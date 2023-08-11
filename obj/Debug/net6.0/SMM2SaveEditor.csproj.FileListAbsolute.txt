@@ -1,0 +1,266 @@
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.csproj.AssemblyReference.cache
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\Avalonia\Resources.Inputs.cache
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\Avalonia\resources
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.GeneratedMSBuildEditorConfig.editorconfig
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.AssemblyInfoInputs.cache
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.AssemblyInfo.cs
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.csproj.CoreCompileInputs.cache
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\Avalonia\references
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\Avalonia\original.dll
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\Avalonia\original.pdb
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\Avalonia\original.ref.dll
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\refint\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\SMM2SaveEditor.exe
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\SMM2SaveEditor.deps.json
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\SMM2SaveEditor.runtimeconfig.json
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\SMM2SaveEditor.pdb
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Base.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Controls.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.DesignerSupport.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Dialogs.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Markup.Xaml.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Markup.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Metal.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.MicroCom.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.OpenGL.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Controls.ColorPicker.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Controls.DataGrid.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Controls.PanAndZoom.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Desktop.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Diagnostics.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Fonts.Inter.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.FreeDesktop.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Native.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Remote.Protocol.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Skia.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Themes.Fluent.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Themes.Simple.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.Win32.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Avalonia.X11.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\HarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Kaitai.Struct.Runtime.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\MicroCom.Runtime.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Microsoft.CodeAnalysis.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Microsoft.CodeAnalysis.Scripting.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\SkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\System.IO.Pipelines.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\Tmds.DBus.Protocol.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-arm64\native\av_libglesv2.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-x64\native\av_libglesv2.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-x86\native\av_libglesv2.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\osx\native\libAvaloniaNative.dylib
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-arm\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-arm64\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-musl-x64\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-x64\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\osx\native\libHarfBuzzSharp.dylib
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-arm64\native\libHarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-x64\native\libHarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-x86\native\libHarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-arm\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-arm64\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-musl-x64\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\linux-x64\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\osx\native\libSkiaSharp.dylib
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-arm64\native\libSkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-x64\native\libSkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win-x86\native\libSkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+D:\codeThings\Switch\SMM2SaveEditor\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.pdb
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.csproj.CopyComplete
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\SMM2SaveEditor.genruntimeconfig.cache
+D:\codeThings\Switch\SMM2SaveEditor\obj\Debug\net6.0\ref\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\SMM2SaveEditor.exe
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\SMM2SaveEditor.deps.json
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\SMM2SaveEditor.runtimeconfig.json
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\SMM2SaveEditor.pdb
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Base.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Controls.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.DesignerSupport.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Dialogs.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Markup.Xaml.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Markup.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Metal.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.MicroCom.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.OpenGL.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Controls.ColorPicker.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Controls.DataGrid.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Controls.PanAndZoom.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Desktop.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Diagnostics.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Fonts.Inter.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.FreeDesktop.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Native.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Remote.Protocol.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Skia.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Themes.Fluent.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Themes.Simple.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.Win32.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Avalonia.X11.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\HarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Kaitai.Struct.Runtime.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\MicroCom.Runtime.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Microsoft.CodeAnalysis.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Microsoft.CodeAnalysis.CSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Microsoft.CodeAnalysis.Scripting.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\SkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\System.IO.Pipelines.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\Tmds.DBus.Protocol.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\cs\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\de\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\es\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\fr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\it\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ja\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ko\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pl\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\pt-BR\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\ru\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-arm64\native\av_libglesv2.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-x64\native\av_libglesv2.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-x86\native\av_libglesv2.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\osx\native\libAvaloniaNative.dylib
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-arm\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-arm64\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-musl-x64\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-x64\native\libHarfBuzzSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\osx\native\libHarfBuzzSharp.dylib
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-arm64\native\libHarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-x64\native\libHarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-x86\native\libHarfBuzzSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-arm\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-arm64\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-musl-x64\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\linux-x64\native\libSkiaSharp.so
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\osx\native\libSkiaSharp.dylib
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-arm64\native\libSkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-x64\native\libSkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win-x86\native\libSkiaSharp.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.csproj.AssemblyReference.cache
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\Avalonia\Resources.Inputs.cache
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\Avalonia\resources
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.GeneratedMSBuildEditorConfig.editorconfig
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.AssemblyInfoInputs.cache
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.AssemblyInfo.cs
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.csproj.CoreCompileInputs.cache
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\Avalonia\references
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\Avalonia\original.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\Avalonia\original.pdb
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\Avalonia\original.ref.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\refint\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.dll
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.pdb
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.csproj.CopyComplete
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\SMM2SaveEditor.genruntimeconfig.cache
+D:\codeThings\Switch\SMM2SaveEditor (deprecated)\obj\Debug\net6.0\ref\SMM2SaveEditor.dll
