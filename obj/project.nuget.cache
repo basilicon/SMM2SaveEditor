@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NLT8gY1Heu0L1ELyz7JOTW8mMtuaDoxVLDaLov7ti0F8SWa45lVzGLQ0kHg9slRvk0ZoBWndH06WXCgHMaigKQ==",
+  "dgSpecHash": "w4CHW6ShaFUihfqSUjkyit5h4I0/b1ZdTfjPfYkiepH7AwWTxjRFv0rjPvUX5sXrK9ZOhGLnsGITN5T93yqqLQ==",
   "success": true,
-  "projectFilePath": "D:\\codeThings\\Switch\\SMM2SaveEditor (deprecated)\\SMM2SaveEditor.csproj",
+  "projectFilePath": "D:\\codeThings\\Switch\\SMM2SaveEditor\\SMM2SaveEditor.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ethan\\.nuget\\packages\\avalonia\\11.0.2\\avalonia.11.0.2.nupkg.sha512",
     "C:\\Users\\ethan\\.nuget\\packages\\avalonia.angle.windows.natives\\2.1.0.2023020321\\avalonia.angle.windows.natives.2.1.0.2023020321.nupkg.sha512",

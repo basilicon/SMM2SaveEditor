@@ -13,61 +13,61 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SMM2SaveEditor
-build_property.ProjectDir = D:\codeThings\Switch\SMM2SaveEditor (deprecated)\
+build_property.ProjectDir = D:\codeThings\Switch\SMM2SaveEditor\
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/App.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/MainWindow.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/ClearPipe.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/ClearPipe.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/ExclamationBlock.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/ExclamationBlock.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Ground.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Ground.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Icicle.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Icicle.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Nodes/ClearPipeNode.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Nodes/ClearPipeNode.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Nodes/ExclamationBlockNode.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Nodes/ExclamationBlockNode.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Nodes/PiranhaCreeperNode.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Nodes/PiranhaCreeperNode.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Nodes/SnakeNode.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Nodes/SnakeNode.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Nodes/TrackBlockNode.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Nodes/TrackBlockNode.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Obj.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Obj.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/PiranhaCreeper.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/PiranhaCreeper.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Snake.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Snake.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/SoundEffect.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/SoundEffect.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/Track.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/Track.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entities/TrackBlock.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entities/TrackBlock.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Entity.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Entity.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[D:/codeThings/Switch/SMM2SaveEditor (deprecated)/src/Level/Map.axaml]
+[D:/codeThings/Switch/SMM2SaveEditor/src/Level/Map.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

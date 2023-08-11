@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\codeThings\\Switch\\SMM2SaveEditor (deprecated)\\SMM2SaveEditor.csproj": {}
+    "D:\\codeThings\\Switch\\SMM2SaveEditor\\SMM2SaveEditor.csproj": {}
   },
   "projects": {
-    "D:\\codeThings\\Switch\\SMM2SaveEditor (deprecated)\\SMM2SaveEditor.csproj": {
+    "D:\\codeThings\\Switch\\SMM2SaveEditor\\SMM2SaveEditor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\codeThings\\Switch\\SMM2SaveEditor (deprecated)\\SMM2SaveEditor.csproj",
+        "projectUniqueName": "D:\\codeThings\\Switch\\SMM2SaveEditor\\SMM2SaveEditor.csproj",
         "projectName": "SMM2SaveEditor",
-        "projectPath": "D:\\codeThings\\Switch\\SMM2SaveEditor (deprecated)\\SMM2SaveEditor.csproj",
+        "projectPath": "D:\\codeThings\\Switch\\SMM2SaveEditor\\SMM2SaveEditor.csproj",
         "packagesPath": "C:\\Users\\ethan\\.nuget\\packages\\",
-        "outputPath": "D:\\codeThings\\Switch\\SMM2SaveEditor (deprecated)\\obj\\",
+        "outputPath": "D:\\codeThings\\Switch\\SMM2SaveEditor\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ethan\\AppData\\Roaming\\NuGet\\NuGet.Config",
