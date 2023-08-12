@@ -27,9 +27,10 @@
 				<paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
 								Background="SlateBlue" ClipToBounds="True" Focusable="True"
 								VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-					<Canvas Name="LevelCanvas" Background="LightGray" Width="500" Height="300">
+					<Grid Name="LevelGrid" Background="LightGray" Width="39400" Height="10140"
+						  RowDefinitions="*,4320,*,4320,*" ColumnDefinitions="*,38400,*">
 						
-					</Canvas>
+					</Grid>
 				</paz:ZoomBorder>
 			</ScrollViewer>
 		</Grid>

@@ -9,7 +9,7 @@ using Avalonia.Markup.Xaml;
 
 namespace SMM2Level
 {
-    public partial class Map : Entity
+    public partial class Map : UserControl, IEntity
     {
         Theme theme;
         AutoscrollType autoscrollType;
@@ -41,7 +41,15 @@ namespace SMM2Level
 
         byte[] unknown2 = new byte[3516];
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        private Canvas? myCanvas;
+
+        public Map()
+        {
+            InitializeComponent();
+            myCanvas = this.Find<Canvas>("MapCanvas");
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             theme = (Theme)io.ReadU1();
             autoscrollType = (AutoscrollType)io.ReadU1();
@@ -69,21 +77,21 @@ namespace SMM2Level
             int icicleCount = io.ReadS4le();
 
 
-            FillLists(objects, objectCount, io, canvas);
-            FillLists(sounds, soundCount, io, canvas);
-            FillLists(snakes, snakeBlockCount, io, canvas);
-            FillLists(clearPipes, clearPipeCount, io, canvas);
-            FillLists(piranhaCreepers, piranhaCreeperCount, io, canvas);
-            FillLists(exclamationBlocks, exclamationMarkBlockCount, io, canvas);
-            FillLists(trackBlocks, trackBlockCount, io, canvas);
-            FillLists(ground, groundCount, io, canvas);
-            FillLists(tracks, trackCount, io, canvas);
-            FillLists(icicles, icicleCount, io, canvas);
+            LevelUtility.FillLists(objects, objectCount, io, myCanvas);
+            LevelUtility.FillLists(sounds, soundCount, io, myCanvas);
+            LevelUtility.FillLists(snakes, snakeBlockCount, io, myCanvas);
+            LevelUtility.FillLists(clearPipes, clearPipeCount, io, myCanvas);
+            LevelUtility.FillLists(piranhaCreepers, piranhaCreeperCount, io, myCanvas);
+            LevelUtility.FillLists(exclamationBlocks, exclamationMarkBlockCount, io, myCanvas);
+            LevelUtility.FillLists(trackBlocks, trackBlockCount, io, myCanvas);
+            LevelUtility.FillLists(ground, groundCount, io, myCanvas);
+            LevelUtility.FillLists(tracks, trackCount, io, myCanvas);
+            LevelUtility.FillLists(icicles, icicleCount, io, myCanvas);
 
             unknown2 = io.ReadBytes(3516);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(0xFFFF);
 
@@ -112,16 +120,16 @@ namespace SMM2Level
             bb.Append(tracks.Count);
             bb.Append(icicles.Count);
 
-            bb.Append(GetBytesFromList(objects));
-            bb.Append(GetBytesFromList(sounds));
-            bb.Append(GetBytesFromList(snakes));
-            bb.Append(GetBytesFromList(clearPipes));
-            bb.Append(GetBytesFromList(piranhaCreepers));
-            bb.Append(GetBytesFromList(exclamationBlocks));
-            bb.Append(GetBytesFromList(trackBlocks));
-            bb.Append(GetBytesFromList(ground));
-            bb.Append(GetBytesFromList(tracks));
-            bb.Append(GetBytesFromList(icicles));
+            bb.Append(LevelUtility.GetBytesFromList(objects));
+            bb.Append(LevelUtility.GetBytesFromList(sounds));
+            bb.Append(LevelUtility.GetBytesFromList(snakes));
+            bb.Append(LevelUtility.GetBytesFromList(clearPipes));
+            bb.Append(LevelUtility.GetBytesFromList(piranhaCreepers));
+            bb.Append(LevelUtility.GetBytesFromList(exclamationBlocks));
+            bb.Append(LevelUtility.GetBytesFromList(trackBlocks));
+            bb.Append(LevelUtility.GetBytesFromList(ground));
+            bb.Append(LevelUtility.GetBytesFromList(tracks));
+            bb.Append(LevelUtility.GetBytesFromList(icicles));
 
             bb.Append(unknown2);
 

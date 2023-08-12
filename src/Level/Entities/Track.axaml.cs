@@ -6,7 +6,7 @@ using Avalonia.Controls;
 
 namespace SMM2Level.Entities
 {
-    public partial class Track : Entity
+    public partial class Track : UserControl, IEntity
     {
         ushort unknown1;
         byte flags;
@@ -17,7 +17,12 @@ namespace SMM2Level.Entities
         ushort unknown2;
         ushort unknown3;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public Track() 
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             unknown1 = io.ReadU2le();
             flags = io.ReadU1();
@@ -34,7 +39,7 @@ namespace SMM2Level.Entities
             // transform.position = new Vector2(x, y);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(12);
 

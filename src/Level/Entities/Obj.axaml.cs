@@ -4,7 +4,7 @@ using Avalonia.Controls;
 
 namespace SMM2Level.Entities
 {
-    public partial class Obj : Entity
+    public partial class Obj : UserControl, IEntity
     {
         int x;
         int y;
@@ -191,7 +191,12 @@ namespace SMM2Level.Entities
             InClaw = 0x8000000,
         }
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null) 
+        public Obj()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null) 
         { 
             x = io.ReadS4le();
             y = io.ReadS4le();
@@ -206,14 +211,14 @@ namespace SMM2Level.Entities
             lid = io.ReadS2le();
             sid = io.ReadS2le();
 
-            Canvas.SetLeft(this, x/160);
-            Canvas.SetBottom(this, y/160);
+            Canvas.SetLeft(this, x);
+            Canvas.SetBottom(this, y);
 
             //transform.position = new Vector2(x / 160f, y / 160f);
             //gameObject.name = id.ToString();
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(32);
 

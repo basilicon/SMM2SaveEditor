@@ -6,22 +6,27 @@ using Avalonia.Controls;
 
 namespace SMM2Level.Entities
 {
-    public partial class Snake : Entity
+    public partial class Snake : UserControl, IEntity
     {
         byte index;
         ushort unknown1;
         List<SnakeNode> nodes = new(120);
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public Snake()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             index = io.ReadU1();
             byte numNodes = io.ReadU1();
             unknown1 = io.ReadU2le();
 
-            FillLists(nodes, numNodes, io, canvas);
+            LevelUtility.FillLists(nodes, numNodes, io, canvas);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4 + (int)Maxes.SnakeNode * 8);
 
@@ -29,7 +34,7 @@ namespace SMM2Level.Entities
             bb.Append((byte)nodes.Count);
             bb.Append(unknown1);
 
-            bb.Append(GetBytesFromList(nodes));
+            bb.Append(LevelUtility.GetBytesFromList(nodes));
 
             return bb.GetBytes();
         }

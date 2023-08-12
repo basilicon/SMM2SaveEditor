@@ -6,14 +6,19 @@ using Avalonia.Controls;
 
 namespace SMM2Level.Entities
 {
-    public partial class SoundEffect : Entity
+    public partial class SoundEffect : UserControl, IEntity
     {
         byte id;
         byte x;
         byte y;
         byte unknown1;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public SoundEffect()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             id = io.ReadU1();
             x = io.ReadU1();
@@ -22,11 +27,9 @@ namespace SMM2Level.Entities
 
             Canvas.SetLeft(this, x);
             Canvas.SetBottom(this, y);
-
-            // transform.position = new Vector2(x, y);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 

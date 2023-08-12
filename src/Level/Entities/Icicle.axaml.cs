@@ -4,14 +4,19 @@ using SMM2Level.Utility;
 
 namespace SMM2Level.Entities
 {
-    public partial class Icicle : Entity
+    public partial class Icicle : UserControl, IEntity
     {
         byte x;
         byte y;
         byte type;
         byte unknown1;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public Icicle()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             x = io.ReadU1();
             y = io.ReadU1();
@@ -22,7 +27,7 @@ namespace SMM2Level.Entities
             Canvas.SetBottom(this, y);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 

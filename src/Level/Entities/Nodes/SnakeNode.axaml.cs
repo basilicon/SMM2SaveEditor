@@ -5,20 +5,25 @@ using SMM2Level.Utility;
 
 namespace SMM2Level.Entities.Nodes
 {
-    public partial class SnakeNode : Entity
+    public partial class SnakeNode : UserControl, IEntity
     {
         ushort index;
         ushort direction;
         uint unknown1;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public SnakeNode()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             index = io.ReadU2le();
             direction = io.ReadU2le();
             unknown1 = io.ReadU4le();
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(8);
 

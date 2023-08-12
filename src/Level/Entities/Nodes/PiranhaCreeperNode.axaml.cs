@@ -4,20 +4,25 @@ using SMM2Level.Utility;
 
 namespace SMM2Level.Entities.Nodes
 {
-    public partial class PiranhaCreeperNode : Entity
+    public partial class PiranhaCreeperNode : UserControl, IEntity
     {
         byte unknown1;
         byte direction;
         ushort unknown2;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public PiranhaCreeperNode()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             unknown1 = io.ReadU1();
             direction = io.ReadU1();
             unknown2 = io.ReadU2le();
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 

@@ -1,8 +1,10 @@
-using System.IO;
 using Kaitai;
 using SMM2Level.Utility;
 using System.Text;
 using System;
+using Avalonia.Controls;
+using System.Diagnostics;
+using Avalonia.Markup.Xaml;
 
 namespace SMM2Level
 {
@@ -44,9 +46,9 @@ namespace SMM2Level
         byte[] unknown1 = new byte[0];
         byte unknown2;
 
-        public void LoadFromStream(KaitaiStream io)
+        public void LoadFromStream(KaitaiStream io, Grid levelGrid)
         {
-            // Debug.Log("Loading level...");
+            Debug.WriteLine("Loading level...");
 
             startY = io.ReadU1();
             goalY = io.ReadU1();
@@ -74,11 +76,25 @@ namespace SMM2Level
             levelName = Encoding.Unicode.GetString(io.ReadBytes(66));
             levelDescription = Encoding.Unicode.GetString(io.ReadBytes(202));
 
-            overworld = new Map();
+            Debug.WriteLine("Finished decoding common info.");
+            Debug.WriteLine(levelName);
+            Debug.WriteLine('\0');
+            Debug.WriteLine(levelDescription);
+            Debug.WriteLine('\0');
+
+            overworld = new Map(); // Map : UserControl, IEntity
+            levelGrid.Children.Add(overworld);
+            Grid.SetColumn(overworld, 1);
+            Grid.SetRow(overworld, 1);
             overworld.LoadFromStream(io);
 
             subworld = new Map();
+            levelGrid.Children.Add(subworld);
+            Grid.SetColumn(subworld, 1);
+            Grid.SetRow(subworld, 3);
             subworld.LoadFromStream(io);
+
+            Debug.WriteLine("Finished opening level.");
         }
 
         public byte[] GetBytes()
@@ -121,33 +137,6 @@ namespace SMM2Level
             bb.Append(subworld.GetBytes());
 
             return bb.GetBytes();
-        }
-
-        public void LoadFromFile(string path)
-        {
-            // Debug.Log("Decrypting bytes from file...");
-
-            byte[] bytes = File.ReadAllBytes(path);
-
-            bytes = LevelCrypto.DecryptLevel(bytes);
-            LoadFromStream(new KaitaiStream(bytes));
-        }
-
-        private bool ByteArrayToFile(string fileName, byte[] byteArray)
-        {
-            try
-            {
-                using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                {
-                    fs.Write(byteArray, 0, byteArray.Length);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception caught in process: {0}", ex);
-                return false;
-            }
         }
     }
 }

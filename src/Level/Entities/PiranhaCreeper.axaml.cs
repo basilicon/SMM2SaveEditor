@@ -6,24 +6,29 @@ using Avalonia.Controls;
 
 namespace SMM2Level.Entities
 {
-    public partial class PiranhaCreeper : Entity
+    public partial class PiranhaCreeper : UserControl, IEntity
     {
         byte unknown1;
         byte index;
         byte unknown2;
         List<PiranhaCreeperNode> nodes = new((int)Maxes.PiranhaCreeperNode);
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public PiranhaCreeper()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             unknown1 = io.ReadU1();
             index = io.ReadU1();
             byte numNodes = io.ReadU1();
             unknown2 = io.ReadU1();
 
-            FillLists(nodes, numNodes, io, canvas);
+            LevelUtility.FillLists(nodes, numNodes, io, canvas);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4 + (int)Maxes.PiranhaCreeperNode * 4);
 
@@ -32,7 +37,7 @@ namespace SMM2Level.Entities
             bb.Append((byte)nodes.Count);
             bb.Append(unknown2);
 
-            bb.Append(GetBytesFromList(nodes));
+            bb.Append(LevelUtility.GetBytesFromList(nodes));
 
             return bb.GetBytes();
         }

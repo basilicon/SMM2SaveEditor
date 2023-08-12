@@ -4,20 +4,25 @@ using SMM2Level.Utility;
 
 namespace SMM2Level.Entities.Nodes
 {
-    public partial class TrackBlockNode : Entity
+    public partial class TrackBlockNode : UserControl, IEntity
     {
         byte unknown1;
         byte direction;
         ushort unknown2;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public TrackBlockNode()
+        {
+            InitializeComponent();
+        }
+ 
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             unknown1 = io.ReadU1();
             direction = io.ReadU1();
             unknown2 = io.ReadU2le();
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 

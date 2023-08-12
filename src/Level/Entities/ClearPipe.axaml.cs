@@ -6,23 +6,28 @@ using Avalonia.Controls;
 
 namespace SMM2Level.Entities
 {
-    public partial class ClearPipe : Entity
+    public partial class ClearPipe : UserControl, IEntity
     {
         byte index;
         byte numNodes;
         ushort unknown;
         List<ClearPipeNode> nodes = new((int)Maxes.ClearPipeNode);
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public ClearPipe() 
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             index = io.ReadU1();
             numNodes = io.ReadU1();
             unknown = io.ReadU2le();
 
-            Entity.FillLists(nodes, numNodes, io);
+            LevelUtility.FillLists(nodes, numNodes, io);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer();
 
@@ -30,7 +35,7 @@ namespace SMM2Level.Entities
             bb.Append(numNodes);
             bb.Append(unknown);
 
-            bb.Append(GetBytesFromList(nodes));
+            bb.Append(LevelUtility.GetBytesFromList(nodes));
 
             return bb.GetBytes();
         }

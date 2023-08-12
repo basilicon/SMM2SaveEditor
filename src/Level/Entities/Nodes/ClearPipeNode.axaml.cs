@@ -4,7 +4,7 @@ using SMM2Level.Utility;
 
 namespace SMM2Level.Entities.Nodes
 {
-    public partial class ClearPipeNode : Entity
+    public partial class ClearPipeNode : UserControl, IEntity
     {
         byte type;
         byte index;
@@ -15,7 +15,12 @@ namespace SMM2Level.Entities.Nodes
         byte unknown1;
         byte direction;
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas)
+        public ClearPipeNode()
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas)
         {
             type = io.ReadU1();
             index = io.ReadU1();
@@ -32,7 +37,7 @@ namespace SMM2Level.Entities.Nodes
             // transform.position = new Vector2(x, y);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer();
 

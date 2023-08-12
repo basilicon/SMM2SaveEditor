@@ -6,24 +6,29 @@ using System.Collections.Generic;
 
 namespace SMM2Level.Entities
 {
-    public partial class ExclamationBlock : Entity
+    public partial class ExclamationBlock : UserControl, IEntity
     {
         byte unknown1;
         byte index;
         byte unknown2;
         List<ExclamationBlockNode> nodes = new((int)Maxes.ExclamationBlockNode);
 
-        public override void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public ExclamationBlock() 
+        {
+            InitializeComponent();
+        }
+
+        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
         {
             unknown1 = io.ReadU1();
             index = io.ReadU1();
             byte numNodes = io.ReadU1();
             unknown2 = io.ReadU1();
 
-            FillLists(nodes, numNodes, io);
+            LevelUtility.FillLists(nodes, numNodes, io);
         }
 
-        public override byte[] GetBytes()
+        public byte[] GetBytes()
         {
             ByteBuffer bb = new();
 
@@ -32,7 +37,7 @@ namespace SMM2Level.Entities
             bb.Append((byte)nodes.Count);
             bb.Append(unknown2);
 
-            bb.Append(GetBytesFromList(nodes));
+            bb.Append(LevelUtility.GetBytesFromList(nodes));
 
             return bb.GetBytes();
         }
