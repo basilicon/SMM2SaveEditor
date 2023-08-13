@@ -28,7 +28,6 @@ namespace SMM2Level.Entities
 
             Canvas.SetLeft(this, x * 160);
             Canvas.SetBottom(this, y * 160);
-            Debug.WriteLine($"Ground at {x},{y}");
         }
 
         public byte[] GetBytes()

@@ -33,8 +33,8 @@ namespace SMM2Level.Entities
             unknown2 = io.ReadU2le();
             unknown3 = io.ReadU2le();
 
-            Canvas.SetLeft(this, x);
-            Canvas.SetBottom(this, y);
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
 
             // transform.position = new Vector2(x, y);
         }

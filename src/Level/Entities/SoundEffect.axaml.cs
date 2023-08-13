@@ -25,8 +25,8 @@ namespace SMM2Level.Entities
             y = io.ReadU1();
             unknown1 = io.ReadU1();
 
-            Canvas.SetLeft(this, x);
-            Canvas.SetBottom(this, y);
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
         }
 
         public byte[] GetBytes()

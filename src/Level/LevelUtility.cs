@@ -238,10 +238,8 @@ namespace SMM2Level.Utility
             for (int i = 0; i < numEntities; i++)
             {
                 T entity = new();
-                canvas?.Children.Add(entity);
-
                 entity.LoadFromStream(io, canvas);
-
+                canvas?.Children.Add(entity);
                 entities.Add(entity);
             }
 

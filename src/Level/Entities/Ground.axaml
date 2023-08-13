@@ -4,5 +4,5 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="160" d:DesignHeight="160"
              x:Class="SMM2Level.Entities.Ground">
-	<Rectangle Fill="Black" ZIndex="99"></Rectangle>
+	<Rectangle Width="160" Height="160" Fill="Black"></Rectangle>
 </UserControl>

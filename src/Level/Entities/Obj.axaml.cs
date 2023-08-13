@@ -1,6 +1,9 @@
 using Kaitai;
 using SMM2Level.Utility;
 using Avalonia.Controls;
+using System.Diagnostics;
+using Avalonia.Controls.Shapes;
+using System.ComponentModel;
 
 namespace SMM2Level.Entities
 {
@@ -211,11 +214,12 @@ namespace SMM2Level.Entities
             lid = io.ReadS2le();
             sid = io.ReadS2le();
 
-            Canvas.SetLeft(this, x);
-            Canvas.SetBottom(this, y);
+            Canvas.SetLeft(this, x - 80);
+            Canvas.SetBottom(this, y - 80);
+            Design.SetWidth(this, width * 160);
+            Design.SetHeight(this, height * 160);
 
-            //transform.position = new Vector2(x / 160f, y / 160f);
-            //gameObject.name = id.ToString();
+            Debug.WriteLine($"{id} at {x},{y} : {width}, {height}");
         }
 
         public byte[] GetBytes()
