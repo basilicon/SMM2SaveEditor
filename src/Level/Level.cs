@@ -78,9 +78,9 @@ namespace SMM2Level
 
             Debug.WriteLine("Finished decoding common info.");
             Debug.WriteLine(levelName);
-            Debug.WriteLine('\0');
+            Debug.WriteLine('\n');
             Debug.WriteLine(levelDescription);
-            Debug.WriteLine('\0');
+            Debug.WriteLine('\n');
 
             overworld = new Map(); // Map : UserControl, IEntity
             levelGrid.Children.Add(overworld);

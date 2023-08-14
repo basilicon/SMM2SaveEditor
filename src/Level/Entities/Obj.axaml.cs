@@ -2,8 +2,9 @@ using Kaitai;
 using SMM2Level.Utility;
 using Avalonia.Controls;
 using System.Diagnostics;
-using Avalonia.Controls.Shapes;
-using System.ComponentModel;
+using Avalonia.Media.Imaging;
+
+using Image = Avalonia.Controls.Image;
 
 namespace SMM2Level.Entities
 {
@@ -22,11 +23,14 @@ namespace SMM2Level.Entities
         short lid;
         short sid;
 
+        private Image img;
+        private Grid grid;
+
         public enum ObjId : ushort
         {
             goomba = 0,
             koopa = 1,
-            piranha_flower = 2,
+            piranha_plant = 2,
             hammer_bro = 3,
             block = 4,
             question_block = 5,
@@ -68,7 +72,7 @@ namespace SMM2Level.Entities
             boo = 41,
             clown_car = 42,
             spikes = 43,
-            big_mushroom = 44,
+            mega_mush = 44,
             shoe_goomba = 45,
             dry_bones = 46,
             cannon = 47,
@@ -111,7 +115,7 @@ namespace SMM2Level.Entities
             snake_block = 84,
             track_block = 85,
             charvaargh = 86,
-            slight_slope = 87,
+            shallow_slope = 87,
             steep_slope = 88,
             custom_auto_bird = 89,
             checkpoint_flag = 90,
@@ -197,6 +201,8 @@ namespace SMM2Level.Entities
         public Obj()
         {
             InitializeComponent();
+            img = this.Find<Image>("Sprite");
+            grid = this.Find<Grid>("LayoutGrid");
         }
 
         public void LoadFromStream(KaitaiStream io, Canvas? canvas = null) 
@@ -216,10 +222,292 @@ namespace SMM2Level.Entities
 
             Canvas.SetLeft(this, x - 80);
             Canvas.SetBottom(this, y - 80);
-            Design.SetWidth(this, width * 160);
-            Design.SetHeight(this, height * 160);
+            SetValue(WidthProperty, width * 160);
+            SetValue(HeightProperty, height * 160);
 
-            Debug.WriteLine($"{id} at {x},{y} : {width}, {height}");
+            HandleSprite();
+
+            //Debug.WriteLine($"{id} at {x},{y} : {width}, {height}");
+        }
+
+        private void HandleSprite()
+        {
+            string stid = ((int)id).ToString();
+
+            switch (id)
+            {
+                // 1 alternate sprite
+                case ObjId.goomba:
+                case ObjId.koopa:
+                case ObjId.block:
+                case ObjId.coin:
+                case ObjId.spring:
+                case ObjId.bob_omb:
+                case ObjId.pow:
+                case ObjId.note_block:
+                case ObjId.goal:
+                case ObjId.one_up:
+                case ObjId.lava_lift:
+                case ObjId.clown_car:
+                case ObjId.dry_bones:
+                case ObjId.blooper:
+                case ObjId.skipsqueak:
+                case ObjId.wiggler:
+                case ObjId.cheep_cheep:
+                case ObjId.chain_chomp:
+                case ObjId.spike_ball:
+                case ObjId.boom_boom:
+                case ObjId.p_block:
+                case ObjId.snake_block:
+                case ObjId.track_block:
+                case ObjId.shallow_slope:
+                case ObjId.steep_slope:
+                case ObjId.key:
+                case ObjId.warp_box:
+                case ObjId.dotted_line_block:
+                case ObjId.blinking_block:
+                case ObjId.super_hammer:
+                case ObjId.icicle:
+                    if ((flag & 0x4) != 0)
+                        SetSprite(stid + "A");
+                    else
+                        SetSprite(stid);
+                    break;
+
+                // weird cases
+
+                case ObjId.vine:
+                    HandleVineSprite();
+                    break;
+
+                case ObjId.pipe:
+                    HandlePipeSprite();
+                    break;
+
+                case ObjId.mushroom_platform:
+                    HandleMushroomPlatformSprite();
+                    break;
+
+                case ObjId.semisolid_platform:
+                    HandleSemisolidSprite();
+                    break;
+
+                case ObjId.bridge:
+                    HandlePlatformSprite("17");
+                    break;
+
+                case ObjId.bullet_bill_blaster:
+                    HandleLauncherSprite();
+                    break;
+
+                // no alternate sprite
+                default:
+                    SetSprite(stid);
+                    break;
+            }
+        }
+
+        private void HandleLauncherSprite()
+        {
+            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
+
+            Grid.SetRowSpan(img, 2);
+            SetSprite("13" + ((flag & 0x4) != 0 ? "B" : ""));
+
+            string trunkSprite = "13" + ((flag & 0x4) == 0 ? "A" : "C");
+            for (int i = 2; i < height; i++)
+            {
+                Image trunk = new();
+                grid.Children.Add(trunk);
+                Grid.SetRow(trunk, i);
+                SetSprite(trunkSprite, trunk);
+            }
+        }
+
+        private void HandleVineSprite()
+        {
+            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
+
+            SetSprite("64A");
+
+            for (int i = 1; i < height - 1; i++)
+            {
+                Image stalk = new();
+                grid.Children.Add(stalk);
+                Grid.SetRow(stalk, i);
+                SetSprite("64", stalk);
+            }
+
+            Image bottom = new();
+            grid.Children.Add(bottom);
+            Grid.SetRow(bottom, height - 1);
+            SetSprite("64B", bottom);
+        }
+
+        private void HandlePipeSprite()
+        {
+            string color = (flag & 0xC0000) switch
+            {
+                0x40000 => "R",
+                0x80000 => "U",
+                0xC0000 => "P",
+                _ => ""
+            };
+
+            string pipeCap = "9" + color + (flag & 0x60) switch
+            {
+                0x20 => "B",
+                0x40 => "",
+                0x60 => "A",
+                _ => "C"
+            };
+
+            bool vert = (flag & 0x40) != 0;
+
+            string pipeBase = "9" + color + (vert ? "D" : "E");
+
+            SetSprite(pipeCap);
+
+            string definitions = EqualSpacingDefinition(height);
+            if (vert) grid.RowDefinitions = new RowDefinitions(definitions);
+            else
+            {
+                grid.ColumnDefinitions = new ColumnDefinitions(definitions);
+                SetValue(WidthProperty, height * 160);
+                SetValue(HeightProperty, width * 160);
+            }
+
+            switch (flag & 0x60)
+            {
+                case 0x20: // left
+                    Grid.SetColumn(img, 0);
+                    for (int i = 1; i < height; i++)
+                    {
+                        Image newImage = new();
+                        grid.Children.Add(newImage);
+                        Grid.SetColumn(newImage, i);
+                        SetSprite(pipeBase, newImage);
+                    }
+                    Canvas.SetLeft(this, x - 80 - (height - 1) * 160);
+                    break;
+                case 0x40: // up
+                    Grid.SetRow(img, 0);
+                    for (int i = 1; i < height; i++)
+                    {
+                        Image newImage = new();
+                        grid.Children.Add(newImage);
+                        Grid.SetRow(newImage, i);
+                        SetSprite(pipeBase, newImage);
+                    }
+                    break;
+                case 0x60: // down
+                    Grid.SetRow(img, height - 1);
+                    for (int i = 0; i < height - 1; i++)
+                    {
+                        Image newImage = new();
+                        grid.Children.Add(newImage);
+                        Grid.SetRow(newImage, i);
+                        SetSprite(pipeBase, newImage);
+                    }
+                    Canvas.SetBottom(this, y - 80 - (height - 1) * 160);
+                    Canvas.SetLeft(this, x - 80 - (width - 1) * 160);
+                    break;
+                default:   // right
+                    Grid.SetColumn(img, height - 1);
+                    for (int i = 0; i < height - 1; i++)
+                    {
+                        Image newImage = new();
+                        grid.Children.Add(newImage);
+                        Grid.SetColumn(newImage, i);
+                        SetSprite(pipeBase, newImage);
+                    }
+                    Canvas.SetBottom(this, y - 80 - (width - 1) * 160);
+                    break;
+            }
+        }
+
+        private void HandleSemisolidSprite()
+        {
+            HandlePlatformSprite("16");
+
+            // TODO: Add semisolid background sprite
+            // TODO: Add semisolid variations
+        }
+
+        private void HandleMushroomPlatformSprite()
+        {
+            HandlePlatformSprite("14");
+
+            // Stalks can be centered
+            Grid stalk = new Grid();
+            grid.Children.Add(stalk);
+            Grid.SetRow(stalk, 1);
+            Grid.SetColumn(stalk, (width - 1) / 2);
+            string stalkRowDefs = "*";
+            for (int i = 1; i < height - 1; i++) stalkRowDefs += ",*";
+            stalk.RowDefinitions = new RowDefinitions(stalkRowDefs);
+
+            if (width % 2 == 1) Grid.SetColumnSpan(stalk, 1);
+            else Grid.SetColumnSpan(stalk, 2);
+
+            for (int i = 0; i < height - 1; i++)
+            {
+                Image stalkCell = new Image();
+                stalk.Children.Add(stalkCell);
+                Grid.SetColumn(stalkCell, 0);
+                Grid.SetRow(stalkCell, i);
+                SetSprite("14C", stalkCell);
+            }
+        }
+
+        private void HandlePlatformSprite(string name)
+        {
+            grid.RowDefinitions = new RowDefinitions($"*,{height - 1}*");
+            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+
+            SetSprite(name + "A");
+
+            Image rightCorner = new Image();
+            grid.Children.Add(rightCorner);
+            Grid.SetRow(rightCorner, 0);
+            Grid.SetColumn(rightCorner, width - 1);
+            SetSprite(name + "B", rightCorner);
+
+            for (int i = 1; i < width - 1; i++)
+            {
+                Image center = new Image();
+                grid.Children.Add(center);
+                Grid.SetRow(center, 0);
+                Grid.SetColumn(center, i);
+                SetSprite(name, center);
+            }
+        }
+
+        private string EqualSpacingDefinition(int count)
+        {
+            string defs = "*";
+            for (int i = 1; i < count; i++) defs += ",*";
+            return defs;
+        }
+
+        private void SetSprite(string name, Image? image = null)
+        {
+            string loc = "../../../img/sprites/" + name + ".png";
+
+            try
+            {
+                SetSprite(new Bitmap(loc), image);
+            }
+            catch
+            {
+                Debug.WriteLine($"Could not find a sprite for {id} at {loc}");
+            }
+        }
+
+        private void SetSprite(Bitmap bitmap, Image? image = null)
+        {
+            if (image == null) img.Source = bitmap;
+            else image.Source = bitmap;
         }
 
         public byte[] GetBytes()
