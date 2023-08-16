@@ -28,4 +28,16 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="src\level\entities\nodes\ClearPipeNode.axaml" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="src\Level\Entities\Objects\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="src\Level\EntityEditor.axaml.cs">
+      <DependentUpon>EntityEditor.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -82,11 +82,13 @@ namespace SMM2Level
             Debug.WriteLine(levelDescription);
             Debug.WriteLine('\n');
 
-            overworld = new Map(); // Map : UserControl, IEntity
+            overworld = new Map();
             levelGrid.Children.Add(overworld);
             Grid.SetColumn(overworld, 1);
             Grid.SetRow(overworld, 1);
             overworld.LoadFromStream(io);
+
+            Debug.WriteLine("Loading subworld...");
 
             subworld = new Map();
             levelGrid.Children.Add(subworld);

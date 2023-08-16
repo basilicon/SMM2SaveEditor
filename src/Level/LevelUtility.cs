@@ -200,7 +200,7 @@ namespace SMM2Level.Utility
         TrackBlock = 10,
         Ground = 4000,
         Track = 1500,
-        Icicle = 30,
+        Icicle = 300,
         SnakeNode = 120,
         ClearPipeNode = 36,
         PiranhaCreeperNode = 20,

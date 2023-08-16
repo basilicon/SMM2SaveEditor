@@ -1,9 +1,8 @@
 using Kaitai;
 using SMM2Level.Utility;
 using Avalonia.Controls;
-using System.Diagnostics;
+using System.Collections.Generic;
 using Avalonia.Media.Imaging;
-using System.Xml.Linq;
 
 namespace SMM2Level.Entities
 {
@@ -15,11 +14,17 @@ namespace SMM2Level.Entities
         public byte backgroundId;
 
         private Image sprite;
+        private static Bitmap? bitmap = null;
 
         public Ground()
         {
             InitializeComponent();
             sprite = this.Find<Image>("Sprite");
+
+            if (bitmap == null)
+            {
+                bitmap = new Bitmap("../../../img/sprites/7.png");
+            }
         }
 
         public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
@@ -32,7 +37,7 @@ namespace SMM2Level.Entities
             Canvas.SetLeft(this, x * 160);
             Canvas.SetBottom(this, y * 160);
 
-            sprite.Source = new Bitmap("../../../img/sprites/7.png");
+            sprite.Source = bitmap;
         }
 
         public byte[] GetBytes()

@@ -6,27 +6,28 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using System.Diagnostics;
 
 namespace SMM2Level
 {
     public partial class Map : UserControl, IEntity
     {
-        Theme theme;
-        AutoscrollType autoscrollType;
-        BoundaryType boundaryType;
-        Orientation orientation;
-        byte liquidEndHeight;
-        LiquidMode liquidMode;
-        LiquidSpeed liquidSpeed;
-        byte liquidStartHeight;
+        public Theme theme;
+        public AutoscrollType autoscrollType;
+        public BoundaryType boundaryType;
+        public Orientation orientation;
+        public byte liquidEndHeight;
+        public LiquidMode liquidMode;
+        public LiquidSpeed liquidSpeed;
+        public byte liquidStartHeight;
 
-        int boundaryRight;
-        int boundaryLeft;
-        int boundaryTop;
-        int boundaryBottom;
+        public int boundaryRight;
+        public int boundaryLeft;
+        public int boundaryTop;
+        public int boundaryBottom;
 
-        int unknownFlag;
-        int unknown1;
+        public int unknownFlag;
+        public int unknown1;
 
         List<Obj> objects = new(); // 2600
         List<SoundEffect> sounds = new(); // 300
@@ -76,7 +77,6 @@ namespace SMM2Level
             int trackCount = io.ReadS4le();
             int icicleCount = io.ReadS4le();
 
-
             LevelUtility.FillLists(objects, objectCount, io, myCanvas);
             LevelUtility.FillLists(sounds, soundCount, io, myCanvas);
             LevelUtility.FillLists(snakes, snakeBlockCount, io, myCanvas);
@@ -88,7 +88,7 @@ namespace SMM2Level
             LevelUtility.FillLists(tracks, trackCount, io, myCanvas);
             LevelUtility.FillLists(icicles, icicleCount, io, myCanvas);
 
-            unknown2 = io.ReadBytes(3516);
+            unknown2 = io.ReadBytes(0xDBC);
         }
 
         public byte[] GetBytes()

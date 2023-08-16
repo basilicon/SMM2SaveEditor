@@ -1,14 +1,15 @@
 using Avalonia.Controls;
 using Kaitai;
 using SMM2Level.Utility;
+using System.Diagnostics;
 
 namespace SMM2Level.Entities.Nodes
 {
     public partial class TrackBlockNode : UserControl, IEntity
     {
-        byte unknown1;
-        byte direction;
-        ushort unknown2;
+        public byte unknown1;
+        public byte direction;
+        public ushort unknown2;
 
         public TrackBlockNode()
         {

@@ -1,5 +1,6 @@
 using Kaitai;
 using Avalonia.Controls;
+using System.Collections.Generic;
 
 namespace SMM2Level
 {

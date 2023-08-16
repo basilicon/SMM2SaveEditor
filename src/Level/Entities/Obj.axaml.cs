@@ -5,162 +5,164 @@ using System.Diagnostics;
 using Avalonia.Media.Imaging;
 
 using Image = Avalonia.Controls.Image;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace SMM2Level.Entities
 {
     public partial class Obj : UserControl, IEntity
     {
-        int x;
-        int y;
-        short unknown1;
-        byte width;
-        byte height;
-        uint flag;
-        uint cflag;
-        int ex;
-        ObjId id;
-        ObjId cid;
-        short lid;
-        short sid;
+        public int x;
+        public int y;
+        public short unknown1;
+        public byte width;
+        public byte height;
+        public uint flag;
+        public uint cflag;
+        public uint ex;
+        public ObjId id;
+        public ObjId cid;
+        public short lid;
+        public short sid;
 
         private Image img;
         private Grid grid;
 
         public enum ObjId : ushort
         {
-            goomba = 0,
-            koopa = 1,
-            piranha_plant = 2,
-            hammer_bro = 3,
-            block = 4,
-            question_block = 5,
-            hard_block = 6,
-            ground = 7,
-            coin = 8,
-            pipe = 9,
-            spring = 10,
-            lift = 11,
-            thwomp = 12,
-            bullet_bill_blaster = 13,
-            mushroom_platform = 14,
-            bob_omb = 15,
-            semisolid_platform = 16,
-            bridge = 17,
-            p_switch = 18,
-            pow = 19,
-            super_mushroom = 20,
-            donut_block = 21,
-            cloud = 22,
-            note_block = 23,
-            fire_bar = 24,
-            spiny = 25,
-            goal_ground = 26,
-            goal = 27,
-            buzzy_beetle = 28,
-            hidden_block = 29,
-            lakitu = 30,
-            lakitu_cloud = 31,
-            banzai_bill = 32,
-            one_up = 33,
-            fire_flower = 34,
-            super_star = 35,
-            lava_lift = 36,
-            starting_brick = 37,
-            starting_arrow = 38,
-            magikoopa = 39,
-            spike_top = 40,
-            boo = 41,
-            clown_car = 42,
-            spikes = 43,
-            mega_mush = 44,
-            shoe_goomba = 45,
-            dry_bones = 46,
-            cannon = 47,
-            blooper = 48,
-            castle_bridge = 49,
-            hop_chop = 50,
-            skipsqueak = 51,
-            wiggler = 52,
-            fast_conveyor_belt = 53,
-            burner = 54,
-            door = 55,
-            cheep_cheep = 56,
-            muncher = 57,
-            rocky_wrench = 58,
-            track = 59,
-            lava_bubble = 60,
-            chain_chomp = 61,
-            bowser = 62,
-            ice_block = 63,
-            vine = 64,
-            stingby = 65,
-            arrow = 66,
-            one_way = 67,
-            saw = 68,
-            player = 69,
-            big_coin = 70,
-            semisolid_3dw = 71,
-            koopa_car = 72,
-            toad = 73,
-            spike_ball = 74,
-            stone = 75,
-            twister = 76,
-            boom_boom = 77,
-            pokey = 78,
-            p_block = 79,
-            sprint_platform = 80,
-            smb2_mushroom = 81,
-            donut = 82,
-            skewer = 83,
-            snake_block = 84,
-            track_block = 85,
-            charvaargh = 86,
-            shallow_slope = 87,
-            steep_slope = 88,
-            custom_auto_bird = 89,
-            checkpoint_flag = 90,
-            seesaw = 91,
-            red_coin = 92,
-            clear_pipe = 93,
-            conveyor_belt = 94,
-            key = 95,
-            ant_trooper = 96,
-            warp_box = 97,
-            bowser_jr = 98,
-            on_off_block = 99,
-            dotted_line_block = 100,
-            water_marker = 101,
-            monty_mole = 102,
-            fish_bone = 103,
-            angry_sun = 104,
-            swinging_claw = 105,
-            tree = 106,
-            piranha_creeper = 107,
-            blinking_block = 108,
-            sound_effect = 109,
-            spike_block = 110,
-            mechakoopa = 111,
-            crate = 112,
-            mushroom_trampoline = 113,
-            porkupuffer = 114,
-            toadette_cage = 115,
-            super_hammer = 116,
-            bully = 117,
-            icicle = 118,
-            exclamation_block = 119,
-            lemmy = 120,
-            morton = 121,
-            larry = 122,
-            wendy = 123,
-            iggy = 124,
-            roy = 125,
-            ludwig = 126,
-            cannon_box = 127,
-            propeller_box = 128,
-            goomba_mask = 129,
-            bullet_bill_mask = 130,
-            red_pow_box = 131,
-            on_off_trampoline = 132
+            Goomba = 0,
+            Koopa = 1,
+            PiranhaPlant = 2,
+            HammerBro = 3,
+            Block = 4,
+            QuestionBlock = 5,
+            HardBlock = 6,
+            Ground = 7,
+            Coin = 8,
+            Pipe = 9,
+            Spring = 10,
+            Lift = 11,
+            Thwomp = 12,
+            Blaster = 13,
+            MushroomPlatform = 14,
+            BobOmb = 15,
+            SemisolidPlatform = 16,
+            Bridge = 17,
+            PSwitch = 18,
+            Pow = 19,
+            Mushroom = 20,
+            DonutBlock = 21,
+            Cloud = 22,
+            NoteBlock = 23,
+            FireBar = 24,
+            Spiny = 25,
+            GoalGround = 26,
+            Goal = 27,
+            BuzzyBeetle = 28,
+            HiddenBlock = 29,
+            Lakitu = 30,
+            LakituCloud = 31,
+            BanzaiBill = 32,
+            OneUp = 33,
+            FireFlower = 34,
+            SuperStar = 35,
+            LavaLift = 36,
+            StartingBrick = 37,
+            StartingArrow = 38,
+            Magikoopa = 39,
+            SpikeTop = 40,
+            Boo = 41,
+            ClownCar = 42,
+            Spikes = 43,
+            MegaMush = 44,
+            ShoeGoomba = 45,
+            DryBones = 46,
+            Cannon = 47,
+            Blooper = 48,
+            CastleBridge = 49,
+            HopChop = 50,
+            Skipsqueak = 51,
+            Wiggler = 52,
+            ConveyorBelt = 53,
+            Burner = 54,
+            Door = 55,
+            CheepCheep = 56,
+            Muncher = 57,
+            RockyWrench = 58,
+            Track = 59,
+            LavaBubble = 60,
+            ChainChomp = 61,
+            Bowser = 62,
+            IceBlock = 63,
+            Vine = 64,
+            Stingby = 65,
+            Arrow = 66,
+            OneWay = 67,
+            Saw = 68,
+            Player = 69,
+            BigCoin = 70,
+            Semisolid3DW = 71,
+            KoopaCar = 72,
+            Toad = 73,
+            SpikeBall = 74,
+            Stone = 75,
+            Twister = 76,
+            BoomBoom = 77,
+            Pokey = 78,
+            PBlock = 79,
+            SprintPlatform = 80,
+            SMB2Mushroom = 81,
+            Donut = 82,
+            Skewer = 83,
+            SnakeBlock = 84,
+            TrackBlock = 85,
+            Charvaargh = 86,
+            ShallowSlope = 87,
+            SteepSlope = 88,
+            CustomAutoBird = 89,
+            CheckpointFlag = 90,
+            Seesaw = 91,
+            RedCoin = 92,
+            ClearPipe = 93,
+            ConveyorBeltSloped = 94,
+            Key = 95,
+            AntTrooper = 96,
+            WarpBox = 97,
+            BowserJr = 98,
+            OnOffBlock = 99,
+            DottedLineBlock = 100,
+            WaterMarker = 101,
+            MontyMole = 102,
+            FishBone = 103,
+            AngrySun = 104,
+            SwingingClaw = 105,
+            Tree = 106,
+            PiranhaCreeper = 107,
+            BlinkingBlock = 108,
+            SoundEffect = 109,
+            SpikeBlock = 110,
+            Mechakoopa = 111,
+            Crate = 112,
+            MushroomTrampoline = 113,
+            Porkupuffer = 114,
+            ToadetteCage = 115,
+            SuperHammer = 116,
+            Bully = 117,
+            Icicle = 118,
+            ExclamationBlock = 119,
+            Lemmy = 120,
+            Morton = 121,
+            Larry = 122,
+            Wendy = 123,
+            Iggy = 124,
+            Roy = 125,
+            Ludwig = 126,
+            CannonBox = 127,
+            PropellerBox = 128,
+            GoombaMask = 129,
+            BulletBillMask = 130,
+            RedPowBox = 131,
+            OnOffTrampoline = 132
         }
 
         public enum ObjFlag : uint
@@ -198,6 +200,9 @@ namespace SMM2Level.Entities
             InClaw = 0x8000000,
         }
 
+        // TODO: Set up bitmap lookup table
+        private static Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
+
         public Obj()
         {
             InitializeComponent();
@@ -214,60 +219,78 @@ namespace SMM2Level.Entities
             height = io.ReadU1();
             flag = io.ReadU4le();
             cflag = io.ReadU4le();
-            ex = io.ReadS4le();
+            ex = io.ReadU4le();
             id = (ObjId)io.ReadS2le();
             cid = (ObjId)io.ReadS2le();
             lid = io.ReadS2le();
             sid = io.ReadS2le();
 
-            Canvas.SetLeft(this, x - 80);
+            Canvas.SetLeft(this, x - 80 * width);
             Canvas.SetBottom(this, y - 80);
             SetValue(WidthProperty, width * 160);
             SetValue(HeightProperty, height * 160);
 
-            HandleSprite();
-
-            //Debug.WriteLine($"{id} at {x},{y} : {width}, {height}");
+            UpdateSprite();
         }
 
-        private void HandleSprite()
+        public byte[] GetBytes()
+        {
+            ByteBuffer bb = new ByteBuffer(32);
+
+            bb.Append(x);
+            bb.Append(y);
+            bb.Append(unknown1);
+            bb.Append(width);
+            bb.Append(height);
+            bb.Append(flag);
+            bb.Append(cflag);
+            bb.Append(ex);
+            bb.Append(id);
+            bb.Append(cid);
+            bb.Append(lid);
+            bb.Append(sid);
+
+            return bb.GetBytes();
+        }
+
+        // TODO: SIMPLIFY IMPLEMENTATION FOR MODDERS
+        // sorry modders LUL
+        private void UpdateSprite()
         {
             string stid = ((int)id).ToString();
 
             switch (id)
             {
                 // 1 alternate sprite
-                case ObjId.goomba:
-                case ObjId.koopa:
-                case ObjId.block:
-                case ObjId.coin:
-                case ObjId.spring:
-                case ObjId.bob_omb:
-                case ObjId.pow:
-                case ObjId.note_block:
-                case ObjId.goal:
-                case ObjId.one_up:
-                case ObjId.lava_lift:
-                case ObjId.clown_car:
-                case ObjId.dry_bones:
-                case ObjId.blooper:
-                case ObjId.skipsqueak:
-                case ObjId.wiggler:
-                case ObjId.cheep_cheep:
-                case ObjId.chain_chomp:
-                case ObjId.spike_ball:
-                case ObjId.boom_boom:
-                case ObjId.p_block:
-                case ObjId.snake_block:
-                case ObjId.track_block:
-                case ObjId.shallow_slope:
-                case ObjId.steep_slope:
-                case ObjId.key:
-                case ObjId.warp_box:
-                case ObjId.dotted_line_block:
-                case ObjId.blinking_block:
-                case ObjId.super_hammer:
-                case ObjId.icicle:
+                case ObjId.Goomba:
+                case ObjId.Koopa:
+                case ObjId.Block:
+                case ObjId.Coin:
+                case ObjId.Spring:
+                case ObjId.BobOmb:
+                case ObjId.Pow:
+                case ObjId.Mushroom:
+                case ObjId.NoteBlock:
+                case ObjId.Goal:
+                case ObjId.OneUp:
+                case ObjId.LavaLift:
+                case ObjId.ClownCar:
+                case ObjId.DryBones:
+                case ObjId.Blooper:
+                case ObjId.Skipsqueak:
+                case ObjId.Wiggler:
+                case ObjId.CheepCheep:
+                case ObjId.ChainChomp:
+                case ObjId.SpikeBall:
+                case ObjId.BoomBoom:
+                case ObjId.PBlock:
+                case ObjId.TrackBlock:
+                case ObjId.Key:
+                case ObjId.WarpBox:
+                case ObjId.DottedLineBlock:
+                case ObjId.BlinkingBlock:
+                case ObjId.SuperHammer:
+                case ObjId.Icicle:
                     if ((flag & 0x4) != 0)
                         SetSprite(stid + "A");
                     else
@@ -276,34 +299,82 @@ namespace SMM2Level.Entities
 
                 // weird cases
 
-                case ObjId.vine:
+                case ObjId.SpikeTop:
+                case ObjId.PiranhaPlant:
+                    HandleWallHang(stid + ((flag & 0x4) == 0 ? "A" : "B"));
+                    break;
+
+                case ObjId.Vine:
                     HandleVineSprite();
                     break;
 
-                case ObjId.pipe:
+                case ObjId.Pipe:
                     HandlePipeSprite();
                     break;
 
-                case ObjId.mushroom_platform:
+                case ObjId.MushroomPlatform:
                     HandleMushroomPlatformSprite();
                     break;
 
-                case ObjId.semisolid_platform:
+                case ObjId.SemisolidPlatform:
                     HandleSemisolidSprite();
                     break;
 
-                case ObjId.bridge:
-                    HandlePlatformSprite("17");
+                case ObjId.Seesaw:
+                    HandleSeesawSprite();
                     break;
 
-                case ObjId.bullet_bill_blaster:
+                case ObjId.Bridge:
+                    HandlePlatformSprite(stid);
+                    break;
+
+                case ObjId.Blaster:
                     HandleLauncherSprite();
                     break;
+
+                case ObjId.Lift:
+                case ObjId.OnOffTrampoline:
+                case ObjId.MushroomTrampoline:
+                case ObjId.ConveyorBelt:
+                    if ((flag & 0x4) == 0) HandlePlatformSprite(stid);
+                    else HandlePlatformSprite(stid, "D", "E", "C");
+                    break;
+
+                case ObjId.SnakeBlock: HandleSnake(); break;
+                case ObjId.SteepSlope: HandleSteepSlope(stid, "7"); break;
+                case ObjId.ConveyorBeltSloped:
+                    if ((flag & 0x4) == 0)
+                        HandleSteepSlope(stid, "53A", "53B");
+                    else
+                        HandleSteepSlope(stid, "53CA", "53CB");
+                    break;
+
+                case ObjId.ShallowSlope: HandleShallowSlope(); break;
+                    
+                // rotations
+                case ObjId.CheckpointFlag:
+                case ObjId.OneWay:
+                case ObjId.Skewer:
+                    HandleOrthogonalRotation(stid); break;
 
                 // no alternate sprite
                 default:
                     SetSprite(stid);
                     break;
+            }
+        }
+
+        private void HandleSnake()
+        {
+            string name = (flag & 0x4) == 0 ? "84" : "84A";
+            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+
+            for (int i = 0; i < width; i++)
+            {
+                Image piece = new Image();
+                grid.Children.Add(piece);
+                Grid.SetColumn(piece, i);
+                SetSprite(name, piece);
             }
         }
 
@@ -399,6 +470,7 @@ namespace SMM2Level.Entities
                         Grid.SetRow(newImage, i);
                         SetSprite(pipeBase, newImage);
                     }
+                    Canvas.SetLeft(this, x - 80);
                     break;
                 case 0x60: // down
                     Grid.SetRow(img, height - 1);
@@ -421,9 +493,36 @@ namespace SMM2Level.Entities
                         Grid.SetColumn(newImage, i);
                         SetSprite(pipeBase, newImage);
                     }
+                    Canvas.SetLeft(this, x - 80);
                     Canvas.SetBottom(this, y - 80 - (width - 1) * 160);
                     break;
             }
+        }
+
+        private void HandleWallHang(string name)
+        {
+            string loc = name + (flag & 0x6000000) switch
+            {
+                0x2000000 => "2",
+                0x4000000 => "4",
+                0x6000000 => "6",
+                _ => "0"
+            };
+
+            SetSprite(loc);
+        }
+
+        private void HandleOrthogonalRotation(string name)
+        {
+            string loc = name + (flag & 0xC00000) switch
+            {
+                0x400000 => "A",
+                0x800000 => "B",
+                0xC00000 => "C",
+                _ => ""
+            };
+
+            SetSprite(loc);
         }
 
         private void HandleSemisolidSprite()
@@ -432,6 +531,17 @@ namespace SMM2Level.Entities
 
             // TODO: Add semisolid background sprite
             // TODO: Add semisolid variations
+        }
+
+        private void HandleSeesawSprite()
+        {
+            HandlePlatformSprite("91");
+
+            Image centerPiece = new();
+            grid.Children.Add(centerPiece);
+            Grid.SetColumn(centerPiece, (width - 1) / 2);
+            if (width % 2 == 0) Grid.SetColumnSpan(centerPiece, 2);
+            SetSprite("91C", centerPiece);
         }
 
         private void HandleMushroomPlatformSprite()
@@ -460,26 +570,115 @@ namespace SMM2Level.Entities
             }
         }
 
-        private void HandlePlatformSprite(string name)
+        private void HandlePlatformSprite(string name, string leftSuffix = "A", string rightSuffix = "B", string centerSuffix="")
         {
             grid.RowDefinitions = new RowDefinitions($"*,{height - 1}*");
             grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
 
-            SetSprite(name + "A");
+            SetSprite(name + leftSuffix);
 
             Image rightCorner = new Image();
             grid.Children.Add(rightCorner);
-            Grid.SetRow(rightCorner, 0);
             Grid.SetColumn(rightCorner, width - 1);
-            SetSprite(name + "B", rightCorner);
+            SetSprite(name + rightSuffix, rightCorner);
 
             for (int i = 1; i < width - 1; i++)
             {
                 Image center = new Image();
                 grid.Children.Add(center);
-                Grid.SetRow(center, 0);
                 Grid.SetColumn(center, i);
-                SetSprite(name, center);
+                SetSprite(name + centerSuffix, center);
+            }
+        }
+
+        private void HandleSteepSlope(string name, string leftPiece, string? rightPiece = null)
+        {
+            Canvas.SetLeft(this, x - 80);
+
+            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
+            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+
+            if (rightPiece == null) rightPiece = leftPiece;
+
+            SetSprite(leftPiece);
+            Image finalPiece = new();
+            grid.Children.Add(finalPiece);
+            Grid.SetColumn(finalPiece, width - 1);
+            SetSprite(rightPiece, finalPiece);
+
+            if ((flag & 0x200000) != 0) // UP LEFT
+            {
+                Grid.SetRow(finalPiece, height - 1);
+
+                for (int i = 1; i < height; i++)
+                {
+                    Image slopePiece = new();
+                    grid.Children.Add(slopePiece);
+                    Grid.SetColumn(slopePiece, i);
+                    Grid.SetRow(slopePiece, i - 1);
+                    Grid.SetRowSpan(slopePiece, 2);
+                    SetSprite(name + "A", slopePiece);
+                }
+            }
+            else // UP RIGHT
+            {
+                int maxHeight = height - 1;
+                Grid.SetRow(img, maxHeight);
+
+                for (int i = 1; i < height; i++)
+                {
+                    Image slopePiece = new();
+                    grid.Children.Add(slopePiece);
+                    Grid.SetColumn(slopePiece, i);
+                    Grid.SetRow(slopePiece, maxHeight - i);
+                    Grid.SetRowSpan(slopePiece, 2);
+                    SetSprite(name, slopePiece);
+                }
+            }
+        }
+
+        private void HandleShallowSlope()
+        {
+            Canvas.SetLeft(this, x - 80);
+
+            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
+            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+
+            SetSprite("7");
+            Image finalPiece = new();
+            grid.Children.Add(finalPiece);
+            Grid.SetColumn(finalPiece, width - 1);
+            SetSprite("7", finalPiece);
+
+            if ((flag & 0x200000) != 0) // UP LEFT
+            {
+                Grid.SetRow(finalPiece, height - 1);
+
+                for (int i = 1; i < height; i++)
+                {
+                    Image slopePiece = new();
+                    grid.Children.Add(slopePiece);
+                    Grid.SetColumn(slopePiece, i * 2 - 1);
+                    Grid.SetRow(slopePiece, i - 1);
+                    Grid.SetColumnSpan(slopePiece, 2);
+                    Grid.SetRowSpan(slopePiece, 2);
+                    SetSprite("87A", slopePiece);
+                }
+            }
+            else // UP RIGHT
+            {
+                Grid.SetRow(img, height - 1);
+
+                for (int i = 1; i < height; i++)
+                {
+                    Image slopePiece = new();
+                    grid.Children.Add(slopePiece);
+                    Grid.SetColumn(slopePiece, i * 2 - 1);
+                    Grid.SetRow(slopePiece, height - i - 1);
+                    Grid.SetRowSpan(slopePiece, 2);
+                    Grid.SetColumnSpan(slopePiece, 2);
+                    SetSprite("87", slopePiece);
+                }
             }
         }
 
@@ -492,11 +691,19 @@ namespace SMM2Level.Entities
 
         private void SetSprite(string name, Image? image = null)
         {
+            if (bitmaps.ContainsKey(name))
+            {
+                SetSprite(bitmaps[name], image);
+                return;
+            }
+
             string loc = "../../../img/sprites/" + name + ".png";
 
             try
             {
-                SetSprite(new Bitmap(loc), image);
+                Bitmap bitmap = new Bitmap(loc);
+                SetSprite(bitmap, image);
+                bitmaps.Add(name, bitmap);
             }
             catch
             {
@@ -508,26 +715,6 @@ namespace SMM2Level.Entities
         {
             if (image == null) img.Source = bitmap;
             else image.Source = bitmap;
-        }
-
-        public byte[] GetBytes()
-        {
-            ByteBuffer bb = new ByteBuffer(32);
-
-            bb.Append(x);
-            bb.Append(y);
-            bb.Append(unknown1);
-            bb.Append(width);
-            bb.Append(height);
-            bb.Append(flag);
-            bb.Append(cflag);
-            bb.Append(ex);
-            bb.Append(id);
-            bb.Append(cid);
-            bb.Append(lid);
-            bb.Append(sid);
-
-            return bb.GetBytes();
         }
     }
 }

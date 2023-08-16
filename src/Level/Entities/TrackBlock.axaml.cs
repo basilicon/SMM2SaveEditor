@@ -3,14 +3,15 @@ using Kaitai;
 using SMM2Level.Entities.Nodes;
 using SMM2Level.Utility;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SMM2Level.Entities
 {
     public partial class TrackBlock : UserControl, IEntity
     {
-        byte unknown1;
-        byte index;
-        byte unknown2;
+        public byte unknown1;
+        public byte index;
+        public byte unknown2;
         List<TrackBlockNode> nodes = new((int)Maxes.TrackBlockNode);
 
         public TrackBlock()

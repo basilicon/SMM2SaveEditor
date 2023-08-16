@@ -35,8 +35,6 @@ namespace SMM2Level.Entities
 
             Canvas.SetLeft(this, x * 160);
             Canvas.SetBottom(this, y * 160);
-
-            // transform.position = new Vector2(x, y);
         }
 
         public byte[] GetBytes()
