@@ -4,8 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="500"
              x:Class="SMM2SaveEditor.EntityEditor">
-	<Grid ColumnDefinitions="*,*" Name="EditorGrid" Background="WhiteSmoke"
-		  Margin="5">
-	    
-	</Grid>
+	<DockPanel LastChildFill="False">
+		<Grid ColumnDefinitions="*,*" Name="EditorGrid" Background="WhiteSmoke"
+			  Margin="5">
+
+		</Grid>
+		<Grid ColumnDefinitions="*,*" DockPanel.Dock="Bottom">
+			<Button Grid.Column="0" Name="Apply">Apply</Button>
+			<Button Grid.Column="1" Name="Cancel">Cancel</Button>
+		</Grid>
+	</DockPanel>
 </UserControl>

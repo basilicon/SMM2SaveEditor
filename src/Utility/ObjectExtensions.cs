@@ -32,6 +32,24 @@ public static class ObjectExtensions
         }
     }
 
+    public static void SetValuesFromDictionary<T>(this T obj, IDictionary<string, object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
+        where T : class
+    {
+        obj.SetValuesFromDictionary(typeof(T), source);
+    }
+
+    public static void SetValuesFromDictionary(this object obj, Type type, IDictionary<string, object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
+    {
+        FieldInfo[] fields = type.GetFields(bindingAttr);
+
+        foreach (FieldInfo field in fields)
+        {
+            Debug.WriteLine($"Assigning {field.Name} to {source[field.Name]}");
+
+            field.SetValue(obj, Convert.ChangeType(source[field.Name], field.FieldType));
+        }
+    }
+
     public static IDictionary<string, object> AsDictionary<T>(this T source, BindingFlags bindingAttr = BindingFlags.Public)
         where T : class
     {
@@ -45,11 +63,11 @@ public static class ObjectExtensions
         IDictionary<string, object> dict = new Dictionary<string, object>();
         FieldInfo[] fields = type.GetFields(bindingAttr);
 
-        foreach (var info in fields)
+        foreach (FieldInfo field in fields)
         {
-            object? value = info.GetValue(source);
+            object? value = field.GetValue(source);
 
-            if (value != null) dict.Add(info.Name, value);
+            if (value != null) dict.Add(field.Name, value);
         }
 
         return dict;

@@ -13,6 +13,9 @@ namespace SMM2SaveEditor
     {
         public static EntityEditor? Instance { get; set; }
 
+        IEntity? objRef = null;
+
+        List<string> labels;
         Grid grid;
 
         public EntityEditor()
@@ -22,6 +25,42 @@ namespace SMM2SaveEditor
 
             grid = this.Find<Grid>("EditorGrid");
 
+            this.Find<Button>("Apply").Click += delegate
+            {
+                if (labels == null || objRef == null) return;
+
+                IDictionary<string, object> options = new Dictionary<string, object>();
+
+                foreach (var child in grid.Children)
+                {
+                    if (Grid.GetColumn(child) == 0) continue;
+
+                    int row = Grid.GetRow(child);
+                    string key = labels[row];
+
+                    if (child is EnumDropdown dropdown)
+                    {
+                        options.Add(key, dropdown.enumValue);
+                    }
+                    else if (child is FlagEditor flagEditor)
+                    {
+                        options.Add(key, flagEditor.flag);
+                    }
+                    if (child is TextBox textBox) 
+                    {
+                        options.Add(key, textBox.Text);
+                    }
+                }
+
+                objRef.SetValuesFromDictionary(objRef.GetType(), options);
+                objRef.UpdateSprite();
+            };
+
+            this.Find<Button>("Cancel").Click += delegate
+            {
+                grid.Children.RemoveAll(grid.Children);
+                objRef = null;
+            };
         }
 
         // TODO: MOVE MENU TO CANVAS IN MAINWINDOW
@@ -30,12 +69,15 @@ namespace SMM2SaveEditor
         {
             grid.Children.RemoveAll(grid.Children);
 
+            objRef = entity;
+
             IDictionary<string, object> options = entity.AsDictionary(entity.GetType());
 
             grid.ColumnDefinitions = new ColumnDefinitions("2*,*");
             grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(options.Count));
 
             int counter = 0;
+            labels = new(options.Count);
             foreach (KeyValuePair<string, object> kvp in options)
             {
                 TextBlock textBlock = new();
@@ -75,6 +117,7 @@ namespace SMM2SaveEditor
                 Grid.SetRow(o, counter);
 
                 counter++;
+                labels.Add(kvp.Key);
             }
         }
     }

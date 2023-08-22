@@ -135,5 +135,10 @@ namespace SMM2SaveEditor
 
             return bb.GetBytes();
         }
+
+        public void UpdateSprite()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

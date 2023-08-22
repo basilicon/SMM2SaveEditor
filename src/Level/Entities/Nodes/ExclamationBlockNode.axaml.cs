@@ -32,5 +32,10 @@ namespace SMM2SaveEditor.Entities.Nodes
 
             return bb.GetBytes();
         }
+
+        public void UpdateSprite()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

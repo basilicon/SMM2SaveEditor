@@ -39,8 +39,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         public void SetFlag(uint newFlag)
         {
             flag = newFlag;
-
-            if (bIsExpanded) textBox.Text = flag.ToString("X"); else UpdateGrid();
+            textBox.Text = flag.ToString("X");
+            UpdateGrid();
         }
 
         private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

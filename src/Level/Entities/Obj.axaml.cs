@@ -282,7 +282,7 @@ namespace SMM2SaveEditor.Entities
 
         // TODO: SIMPLIFY IMPLEMENTATION FOR MODDERS
         // sorry modders LUL
-        private void UpdateSprite()
+        public void UpdateSprite()
         {
             string stid = ((int)id).ToString();
 

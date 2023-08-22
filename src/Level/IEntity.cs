@@ -12,6 +12,7 @@ namespace SMM2SaveEditor
     {
         public byte[] GetBytes();
         public void LoadFromStream(KaitaiStream io, Canvas? canvas = null);
+        public void UpdateSprite();
 
         public void OnClick(object sender, PointerPressedEventArgs e)
         {

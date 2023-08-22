@@ -39,12 +39,14 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 if (dropdown.SelectedValue is ComboBoxItem item) {
                     enumValue = Enum.Parse(T, item.Content.ToString());
+                    Debug.WriteLine($"New value: {enumValue}");
                 }
             };
 
             if (defaultValue != null)
             {
                 SetValue(defaultValue.ToString());
+                enumValue = defaultValue;
             }
         }
 
@@ -52,7 +54,6 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         {
             dropdown.PlaceholderText = info;
             dropdown.SelectedValue = info;
-            enumValue = info;
         }
     }
 }
