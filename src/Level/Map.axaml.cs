@@ -1,5 +1,5 @@
-using SMM2Level.Utility;
-using SMM2Level.Entities;
+using SMM2SaveEditor.Utility;
+using SMM2SaveEditor.Entities;
 using Kaitai;
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System.Diagnostics;
 
-namespace SMM2Level
+namespace SMM2SaveEditor
 {
     public partial class Map : UserControl, IEntity
     {

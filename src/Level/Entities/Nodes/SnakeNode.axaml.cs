@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Kaitai;
-using SMM2Level;
-using SMM2Level.Utility;
+using SMM2SaveEditor;
+using SMM2SaveEditor.Utility;
 
-namespace SMM2Level.Entities.Nodes
+namespace SMM2SaveEditor.Entities.Nodes
 {
     public partial class SnakeNode : UserControl, IEntity
     {

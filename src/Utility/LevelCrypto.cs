@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace SMM2Level.Utility
+namespace SMM2SaveEditor.Utility
 {
 
     public class LevelCrypto

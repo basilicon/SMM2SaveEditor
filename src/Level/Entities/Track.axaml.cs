@@ -1,10 +1,10 @@
 using Kaitai;
 using System.Collections;
 using System.Collections.Generic;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using Avalonia.Controls;
 
-namespace SMM2Level.Entities
+namespace SMM2SaveEditor.Entities
 {
     public partial class Track : UserControl, IEntity
     {

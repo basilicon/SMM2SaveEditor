@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using System.Diagnostics;
 
-namespace SMM2Level.Entities.Nodes
+namespace SMM2SaveEditor.Entities.Nodes
 {
     public partial class TrackBlockNode : UserControl, IEntity
     {

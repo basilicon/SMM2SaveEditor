@@ -1,12 +1,12 @@
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using System.Text;
 using System;
 using Avalonia.Controls;
 using System.Diagnostics;
 using Avalonia.Markup.Xaml;
 
-namespace SMM2Level
+namespace SMM2SaveEditor
 {
     public class Level
     {

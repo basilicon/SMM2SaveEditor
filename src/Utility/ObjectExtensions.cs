@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 
-namespace SMM2Level.Utility;
+namespace SMM2SaveEditor.Utility;
 
 public static class ObjectExtensions
 {
@@ -35,13 +36,29 @@ public static class ObjectExtensions
         where T : class
     {
         Type myObjectType = typeof(T);
-        IDictionary<string, object> dict = new Dictionary<string, object>();
-        PropertyInfo[] properties = myObjectType.GetProperties();
-        foreach (var info in properties)
-        {
-            dict.Add(info.Name, info.GetValue(source));
-        }
-        return dict;
+        return source.AsDictionary(myObjectType, bindingAttr);
 
+    }
+
+    public static IDictionary<string, object> AsDictionary(this object source, Type type, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
+    {
+        IDictionary<string, object> dict = new Dictionary<string, object>();
+        FieldInfo[] fields = type.GetFields(bindingAttr);
+
+        foreach (var info in fields)
+        {
+            object? value = info.GetValue(source);
+
+            if (value != null) dict.Add(info.Name, value);
+        }
+
+        return dict;
+    }
+
+    public static string EqualSpacingDefinition(int count)
+    {
+        string defs = "*";
+        for (int i = 1; i < count; i++) defs += ",*";
+        return defs;
     }
 }

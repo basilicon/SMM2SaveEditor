@@ -1,6 +1,6 @@
 // From NullFX.Security
 
-namespace SMM2Level.Utility
+namespace SMM2SaveEditor.Utility
 {
     using System;
     public class Crc32

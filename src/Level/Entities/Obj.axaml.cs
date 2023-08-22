@@ -1,29 +1,34 @@
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using Avalonia.Controls;
 using System.Diagnostics;
 using Avalonia.Media.Imaging;
 
 using Image = Avalonia.Controls.Image;
 using System.Collections.Generic;
-using System.Xml.Linq;
+using Avalonia.Styling;
+using Avalonia.VisualTree;
+using Avalonia;
+using Avalonia.Media;
+using Avalonia.Input;
+using System;
 
-namespace SMM2Level.Entities
+namespace SMM2SaveEditor.Entities
 {
     public partial class Obj : UserControl, IEntity
     {
-        public int x;
-        public int y;
-        public short unknown1;
-        public byte width;
-        public byte height;
-        public uint flag;
-        public uint cflag;
-        public uint ex;
-        public ObjId id;
-        public ObjId cid;
-        public short lid;
-        public short sid;
+        public int x = 0;
+        public int y = 0;
+        public short unknown1 = 0;
+        public byte width = 0;
+        public byte height = 0;
+        public uint flag = 0;
+        public uint cflag = 0;
+        public uint ex = 0;
+        public ObjId id = 0;
+        public ObjId cid = 0;
+        public short lid = 0;
+        public short sid = 0;
 
         private Image img;
         private Grid grid;
@@ -162,7 +167,8 @@ namespace SMM2Level.Entities
             GoombaMask = 129,
             BulletBillMask = 130,
             RedPowBox = 131,
-            OnOffTrampoline = 132
+            OnOffTrampoline = 132,
+            None = 0xFFFF
         }
 
         public enum ObjFlag : uint
@@ -198,6 +204,27 @@ namespace SMM2Level.Entities
             LWallHang = 0x2000000,
             GroundHang = 0x6000000,
             InClaw = 0x8000000,
+        }
+
+        public enum CannonRotation : uint
+        {
+            deg135 = 0x0,
+            deg180 = 0x400000,
+            deg225 = 0x800000,
+            deg270 = 0xC00000,
+            deg90 = 0x1000000,
+        }
+
+        public enum ArrowRotation : uint
+        {
+            Right       = 0x0,
+            Down        = 0x0800000,
+            Left        = 0x1000000,
+            Up          = 0x1800000,
+            DownRight   = 0x0400000,
+            DownLeft    = 0x0C00000,
+            UpRight     = 0x1C00000,
+            UpLeft      = 0x1400000
         }
 
         // TODO: Set up bitmap lookup table
@@ -299,9 +326,10 @@ namespace SMM2Level.Entities
 
                 // weird cases
 
-                case ObjId.SpikeTop:
-                case ObjId.PiranhaPlant:
+                case ObjId.SpikeTop: HandleWallHang(stid + ((flag & 0x4) == 0 ? "A" : "B")); break;
+                case ObjId.PiranhaPlant: // these are still broken and i dont know why
                     HandleWallHang(stid + ((flag & 0x4) == 0 ? "A" : "B"));
+                    HandleTallTiledObjects();
                     break;
 
                 case ObjId.Vine:
@@ -357,6 +385,9 @@ namespace SMM2Level.Entities
                 case ObjId.Skewer:
                     HandleOrthogonalRotation(stid); break;
 
+                case ObjId.Cannon: HandleCannonRotation(); break;
+                case ObjId.Arrow: HandleArrowRotation(); break;
+
                 // no alternate sprite
                 default:
                     SetSprite(stid);
@@ -364,10 +395,29 @@ namespace SMM2Level.Entities
             }
         }
 
+        private void HandleTallTiledObjects(int count = 2, Image? image = null)
+        {
+            if (image == null) image = img;
+
+            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(count));
+            grid.Height = count * 160;
+            Grid.SetRowSpan(image, count);
+            Canvas.SetBottom(this, y);
+        }
+
+        private void HandleWideTiledObjected(int count = 2, Image? image = null)
+        {
+            if (image == null) image = img;
+
+            grid.ColumnDefinitions = new ColumnDefinitions(ObjectExtensions.EqualSpacingDefinition(count));
+            grid.Width = count * 160;
+            Grid.SetColumnSpan(image, count);
+        }
+
         private void HandleSnake()
         {
             string name = (flag & 0x4) == 0 ? "84" : "84A";
-            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+            grid.ColumnDefinitions = new ColumnDefinitions(ObjectExtensions.EqualSpacingDefinition(width));
 
             for (int i = 0; i < width; i++)
             {
@@ -380,7 +430,7 @@ namespace SMM2Level.Entities
 
         private void HandleLauncherSprite()
         {
-            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
+            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(height));
 
             Grid.SetRowSpan(img, 2);
             SetSprite("13" + ((flag & 0x4) != 0 ? "B" : ""));
@@ -397,7 +447,7 @@ namespace SMM2Level.Entities
 
         private void HandleVineSprite()
         {
-            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
+            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(height));
 
             SetSprite("64A");
 
@@ -439,7 +489,7 @@ namespace SMM2Level.Entities
 
             SetSprite(pipeCap);
 
-            string definitions = EqualSpacingDefinition(height);
+            string definitions = ObjectExtensions.EqualSpacingDefinition(height);
             if (vert) grid.RowDefinitions = new RowDefinitions(definitions);
             else
             {
@@ -573,7 +623,7 @@ namespace SMM2Level.Entities
         private void HandlePlatformSprite(string name, string leftSuffix = "A", string rightSuffix = "B", string centerSuffix="")
         {
             grid.RowDefinitions = new RowDefinitions($"*,{height - 1}*");
-            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+            grid.ColumnDefinitions = new ColumnDefinitions(ObjectExtensions.EqualSpacingDefinition(width));
 
             SetSprite(name + leftSuffix);
 
@@ -595,8 +645,8 @@ namespace SMM2Level.Entities
         {
             Canvas.SetLeft(this, x - 80);
 
-            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
-            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(height));
+            grid.ColumnDefinitions = new ColumnDefinitions(ObjectExtensions.EqualSpacingDefinition(width));
 
             if (rightPiece == null) rightPiece = leftPiece;
 
@@ -641,8 +691,8 @@ namespace SMM2Level.Entities
         {
             Canvas.SetLeft(this, x - 80);
 
-            grid.RowDefinitions = new RowDefinitions(EqualSpacingDefinition(height));
-            grid.ColumnDefinitions = new ColumnDefinitions(EqualSpacingDefinition(width));
+            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(height));
+            grid.ColumnDefinitions = new ColumnDefinitions(ObjectExtensions.EqualSpacingDefinition(width));
 
             SetSprite("7");
             Image finalPiece = new();
@@ -682,11 +732,60 @@ namespace SMM2Level.Entities
             }
         }
 
-        private string EqualSpacingDefinition(int count)
+        private void HandleCannonRotation()
         {
-            string defs = "*";
-            for (int i = 1; i < count; i++) defs += ",*";
-            return defs;
+            string name = (flag & 0x4) == 0 ? "47" : "47E";
+            SetSprite(name);
+
+            double rotation = (CannonRotation)(flag & 0x1C00000) switch
+            {
+                CannonRotation.deg135 => 135,
+                CannonRotation.deg225 => 225,
+                CannonRotation.deg270 => 270,
+                CannonRotation.deg90 => 90,
+                CannonRotation.deg180 => 180,
+                _ => 0
+            };
+
+            double baseRotation = (flag & 0x6000000) switch
+            {
+                0x2000000 => 90,
+                0x4000000 => 0,
+                0x6000000 => 180,
+                _ => 270
+            };
+
+            img.SetValue(
+                RenderTransformProperty, 
+                new RotateTransform(rotation + baseRotation + (((baseRotation == 90) || (baseRotation == 270)) ? 180 : 0))
+                );
+
+            Image cannonBase = new Image();
+            grid.Children.Add(cannonBase);
+            SetSprite(name + (baseRotation) switch
+            {
+                90 => "B",
+                0 => "C",
+                180 => "A",
+                _ => "D"
+            }, cannonBase);
+            cannonBase.ZIndex = 5;
+        }
+
+        private void HandleArrowRotation()
+        {
+            SetSprite("66" + (ArrowRotation)(flag & 0x1C00000) switch
+            {
+                ArrowRotation.DownRight => "A",
+                ArrowRotation.Down => "B",
+                ArrowRotation.DownLeft => "C",
+                ArrowRotation.Left => "D",
+                ArrowRotation.UpLeft => "E",
+                ArrowRotation.Up => "F",
+                ArrowRotation.UpRight => "G",
+                _ => ""
+            });
+
         }
 
         private void SetSprite(string name, Image? image = null)
@@ -713,8 +812,15 @@ namespace SMM2Level.Entities
 
         private void SetSprite(Bitmap bitmap, Image? image = null)
         {
-            if (image == null) img.Source = bitmap;
-            else image.Source = bitmap;
+            if (image == null) 
+            {
+                if (img == null) return;
+                SetSprite(bitmap, img);
+                return;
+            }
+
+            image.Source = bitmap;
+            image.PointerPressed += (this as IEntity).OnClick;
         }
     }
 }

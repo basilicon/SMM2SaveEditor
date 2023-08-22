@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SMM2SaveEditor.Utility.EditorHelpers.FlagEditor">
+	<DockPanel>
+		<Button DockPanel.Dock="Right" Name="ToggleExpand">
+			Expand
+		</Button>
+		<ContentControl Margin="10" Name="FlagEditorArea" Background="White">
+		</ContentControl>
+	</DockPanel>
+</UserControl>

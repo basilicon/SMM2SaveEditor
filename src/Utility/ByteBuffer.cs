@@ -1,6 +1,6 @@
 using System;
 
-namespace SMM2Level.Utility
+namespace SMM2SaveEditor.Utility
 {
     public class ByteBuffer
     {

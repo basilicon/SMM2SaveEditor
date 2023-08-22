@@ -1,8 +1,8 @@
 using Avalonia.Controls;
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 
-namespace SMM2Level.Entities
+namespace SMM2SaveEditor.Entities
 {
     public partial class Icicle : UserControl, IEntity
     {

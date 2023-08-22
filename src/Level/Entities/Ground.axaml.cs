@@ -1,10 +1,10 @@
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using Avalonia.Controls;
 using System.Collections.Generic;
 using Avalonia.Media.Imaging;
 
-namespace SMM2Level.Entities
+namespace SMM2SaveEditor.Entities
 {
     public partial class Ground : UserControl, IEntity
     {
@@ -38,6 +38,7 @@ namespace SMM2Level.Entities
             Canvas.SetBottom(this, y * 160);
 
             sprite.Source = bitmap;
+            sprite.PointerPressed += (this as IEntity).OnClick;
         }
 
         public byte[] GetBytes()

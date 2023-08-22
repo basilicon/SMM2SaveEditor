@@ -3,7 +3,7 @@ using Kaitai;
 using System.Collections.Generic;
 using System;
 
-namespace SMM2Level.Utility
+namespace SMM2SaveEditor.Utility
 {
     public enum AutoscrollSpeed : byte
     {

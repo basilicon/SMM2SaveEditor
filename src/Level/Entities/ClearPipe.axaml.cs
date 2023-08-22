@@ -1,10 +1,10 @@
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using System.Collections.Generic;
-using SMM2Level.Entities.Nodes;
+using SMM2SaveEditor.Entities.Nodes;
 using Avalonia.Controls;
 
-namespace SMM2Level.Entities
+namespace SMM2SaveEditor.Entities
 {
     public partial class ClearPipe : UserControl, IEntity
     {

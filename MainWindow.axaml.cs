@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Markup.Xaml;
-using SMM2Level;
+using SMM2SaveEditor;
 using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
 using Kaitai;
-using SMM2Level.Utility;
+using SMM2SaveEditor.Utility;
 using System.IO;
 using System.Diagnostics;
 using Avalonia.Input;
@@ -16,19 +16,19 @@ namespace SMM2SaveEditor
 {
     public partial class MainWindow : Window
     {
-        private readonly ZoomBorder? _zoomBorder;
-        private readonly ScrollViewer? _scrollViewer;
         private Level level;
         private Grid? levelGrid;
+        private EntityEditor? entityEditor;
 
         public MainWindow()
         {
             this.InitializeComponent();
 
-            _zoomBorder = this.Find<ZoomBorder>("ZoomBorder");
-
             levelGrid = this.Find<Grid>("LevelGrid");
             level = new();
+
+            entityEditor = new();
+            this.Find<Canvas>("EditingArea")?.Children.Add(entityEditor);
 
             Debug.WriteLine("Launched application!");
         }
@@ -36,18 +36,6 @@ namespace SMM2SaveEditor
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        private void ZoomBorder_PointerPressed(object sender, PointerPressedEventArgs e)
-        {
-            Point pointerPosition = e.GetPosition(_zoomBorder);
-            IInputElement? clickedElement = _zoomBorder.InputHitTest(pointerPosition);
-
-            if (clickedElement == null) return;
-            if (clickedElement is IEntity entity)
-            {
-                EntityEditor entityEditor = new();
-            }
         }
 
         private async void OnOpenLevel(object sender, RoutedEventArgs e)
