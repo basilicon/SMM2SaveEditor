@@ -252,11 +252,6 @@ namespace SMM2SaveEditor.Entities
             lid = io.ReadS2le();
             sid = io.ReadS2le();
 
-            Canvas.SetLeft(this, x - 80 * width);
-            Canvas.SetBottom(this, y - 80);
-            SetValue(WidthProperty, width * 160);
-            SetValue(HeightProperty, height * 160);
-
             UpdateSprite();
         }
 
@@ -284,6 +279,18 @@ namespace SMM2SaveEditor.Entities
         // sorry modders LUL
         public void UpdateSprite()
         {
+            Canvas.SetLeft(this, x - 80 * width);
+            Canvas.SetBottom(this, y - 80);
+            SetValue(WidthProperty, width * 160);
+            SetValue(HeightProperty, height * 160);
+
+            grid.Children.RemoveAll(grid.Children);
+            grid.RowDefinitions = new RowDefinitions("*");
+            grid.ColumnDefinitions = new ColumnDefinitions("*");
+
+            // TODO: not this
+            grid.Children.Add(img);
+
             string stid = ((int)id).ToString();
 
             switch (id)
@@ -374,7 +381,7 @@ namespace SMM2SaveEditor.Entities
                     if ((flag & 0x4) == 0)
                         HandleSteepSlope(stid, "53A", "53B");
                     else
-                        HandleSteepSlope(stid, "53CA", "53CB");
+                        HandleSteepSlope(stid + "C", "53CA", "53CB");
                     break;
 
                 case ObjId.ShallowSlope: HandleShallowSlope(); break;
