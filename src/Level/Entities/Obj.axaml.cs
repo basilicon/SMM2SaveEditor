@@ -267,8 +267,8 @@ namespace SMM2SaveEditor.Entities
             bb.Append(flag);
             bb.Append(cflag);
             bb.Append(ex);
-            bb.Append(id);
-            bb.Append(cid);
+            bb.Append((ushort)id);
+            bb.Append((ushort)cid);
             bb.Append(lid);
             bb.Append(sid);
 

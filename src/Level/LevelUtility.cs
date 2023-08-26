@@ -110,7 +110,7 @@ namespace SMM2SaveEditor.Utility
         reach_the_goal_after_defeating_at_least_all_banzai_bill = 4293354249
     }
 
-    public enum GameStyle : uint
+    public enum GameStyle : ushort
     {
         smb1 = 12621,
         smb3 = 13133,
@@ -231,7 +231,7 @@ namespace SMM2SaveEditor.Utility
 
     static class LevelUtility
     {
-        public static void FillLists<T>(List<T> entities, int numEntities, KaitaiStream io, Canvas? canvas = null) where T : UserControl, IEntity, new()
+        public static void FillLists<T>(ref List<T> entities, int numEntities, KaitaiStream io, Canvas? canvas = null) where T : UserControl, IEntity, new()
         {
             entities = new List<T>(numEntities);
 
@@ -255,6 +255,7 @@ namespace SMM2SaveEditor.Utility
         {
             string entityName = typeof(T).Name;
             int maxEntities = (int)Enum.Parse(typeof(Maxes), entityName);
+            int sizeOfEntity = (int)Enum.Parse(typeof(Sizes), entityName);
 
             ByteBuffer bb = new ByteBuffer();
 
@@ -265,12 +266,7 @@ namespace SMM2SaveEditor.Utility
                 bb.Append(entities[i].GetBytes());
             }
 
-            // append garbage data
-            T entity = new();
-            for (int i = numEntities; i < maxEntities; i++)
-            {
-                bb.Append(entity.GetBytes());
-            }
+            bb.Append(new byte[(maxEntities - numEntities) * sizeOfEntity]);
 
             return bb.GetBytes();
         }

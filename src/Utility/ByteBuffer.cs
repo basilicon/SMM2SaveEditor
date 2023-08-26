@@ -16,7 +16,7 @@ namespace SMM2SaveEditor.Utility
         {
             if (data == null) throw new ArgumentNullException("Could not append null value to ByteBuffer!");
 
-            object evilData = (object)data;
+            object evilData = data;
             byte[] _bytes;
 
             switch (typeof(T)) // evil hack
@@ -28,11 +28,16 @@ namespace SMM2SaveEditor.Utility
                 case var v when v == typeof(short): _bytes = BitConverter.GetBytes((short)evilData); break;
                 case var v when v == typeof(ushort): _bytes = BitConverter.GetBytes((ushort)evilData); break;
                 default:
-                    throw new ArgumentException("Illegal type detected!");
+                    throw new ArgumentException($"Illegal type detected! {typeof(T)}");
             }
 
             if (!le) Array.Reverse(_bytes);
             Append(_bytes);
+        }
+
+        public void Append(sbyte data, bool le = true)
+        {
+            Append((byte)data, le);
         }
 
         public void Append(byte data, bool le=true)
@@ -62,20 +67,14 @@ namespace SMM2SaveEditor.Utility
                 bytes = newBytes;
             }
 
-            for (int i = 0; i < data.Length; i++)
-            {
-                bytes[i + offset] = data[i];
-            }
+            Array.Copy(data, 0, bytes, offset, data.Length);
             offset += data.Length;
         }
 
         public byte[] GetBytes()
         {
             byte[] outBytes = new byte[offset];
-            for (int i = 0; i < offset; i++)
-            {
-                outBytes[i] = bytes[i];
-            }
+            Array.Copy(bytes, outBytes, offset);
             return outBytes;
         }
     }

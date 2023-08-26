@@ -45,8 +45,8 @@ namespace SMM2SaveEditor.Entities
         {
             ByteBuffer bb = new ByteBuffer(4);
 
-            bb.Append((byte)(x / 160));
-            bb.Append((byte)(y / 160));
+            bb.Append(x);
+            bb.Append(y);
             bb.Append(id);
             bb.Append(backgroundId);
 

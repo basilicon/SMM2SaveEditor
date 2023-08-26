@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -78,7 +79,7 @@ namespace SMM2SaveEditor.Utility
         {
             if (buf.Length != 0x5c000)
             {
-                throw new ArgumentException(string.Format("invalid buf size {0} != {1}", buf.Length, 0x5c000));
+                throw new ArgumentException($"Invalid buffer size {buf.Length} != {0x5c000}");
             }
 
             int end = 0x5BFD0;
@@ -116,44 +117,40 @@ namespace SMM2SaveEditor.Utility
             // crc check
             if (Crc32Calculate(decrypted) != BitConverter.ToUInt32(crcWant))
             {
-                throw new Exception("crc invalid");
+                throw new Exception("Decryption error: CRC failed.");
             }
 
-            // WHO NEEDS THE CMAC CHECK LMFAO
-            //// cmac check
-            //MemoryStream cmacKey = new MemoryStream();
-            //CreateKey(r, bcdTable, 0x10, cmacKey);
+            // cmac check
+            MemoryStream cmacKey = new MemoryStream();
+            CreateKey(r, bcdTable, 0x10, cmacKey);
 
-            //Aes cmacBlock = Aes.Create();
-            //cmacBlock.Key = cmacKey.ToArray();
+            bool cmacValid = AesUtility.VerifyMac(decrypted, cmacWant, cmacKey.ToArray());
 
-            //byte[] cmacDigest;
-            //using (var ms = new MemoryStream(decrypted))
-            //using (var cryptoStream = new CryptoStream(ms, cmacBlock.CreateDecryptor(), CryptoStreamMode.Read))
-            //{
-            //    cmacDigest = new byte[0x10];
-            //    int bytesRead = cryptoStream.Read(cmacDigest, 0, 0x10);
-            //    if (bytesRead != 0x10)
-            //    {
-            //        throw new Exception("cmac invalid");
-            //    }
-            //}
+            if (!cmacValid)
+            {
+                throw new Exception("Decryption error: CMAC digest is invalid.");
+            }
 
-            //if (!cmacDigest.SequenceEqual(cmacWant))
-            //{
-            //    throw new Exception("cmac invalid");
-            //}
-
-            //if (false)
-            //{
-            //    // write bcd header
-            //    writer.Write(buf, 0, 0x10);
-            //}
+            if (false)
+            {
+                // write bcd header
+                writer.Write(buf, 0, 0x10);
+            }
 
             // Decrypted course data
             writer.Write(decrypted, 0, decrypted.Length);
 
             return writer.ToArray();
+        }
+
+        public static string WriteArray(byte[] buffer)
+        {
+            string outString = "";
+            foreach (byte b in buffer)
+            {
+                outString += b.ToString("X2") + ' ';
+            }
+            return outString;
         }
 
         public static byte[] EncryptLevel(byte[] buf)
@@ -162,7 +159,7 @@ namespace SMM2SaveEditor.Utility
 
             if (!withoutBcdHeader && buf.Length != 0x5BFD0)
             {
-                throw new ArgumentException($"invalid buf size {buf.Length} != {0x5BFD0}");
+                throw new ArgumentException($"invalid buf size {buf.Length} != {0x5BFD0} (difference of {buf.Length - 0x5BFD0})");
             }
 
             MemoryStream writer = new MemoryStream();
@@ -180,7 +177,7 @@ namespace SMM2SaveEditor.Utility
                 uint crc = Crc32Calculate(decrypted);
 
                 // Header data
-                writer.Write(BitConverter.GetBytes((uint)1), 0, sizeof(uint)); // 0x1
+                writer.Write(BitConverter.GetBytes((uint)0x1), 0, sizeof(uint));
                 writer.Write(BitConverter.GetBytes((ushort)0x10), 0, sizeof(ushort));
                 writer.Write(BitConverter.GetBytes((ushort)0x0), 0, sizeof(ushort));
                 writer.Write(BitConverter.GetBytes(crc), 0, sizeof(uint));
@@ -224,27 +221,21 @@ namespace SMM2SaveEditor.Utility
             MemoryStream cmacKey = new MemoryStream();
             CreateKey(r, bcdTable, 0x10, cmacKey);
 
-            Aes cmacBlock = Aes.Create();
-            cmacBlock.Key = cmacKey.ToArray();
-
-            byte[] cmacDigest;
-            using (var ms = new MemoryStream(decrypted))
-            using (var cryptoStream = new CryptoStream(ms, cmacBlock.CreateEncryptor(), CryptoStreamMode.Read))
-            {
-                cmacDigest = new byte[0x10];
-                int bytesRead = cryptoStream.Read(cmacDigest, 0, 0x10);
-                if (bytesRead != 0x10)
-                {
-                    throw new Exception("Failed to calculate CMAC digest.");
-                }
-            }
+            byte[] cmacDigest = AesUtility.AesCmac(decrypted, cmacKey.ToArray());
 
             writer.Write(encrypted, 0, encrypted.Length);
             writer.Write(aesIv, 0, aesIv.Length);
             writer.Write(randomSeed, 0, randomSeed.Length);
             writer.Write(cmacDigest, 0, cmacDigest.Length);
 
-            return writer.ToArray();
+            byte[] outArr = writer.ToArray();
+
+            if (outArr.Length != 0x5c000)
+            {
+                throw new ArgumentException($"Encryption failed: Invalid buffer size {outArr.Length} != {0x5c000}");
+            }
+
+            return outArr;
         }
     }
 }

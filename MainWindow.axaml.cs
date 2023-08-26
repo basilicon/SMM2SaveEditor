@@ -20,6 +20,8 @@ namespace SMM2SaveEditor
         private Grid? levelGrid;
         private EntityEditor? entityEditor;
 
+        private IStorageBookmarkFile? storageBookmarkFile;
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -55,19 +57,61 @@ namespace SMM2SaveEditor
 
             if (picked.Count == 0) return;
 
-            Debug.WriteLine("OnOpenLevel : Opening a new level!");
-
-            var file = (IStorageBookmarkFile)picked[0];
-            LoadFromFile(file.Path.LocalPath);
+            storageBookmarkFile = (IStorageBookmarkFile)picked[0];
+            LoadFromFile(storageBookmarkFile.Path.LocalPath);
         }
 
-        private void LoadFromFile(string path)
+        private async void OnExportLevel(object sender, RoutedEventArgs e)
+        {
+            IStorageFile? picked = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+            {
+                Title = "Export Level",
+                DefaultExtension = (storageBookmarkFile != null) ? storageBookmarkFile.Name : "course_data_000.bcd",
+                FileTypeChoices = new[]
+                {
+                    new FilePickerFileType("") 
+                    {
+                        Patterns = new[] { "*.bcd" }
+                    }
+                },
+                ShowOverwritePrompt = true
+            });
+
+            if (picked == null) return;
+
+            byte[] encrypted = LevelCrypto.EncryptLevel(level.GetBytes());
+            File.WriteAllBytes(picked.Path.LocalPath, encrypted);
+            Debug.WriteLine("Completed export. Happy trolling!");
+        }
+
+        private async void OnSaveLevel(object sender, RoutedEventArgs e)
+        {
+            if (storageBookmarkFile == null)
+            {
+                OnExportLevel(sender, e);
+                return;
+            }
+
+            await File.WriteAllBytesAsync(storageBookmarkFile.Path.LocalPath, level.GetBytes());
+        }
+
+        private async void LoadFromFile(string path)
         {
             // Debug.Log("Decrypting bytes from file...");
 
-            byte[] bytes = File.ReadAllBytes(path);
+            byte[] bytes = await File.ReadAllBytesAsync(path);
 
             bytes = LevelCrypto.DecryptLevel(bytes);
+
+            //try
+            //{
+            //    bytes = LevelCrypto.DecryptLevel(bytes);
+            //} catch 
+            //{
+            //    Debug.WriteLine($"Failed to decrypt level {path}. (This level may be corrupted.)");
+            //    return;
+            //}
+
             level.LoadFromStream(new KaitaiStream(bytes), levelGrid);
         }
     }

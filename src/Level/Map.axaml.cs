@@ -77,16 +77,16 @@ namespace SMM2SaveEditor
             int trackCount = io.ReadS4le();
             int icicleCount = io.ReadS4le();
 
-            LevelUtility.FillLists(objects, objectCount, io, myCanvas);
-            LevelUtility.FillLists(sounds, soundCount, io, myCanvas);
-            LevelUtility.FillLists(snakes, snakeBlockCount, io, myCanvas);
-            LevelUtility.FillLists(clearPipes, clearPipeCount, io, myCanvas);
-            LevelUtility.FillLists(piranhaCreepers, piranhaCreeperCount, io, myCanvas);
-            LevelUtility.FillLists(exclamationBlocks, exclamationMarkBlockCount, io, myCanvas);
-            LevelUtility.FillLists(trackBlocks, trackBlockCount, io, myCanvas);
-            LevelUtility.FillLists(ground, groundCount, io, myCanvas);
-            LevelUtility.FillLists(tracks, trackCount, io, myCanvas);
-            LevelUtility.FillLists(icicles, icicleCount, io, myCanvas);
+            LevelUtility.FillLists(ref objects, objectCount, io, myCanvas);
+            LevelUtility.FillLists(ref sounds, soundCount, io, myCanvas);
+            LevelUtility.FillLists(ref snakes, snakeBlockCount, io, myCanvas);
+            LevelUtility.FillLists(ref clearPipes, clearPipeCount, io, myCanvas);
+            LevelUtility.FillLists(ref piranhaCreepers, piranhaCreeperCount, io, myCanvas);
+            LevelUtility.FillLists(ref exclamationBlocks, exclamationMarkBlockCount, io, myCanvas);
+            LevelUtility.FillLists(ref trackBlocks, trackBlockCount, io, myCanvas);
+            LevelUtility.FillLists(ref ground, groundCount, io, myCanvas);
+            LevelUtility.FillLists(ref tracks, trackCount, io, myCanvas);
+            LevelUtility.FillLists(ref icicles, icicleCount, io, myCanvas);
 
             unknown2 = io.ReadBytes(0xDBC);
         }
@@ -95,13 +95,13 @@ namespace SMM2SaveEditor
         {
             ByteBuffer bb = new ByteBuffer(0xFFFF);
 
-            bb.Append(theme);
-            bb.Append(autoscrollType);
-            bb.Append(boundaryType);
-            bb.Append(orientation);
+            bb.Append((byte)theme);
+            bb.Append((byte)autoscrollType);
+            bb.Append((byte)boundaryType);
+            bb.Append((byte)orientation);
             bb.Append(liquidEndHeight);
-            bb.Append(liquidMode);
-            bb.Append(liquidSpeed);
+            bb.Append((byte)liquidMode);
+            bb.Append((byte)liquidSpeed);
             bb.Append(liquidStartHeight);
             bb.Append(boundaryRight);
             bb.Append(boundaryTop);
@@ -115,10 +115,12 @@ namespace SMM2SaveEditor
             bb.Append(piranhaCreepers.Count);
             bb.Append(exclamationBlocks.Count);
             bb.Append(trackBlocks.Count);
-            bb.Append(unknown1); // troll
+            bb.Append(unknown1); // bruh
             bb.Append(ground.Count);
             bb.Append(tracks.Count);
             bb.Append(icicles.Count);
+
+            Debug.WriteLine($"Ground count: {ground.Count}");
 
             bb.Append(LevelUtility.GetBytesFromList(objects));
             bb.Append(LevelUtility.GetBytesFromList(sounds));

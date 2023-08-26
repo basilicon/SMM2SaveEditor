@@ -48,6 +48,12 @@ namespace SMM2SaveEditor
 
         public void LoadFromStream(KaitaiStream io, Grid levelGrid)
         {
+            levelGrid.Children.RemoveAll(levelGrid.Children);
+
+            // might not be necessary
+            //GC.Collect();
+            //GC.WaitForPendingFinalizers();
+            
             Debug.WriteLine("Loading level...");
 
             startY = io.ReadU1();
@@ -76,19 +82,11 @@ namespace SMM2SaveEditor
             levelName = Encoding.Unicode.GetString(io.ReadBytes(66));
             levelDescription = Encoding.Unicode.GetString(io.ReadBytes(202));
 
-            Debug.WriteLine("Finished decoding common info.");
-            Debug.WriteLine(levelName);
-            Debug.WriteLine('\n');
-            Debug.WriteLine(levelDescription);
-            Debug.WriteLine('\n');
-
             overworld = new Map();
             levelGrid.Children.Add(overworld);
             Grid.SetColumn(overworld, 1);
             Grid.SetRow(overworld, 1);
             overworld.LoadFromStream(io);
-
-            Debug.WriteLine("Loading subworld...");
 
             subworld = new Map();
             levelGrid.Children.Add(subworld);
@@ -101,6 +99,8 @@ namespace SMM2SaveEditor
 
         public byte[] GetBytes()
         {
+            Debug.WriteLine("Compiling level data...");
+
             ByteBuffer bb = new ByteBuffer(0x5BFD0 - 0x10);
 
             bb.Append(startY);
@@ -113,30 +113,39 @@ namespace SMM2SaveEditor
             bb.Append(day);
             bb.Append(hour);
             bb.Append(minute);
-            bb.Append(autoscrollSpeed);
-            bb.Append(clearConditionCategory);
-            bb.Append(clearCondition);
+            bb.Append((byte)autoscrollSpeed);
+            bb.Append((byte)clearConditionCategory);
+            bb.Append((uint)clearCondition);
             bb.Append(unknownGameVersion);
             bb.Append(unknownManagementFlags);
             bb.Append(clearAttempts);
             bb.Append(clearTime);
             bb.Append(unknownCreationId);
             bb.Append(unknownUploadId);
-            bb.Append(gameVersion);
+            bb.Append((uint)gameVersion);
             bb.Append(unknown1);
-            bb.Append(gameStyle);
+            bb.Append((ushort)gameStyle);
             bb.Append(unknown2);
 
-            char[] levelNameChars = new char[66];
-            for (int i = 0; i < levelName.Length; i++) levelNameChars[i] = levelName[i];
+            byte[] levelNameChars = new byte[66];
+            for (int i = 0; i < levelName.Length; i++) levelNameChars[i] = (byte)levelName[i];
             bb.Append(levelNameChars);
 
-            char[] descriptionChars = new char[202];
-            for (int i = 0; i < levelDescription.Length; i++) descriptionChars[i] = levelDescription[i];
-            bb.Append(levelNameChars);
+            byte[] descriptionChars = new byte[202];
+            for (int i = 0; i < levelDescription.Length; i++) descriptionChars[i] = (byte)levelDescription[i];
+            bb.Append(descriptionChars);
 
             bb.Append(overworld.GetBytes());
             bb.Append(subworld.GetBytes());
+
+            byte[] bytes = bb.GetBytes();
+
+            int checker = 0;
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                if (bytes[i] != 0) checker++;
+            }
+            Debug.WriteLine($"Checker length: {checker}");
 
             return bb.GetBytes();
         }

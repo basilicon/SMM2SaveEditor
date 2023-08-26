@@ -26,7 +26,7 @@ namespace SMM2SaveEditor.Entities
             byte numNodes = io.ReadU1();
             unknown2 = io.ReadU1();
 
-            LevelUtility.FillLists(nodes, numNodes, io, canvas);
+            LevelUtility.FillLists(ref nodes, numNodes, io, canvas);
         }
 
         public byte[] GetBytes()

@@ -44,8 +44,6 @@ public static class ObjectExtensions
 
         foreach (FieldInfo field in fields)
         {
-            Debug.WriteLine($"Assigning {field.Name} to {source[field.Name]}");
-
             field.SetValue(obj, Convert.ChangeType(source[field.Name], field.FieldType));
         }
     }
