@@ -52,7 +52,7 @@ namespace SMM2SaveEditor.Utility
         0x7d8f5d68, 0x517cbed1, 0x1fcddf0d, 0x77a58c94,
         };
 
-        private static void CreateKey(Random random, uint[] bcdTable, int size, MemoryStream keyStream)
+        private static void CreateKey(ref Random random, uint[] bcdTable, int size, MemoryStream keyStream)
         {
             for (uint i = 0; i < size / 4; i++)
             {
@@ -100,7 +100,7 @@ namespace SMM2SaveEditor.Utility
 
             // Construct AES instance
             MemoryStream aesKey = new MemoryStream();
-            CreateKey(r, bcdTable, 0x10, aesKey);
+            CreateKey(ref r, bcdTable, 0x10, aesKey);
 
             Aes aesBlock = Aes.Create();
             aesBlock.Key = aesKey.ToArray();
@@ -120,15 +120,12 @@ namespace SMM2SaveEditor.Utility
 
             // cmac check
             MemoryStream cmacKey = new MemoryStream();
-            CreateKey(r, bcdTable, 0x10, cmacKey);
+            CreateKey(ref r, bcdTable, 0x10, cmacKey);
 
             byte[] cmacDigest = AesCmac.Calc(decrypted, cmacKey.ToArray());
 
             if (!cmacDigest.SequenceEqual(cmacWant))
             {
-                Debug.WriteLine($"Cmac Digest: {BytesToString(cmacDigest)}");
-                Debug.WriteLine($"Cmac Wanted: {BytesToString(cmacWant)}");
-
                 throw new Exception("Decryption error: CMAC digest is invalid.");
             }
 
@@ -142,18 +139,6 @@ namespace SMM2SaveEditor.Utility
             writer.Write(decrypted, 0, decrypted.Length);
 
             return writer.ToArray();
-        }
-
-        private static string BytesToString(byte[] data)
-        {
-            string t = "";
-
-            for (int i=0; i<data.Length; i++)
-            {
-                t += data[i].ToString("X2") + ' ';
-            }
-
-            return t;
         }
 
         public static byte[] EncryptLevel(byte[] buf)
@@ -209,7 +194,7 @@ namespace SMM2SaveEditor.Utility
             byte[] aesIv = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
             MemoryStream aesKey = new MemoryStream();
-            CreateKey(r, bcdTable, 0x10, aesKey);
+            CreateKey(ref r, bcdTable, 0x10, aesKey);
 
             Aes aesBlock = Aes.Create();
             aesBlock.Key = aesKey.ToArray();
@@ -222,7 +207,7 @@ namespace SMM2SaveEditor.Utility
             aesMode.TransformBlock(decrypted, 0, decrypted.Length, encrypted, 0);
 
             MemoryStream cmacKey = new MemoryStream();
-            CreateKey(r, bcdTable, 0x10, cmacKey);
+            CreateKey(ref r, bcdTable, 0x10, cmacKey);
 
             byte[] cmacDigest = AesCmac.Calc(decrypted, cmacKey.ToArray());
 

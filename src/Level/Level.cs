@@ -127,18 +127,22 @@ namespace SMM2SaveEditor
             bb.Append((ushort)gameStyle);
             bb.Append(unknown2);
 
-            byte[] levelNameChars = new byte[66];
-            for (int i = 0; i < levelName.Length; i++) levelNameChars[i] = (byte)levelName[i];
-            bb.Append(levelNameChars);
+            
+            byte[] levelNameChars = new UnicodeEncoding().GetBytes(levelName);
+            byte[] levelNameBuffer = new byte[66];
+            for (int i = 0; i < levelNameChars.Length; i++) levelNameBuffer[i] = levelNameChars[i];
+            bb.Append(levelNameBuffer);
 
-            byte[] descriptionChars = new byte[202];
-            for (int i = 0; i < levelDescription.Length; i++) descriptionChars[i] = (byte)levelDescription[i];
-            bb.Append(descriptionChars);
+            byte[] descriptionChars = new UnicodeEncoding().GetBytes(levelDescription);
+            byte[] descriptionBuffer = new byte[202];
+            for (int i = 0; i < descriptionChars.Length; i++) descriptionBuffer[i] = descriptionChars[i];
+            bb.Append(descriptionBuffer);
 
             bb.Append(overworld.GetBytes());
             bb.Append(subworld.GetBytes());
 
             return bb.GetBytes();
         }
+
     }
 }
