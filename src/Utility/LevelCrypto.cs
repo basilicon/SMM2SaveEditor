@@ -50,7 +50,7 @@ namespace SMM2SaveEditor.Utility
         0x82ec6646, 0xfb19f33e, 0x3bde6fe2, 0x17a84cca,
         0xccdf0ce9, 0x50e4135c, 0xff2658b2, 0x3780f156,
         0x7d8f5d68, 0x517cbed1, 0x1fcddf0d, 0x77a58c94,
-    };
+        };
 
         private static void CreateKey(Random random, uint[] bcdTable, int size, MemoryStream keyStream)
         {
@@ -95,8 +95,6 @@ namespace SMM2SaveEditor.Utility
                 v3 = BitConverter.ToUInt32(buf, end + 0x1C),
             };
 
-            //Debug.Log(String.Format("{0} {1} {2} {3}", r.v0, r.v1, r.v2, r.v3));
-
             byte[] cmacWant = buf.Skip(end + 0x20).Take(0x10).ToArray();
             byte[] crcWant = buf.Skip(8).Take(4).ToArray();
 
@@ -124,14 +122,17 @@ namespace SMM2SaveEditor.Utility
             MemoryStream cmacKey = new MemoryStream();
             CreateKey(r, bcdTable, 0x10, cmacKey);
 
-            bool cmacValid = AesUtility.VerifyMac(decrypted, cmacWant, cmacKey.ToArray());
+            byte[] cmacDigest = AesCmac.Calc(decrypted, cmacKey.ToArray());
 
-            if (!cmacValid)
+            if (!cmacDigest.SequenceEqual(cmacWant))
             {
+                Debug.WriteLine($"Cmac Digest: {BytesToString(cmacDigest)}");
+                Debug.WriteLine($"Cmac Wanted: {BytesToString(cmacWant)}");
+
                 throw new Exception("Decryption error: CMAC digest is invalid.");
             }
 
-            if (false)
+            if (false) // might be able to just remove this
             {
                 // write bcd header
                 writer.Write(buf, 0, 0x10);
@@ -143,14 +144,16 @@ namespace SMM2SaveEditor.Utility
             return writer.ToArray();
         }
 
-        public static string WriteArray(byte[] buffer)
+        private static string BytesToString(byte[] data)
         {
-            string outString = "";
-            foreach (byte b in buffer)
+            string t = "";
+
+            for (int i=0; i<data.Length; i++)
             {
-                outString += b.ToString("X2") + ' ';
+                t += data[i].ToString("X2") + ' ';
             }
-            return outString;
+
+            return t;
         }
 
         public static byte[] EncryptLevel(byte[] buf)
@@ -221,7 +224,7 @@ namespace SMM2SaveEditor.Utility
             MemoryStream cmacKey = new MemoryStream();
             CreateKey(r, bcdTable, 0x10, cmacKey);
 
-            byte[] cmacDigest = AesUtility.AesCmac(decrypted, cmacKey.ToArray());
+            byte[] cmacDigest = AesCmac.Calc(decrypted, cmacKey.ToArray());
 
             writer.Write(encrypted, 0, encrypted.Length);
             writer.Write(aesIv, 0, aesIv.Length);

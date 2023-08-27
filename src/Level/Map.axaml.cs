@@ -120,8 +120,6 @@ namespace SMM2SaveEditor
             bb.Append(tracks.Count);
             bb.Append(icicles.Count);
 
-            Debug.WriteLine($"Ground count: {ground.Count}");
-
             bb.Append(LevelUtility.GetBytesFromList(objects));
             bb.Append(LevelUtility.GetBytesFromList(sounds));
             bb.Append(LevelUtility.GetBytesFromList(snakes));

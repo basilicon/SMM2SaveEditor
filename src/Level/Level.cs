@@ -138,15 +138,6 @@ namespace SMM2SaveEditor
             bb.Append(overworld.GetBytes());
             bb.Append(subworld.GetBytes());
 
-            byte[] bytes = bb.GetBytes();
-
-            int checker = 0;
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                if (bytes[i] != 0) checker++;
-            }
-            Debug.WriteLine($"Checker length: {checker}");
-
             return bb.GetBytes();
         }
     }
