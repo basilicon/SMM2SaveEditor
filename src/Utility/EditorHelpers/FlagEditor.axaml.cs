@@ -10,6 +10,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         ContentControl contentControl;
 
+        ScrollViewer scrollViewer;
         Grid grid;
         List<CheckBox> checkedList = new();
 
@@ -28,6 +29,10 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             textBox.Text = flag.ToString("X");
             textBox.TextChanged += TextBox_TextChanged;
             contentControl.Content = textBox;
+
+            scrollViewer = new();
+            scrollViewer.MaxHeight = 400;
+            scrollViewer.VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
 
             grid = new();
             SetupGrid();
@@ -54,8 +59,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             else
             {
                 UpdateGrid();
-                contentControl.Content = grid;
-                button.Content = "Contract";
+                contentControl.Content = scrollViewer;
+                button.Content = "Minimize";
             }
 
             bIsExpanded ^= true;
@@ -99,6 +104,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
                 counter <<= 1;
             }
+
+            scrollViewer.Content = grid;
         }
 
         private void UpdateGrid()

@@ -8,7 +8,7 @@
 		<Button DockPanel.Dock="Right" Name="ToggleExpand">
 			Expand
 		</Button>
-		<ContentControl Margin="10" Name="FlagEditorArea" Background="White">
+		<ContentControl Margin="10" Name="FlagEditorArea">
 		</ContentControl>
 	</DockPanel>
 </UserControl>

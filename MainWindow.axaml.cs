@@ -18,7 +18,7 @@ namespace SMM2SaveEditor
     {
         private Level level;
         private Grid? levelGrid;
-        private EntityEditor? entityEditor;
+        private EntityEditor entityEditor;
 
         private IStorageBookmarkFile? storageBookmarkFile;
 
