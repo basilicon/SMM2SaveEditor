@@ -32,7 +32,7 @@
 
 
   <ItemGroup>
-    <Compile Update="src\Level\EntityEditor.axaml.cs">
+    <Compile Update="src\Utility\EditorHelpers\EntityEditor.axaml.cs">
       <DependentUpon>EntityEditor.axaml</DependentUpon>
     </Compile>
   </ItemGroup>

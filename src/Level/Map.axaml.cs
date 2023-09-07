@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using System.Diagnostics;
 
 namespace SMM2SaveEditor

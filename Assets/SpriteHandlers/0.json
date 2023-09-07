@@ -1,0 +1,13 @@
+﻿{
+  "name": "Goomba",
+  "layer": [ "Enemy", "Obj" ],
+  "spriting": [
+    {
+      "type": "SingleAlternate",
+      "sprites": [
+        "",
+        "A"
+      ]
+    }
+  ],
+}

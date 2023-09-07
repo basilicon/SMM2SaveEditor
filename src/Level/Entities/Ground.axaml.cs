@@ -23,7 +23,13 @@ namespace SMM2SaveEditor.Entities
 
             if (bitmap == null)
             {
-                bitmap = new Bitmap("../../../img/sprites/7.png");
+                bitmap = new Bitmap(
+#if RELEASE
+                "./Assets/sprites/7.png"
+#else
+                "../../../Assets/sprites/7.png"
+#endif
+                );
             }
         }
 
@@ -55,7 +61,7 @@ namespace SMM2SaveEditor.Entities
 
         public void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
         }
     }
 }

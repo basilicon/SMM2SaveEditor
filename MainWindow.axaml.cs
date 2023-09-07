@@ -9,8 +9,7 @@ using Kaitai;
 using SMM2SaveEditor.Utility;
 using System.IO;
 using System.Diagnostics;
-using Avalonia.Input;
-using System;
+using SMM2SaveEditor.Utility.EditorHelpers;
 
 namespace SMM2SaveEditor
 {
@@ -19,6 +18,7 @@ namespace SMM2SaveEditor
         private Level level;
         private Grid? levelGrid;
         private EntityEditor entityEditor;
+        private ZoomBorder? zoomBorder;
 
         private IStorageBookmarkFile? storageBookmarkFile;
 
@@ -28,9 +28,14 @@ namespace SMM2SaveEditor
 
             levelGrid = this.Find<Grid>("LevelGrid");
             level = new();
+            level.LoadFromStream(new KaitaiStream(new byte[0x5BFD0]), levelGrid);
 
             entityEditor = new();
-            this.Find<Canvas>("EditingArea")?.Children.Add(entityEditor);
+            this.Find<Grid>("EditingArea")?.Children.Add(entityEditor);
+            Grid.SetColumn(entityEditor, 2);
+
+            zoomBorder = this.Find<ZoomBorder>("ZoomBorder");
+            if (zoomBorder != null) zoomBorder.ZoomTo(0.5, 0, 0, true);
 
             Debug.WriteLine("Launched application!");
         }

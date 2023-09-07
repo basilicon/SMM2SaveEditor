@@ -15,27 +15,20 @@
 				<MenuItem Header="Save..."/>
 			</MenuItem>
 		</Menu>
-		<Canvas Name="EditingArea">
-			
-			
-			<Grid RowDefinitions="*" ColumnDefinitions="*">
-				<StackPanel Orientation="Vertical"
-							HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0">
-
-				</StackPanel>
-				<ScrollViewer Grid.Row="0" Grid.Column="0"
+		<Grid ColumnDefinitions="3*,5,*" Name="EditingArea">
+			<ScrollViewer Grid.Column="0"
 							  VerticalScrollBarVisibility="Auto"
 							  HorizontalScrollBarVisibility="Auto">
-					<paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
-									Background="SlateBlue" ClipToBounds="True" Focusable="True"
-									VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-						<Grid Name="LevelGrid" Background="LightGray" Width="39400" Height="10140"
-							  RowDefinitions="*,4320,*,4320,*" ColumnDefinitions="*,38400,*">
+				<paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
+								Background="SlateBlue" ClipToBounds="True" Focusable="True"
+								VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+					<Grid Name="LevelGrid" Background="LightGray" Width="39400" Height="10140"
+						  RowDefinitions="*,4320,*,4320,*" ColumnDefinitions="*,38400,*">
 
-						</Grid>
-					</paz:ZoomBorder>
-				</ScrollViewer>
-			</Grid>
-		</Canvas>
+					</Grid>
+				</paz:ZoomBorder>
+			</ScrollViewer>
+			<GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
+		</Grid>
 	</DockPanel>
 </Window>

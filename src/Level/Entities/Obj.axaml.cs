@@ -6,12 +6,7 @@ using Avalonia.Media.Imaging;
 
 using Image = Avalonia.Controls.Image;
 using System.Collections.Generic;
-using Avalonia.Styling;
-using Avalonia.VisualTree;
-using Avalonia;
 using Avalonia.Media;
-using Avalonia.Input;
-using System;
 
 namespace SMM2SaveEditor.Entities
 {
@@ -227,8 +222,24 @@ namespace SMM2SaveEditor.Entities
             UpLeft      = 0x1400000
         }
 
+        public enum PipeRotation : uint
+        {
+            Right = 0,
+            Left = 0x20,
+            Up = 0x40,
+            Down = 0x60,
+        }
+
+        public enum Sizes : uint
+        {
+            Small = 0,
+            Medium = 0x2000,
+            Big = 0x4000
+        }
+
         // TODO: Set up bitmap lookup table
         private static Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
+        private static Dictionary<ushort, object>? spriteMappings = null;
 
         public Obj()
         {
@@ -385,7 +396,10 @@ namespace SMM2SaveEditor.Entities
                     break;
 
                 case ObjId.ShallowSlope: HandleShallowSlope(); break;
-                    
+
+                case ObjId.Semisolid3DW:
+                    HandleNineTileSprite("71", "71A", "71B", "71C", "71D", "71E", "71F", "71G", "71H");
+                    break;
                 // rotations
                 case ObjId.CheckpointFlag:
                 case ObjId.OneWay:
@@ -395,11 +409,48 @@ namespace SMM2SaveEditor.Entities
                 case ObjId.Cannon: HandleCannonRotation(); break;
                 case ObjId.Arrow: HandleArrowRotation(); break;
 
+                case ObjId.SpikeBlock:
+                    Canvas.SetLeft(this, x - 80);
+                    SetSprite(stid);
+                    break;
                 // no alternate sprite
                 default:
                     SetSprite(stid);
                     break;
             }
+        }
+
+        private void HandleNineTileSprite(
+            string topLeft = "", string topCenter = "", string topRight = "", 
+            string midLeft = "", string midCenter = "", string midRight = "",
+            string botLeft = "", string botCenter = "", string botRight = "",
+            int width = -1, int height = -1)
+        {
+            if (width == -1) width = this.width;
+            if (height == -1) height = this.height;
+
+            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(height));
+            grid.ColumnDefinitions = new ColumnDefinitions(ObjectExtensions.EqualSpacingDefinition(width));
+
+            CreateImage(topLeft, 0, 0);
+            CreateImage(topRight, 0, width - 1);
+            CreateImage(botLeft, height - 1, 0);
+            CreateImage(botRight, height - 1, width - 1);
+
+            for (int i = 1; i < height - 1; i++)
+            {
+                CreateImage(topCenter, 0, i);
+                CreateImage(botCenter, height - 1, i);
+            }
+            for (int i = 1; i < width - 1; i++)
+            {
+                CreateImage(midLeft, i, 0);
+                CreateImage(midRight, i, width - 1);
+            }
+            for (int i = 1; i < width - 1; i++) for (int j = 1; j < height - 1; j++)
+                {
+                    CreateImage(midCenter, j, i);
+                }
         }
 
         private void HandleTallTiledObjects(int count = 2, Image? image = null)
@@ -795,6 +846,42 @@ namespace SMM2SaveEditor.Entities
 
         }
 
+        private void HandleSprite()
+        {
+            object spriteMapping = FindSpriteMapping();
+
+            
+        }
+
+        private object FindSpriteMapping()
+        {
+            if (spriteMappings == null)
+            {
+                throw new System.Exception("No sprite mapping defined.");
+            }
+
+            object myMapping;
+            if (!spriteMappings.TryGetValue((ushort)id, out myMapping))
+            {
+                throw new System.Exception($"No valid sprite mapping for {id}!");
+            }
+            return myMapping;
+        }
+
+        private Image? CreateImage(string name = "", int rowIndex = 0, int columnIndex = 0)
+        {
+            // grid cannot contain image
+            if (rowIndex >= grid.RowDefinitions.Count || columnIndex >= grid.ColumnDefinitions.Count) return null;
+
+            Image image = new();
+            grid.Children.Add(image);
+            if (name != "") SetSprite(name, image);
+            Grid.SetRow(image, rowIndex);
+            Grid.SetColumn(image, columnIndex);
+
+            return image;
+        }
+
         private void SetSprite(string name, Image? image = null)
         {
             if (bitmaps.ContainsKey(name))
@@ -803,7 +890,13 @@ namespace SMM2SaveEditor.Entities
                 return;
             }
 
-            string loc = "../../../img/sprites/" + name + ".png";
+            string loc =
+#if RELEASE                
+                "./Assets/sprites/" +
+#else
+                "../../../Assets/sprites/" +
+#endif
+                name + ".png";
 
             try
             {
