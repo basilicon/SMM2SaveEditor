@@ -5,17 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="500"
              x:Class="SMM2SaveEditor.Utility.EditorHelpers.EntityEditor" 
 			 Background="DarkGray">
-	<DockPanel LastChildFill="False">
-		<Grid ColumnDefinitions="*,*" DockPanel.Dock="Bottom">
-			<Button Grid.Column="0" Name="Apply" HorizontalAlignment="Center">
-				<TextBlock Text="Apply" TextAlignment="Center"/>
-			</Button>
-			<Button Grid.Column="1" Name="Cancel" HorizontalAlignment="Center">
-				<TextBlock Text="Cancel" TextAlignment="Center"/>
-			</Button>
-		</Grid>
-		<ScrollViewer HorizontalScrollBarVisibility="Auto">
-			<Grid ColumnDefinitions="*,*" Name="EditorGrid" VerticalAlignment="Top"/>
-		</ScrollViewer>
-	</DockPanel>
+	<ScrollViewer HorizontalScrollBarVisibility="Auto">
+		<Grid ColumnDefinitions="*,*" Name="EditorGrid" VerticalAlignment="Top"/>
+	</ScrollViewer>
 </UserControl>

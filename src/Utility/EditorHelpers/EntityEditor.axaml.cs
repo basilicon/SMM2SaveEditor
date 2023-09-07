@@ -17,9 +17,6 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         private List<string> labels;
         private Grid grid;
 
-        private Button applyButton;
-        private Button cancelButton;
-
         public EntityEditor()
         {
             Instance = this;
@@ -27,23 +24,9 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
             grid = this.Find<Grid>("EditorGrid");
             if (grid == null) throw new Exception("No grid found!");
-
-            applyButton = this.Find<Button>("Apply");
-            if (applyButton == null) throw new Exception("No apply button found!");
-
-            applyButton.Click += OnApply;
-
-            cancelButton = this.Find<Button>("Cancel");
-            if (cancelButton == null) throw new Exception("No cancel button found!");
-
-            cancelButton.Click += delegate
-            {
-                grid.Children.RemoveAll(grid.Children);
-                objRef = null;
-            };
         }
 
-        private void OnApply(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void OnApply()
         {
             if (labels == null || objRef == null) return;
 
@@ -112,6 +95,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     EnumDropdown enumDropdown = new();
                     enumDropdown.SetEnum(type, kvp.Value);
+                    enumDropdown.SelectionChanged += delegate { OnApply(); };
 
                     o = enumDropdown;
                 } 
@@ -120,6 +104,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     FlagEditor flagEditor = new();
                     flagEditor.SetFlag((uint)kvp.Value);
+                    flagEditor.ValueChanged += delegate { OnApply(); };
+
                     o = flagEditor;
                 }
                 else 
@@ -128,6 +114,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     NumericUpDown numericUpDown = new();
                     numericUpDown.Increment = 1;
                     numericUpDown.Value = Convert.ToDecimal(kvp.Value);
+                    numericUpDown.ValueChanged += delegate { OnApply(); };
 
                     o = numericUpDown;
                 }
@@ -135,6 +122,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     TextBox valueBlock = new();
                     valueBlock.Text = kvp.Value.ToString();
+                    valueBlock.TextInput += delegate { OnApply(); };
+
                     o = valueBlock;
                 }
 

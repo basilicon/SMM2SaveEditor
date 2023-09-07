@@ -1,7 +1,6 @@
 using Kaitai;
 using SMM2SaveEditor.Utility;
 using Avalonia.Controls;
-using System.Collections.Generic;
 using Avalonia.Media.Imaging;
 
 namespace SMM2SaveEditor.Entities
@@ -40,11 +39,7 @@ namespace SMM2SaveEditor.Entities
             id = io.ReadU1();
             backgroundId = io.ReadU1();
 
-            Canvas.SetLeft(this, x * 160);
-            Canvas.SetBottom(this, y * 160);
-
-            sprite.Source = bitmap;
-            sprite.PointerPressed += (this as IEntity).OnClick;
+            UpdateSprite();
         }
 
         public byte[] GetBytes()
@@ -62,6 +57,11 @@ namespace SMM2SaveEditor.Entities
         public void UpdateSprite()
         {
             // throw new System.NotImplementedException();
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
+
+            sprite.Source = bitmap;
+            sprite.PointerPressed += (this as IEntity).OnClick;
         }
     }
 }

@@ -12,11 +12,18 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         public object? enumValue;
 
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
+
         public EnumDropdown()
         {
             InitializeComponent();
 
             dropdown = this.Find<ComboBox>("Dropdown");
+        }
+
+        private void Dropdown_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            SelectionChanged.Invoke(sender, e);
         }
 
         public void SetEnum<T>(T defaultValue) where T : Enum
@@ -35,11 +42,11 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 dropdown.Items.Add(item);
             }
 
-            dropdown.SelectionChanged += delegate
+            dropdown.SelectionChanged += (sender, e) =>
             {
                 if (dropdown.SelectedValue is ComboBoxItem item) {
                     enumValue = Enum.Parse(T, item.Content.ToString());
-                    Debug.WriteLine($"New value: {enumValue}");
+                    SelectionChanged.Invoke(sender, e);
                 }
             };
 

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System;
 
 namespace SMM2SaveEditor.Utility.EditorHelpers
 {
@@ -15,9 +16,12 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         List<CheckBox> checkedList = new();
 
         TextBox textBox;
-        Button button;
+        Button toggleExpandButton;
 
         bool bIsExpanded = false;
+
+        public delegate void FlagEditorValueChangedHandler(object sender);
+        public event FlagEditorValueChangedHandler ValueChanged;
 
         public FlagEditor()
         {
@@ -37,8 +41,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             grid = new();
             SetupGrid();
 
-            button = this.Find<Button>("ToggleExpand");
-            button.Click += Button_Click;
+            toggleExpandButton = this.Find<Button>("ToggleExpand");
+            toggleExpandButton.Click += Button_Click;
         }
 
         public void SetFlag(uint newFlag)
@@ -54,13 +58,13 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 textBox.Text = flag.ToString("X");
                 contentControl.Content = textBox;
-                button.Content = "Expand";
+                toggleExpandButton.Content = "Expand";
             } 
             else
             {
                 UpdateGrid();
                 contentControl.Content = scrollViewer;
-                button.Content = "Minimize";
+                toggleExpandButton.Content = "Minimize";
             }
 
             bIsExpanded ^= true;
@@ -76,6 +80,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             try
             {
                 flag = uint.Parse(textBox.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
+                ValueChanged.Invoke(this);
             }
             catch
             {
@@ -100,7 +105,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 Grid.SetRow(checkBox, i);
 
                 uint copy = counter;
-                checkBox.Click += delegate { flag ^= copy; };
+                checkBox.Click += delegate { flag ^= copy; ValueChanged.Invoke(this); };
 
                 counter <<= 1;
             }

@@ -47,6 +47,7 @@ namespace SMM2SaveEditor
         {
             InitializeComponent();
             myCanvas = this.Find<Canvas>("MapCanvas");
+            // myCanvas.PointerPressed += (this as IEntity).OnClick;
         }
 
         public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
