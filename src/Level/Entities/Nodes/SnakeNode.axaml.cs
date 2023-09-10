@@ -2,11 +2,14 @@ using Avalonia.Controls;
 using Kaitai;
 using SMM2SaveEditor;
 using SMM2SaveEditor.Utility;
+using System;
 
 namespace SMM2SaveEditor.Entities.Nodes
 {
-    public partial class SnakeNode : UserControl, IEntity
+    public partial class SnakeNode : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         ushort index;
         ushort direction;
         uint unknown1;
@@ -16,14 +19,14 @@ namespace SMM2SaveEditor.Entities.Nodes
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             index = io.ReadU2le();
             direction = io.ReadU2le();
             unknown1 = io.ReadU4le();
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(8);
 
@@ -34,7 +37,7 @@ namespace SMM2SaveEditor.Entities.Nodes
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

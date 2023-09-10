@@ -7,11 +7,14 @@ using Avalonia.Media.Imaging;
 using Image = Avalonia.Controls.Image;
 using System.Collections.Generic;
 using Avalonia.Media;
+using System;
 
 namespace SMM2SaveEditor.Entities
 {
-    public partial class Obj : UserControl, IEntity
+    public partial class Obj : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         public int x = 0;
         public int y = 0;
         public short unknown1 = 0;
@@ -248,7 +251,7 @@ namespace SMM2SaveEditor.Entities
             grid = this.Find<Grid>("LayoutGrid");
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null) 
+        public override void LoadFromStream(KaitaiStream io) 
         { 
             x = io.ReadS4le();
             y = io.ReadS4le();
@@ -266,7 +269,7 @@ namespace SMM2SaveEditor.Entities
             UpdateSprite();
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(32);
 
@@ -288,7 +291,7 @@ namespace SMM2SaveEditor.Entities
 
         // TODO: SIMPLIFY IMPLEMENTATION FOR MODDERS
         // sorry modders LUL
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             Canvas.SetLeft(this, x - 80 * width);
             Canvas.SetBottom(this, y - 80);
@@ -920,7 +923,7 @@ namespace SMM2SaveEditor.Entities
             }
 
             image.Source = bitmap;
-            image.PointerPressed += (this as IEntity).OnClick;
+            image.PointerPressed += OnClick;
         }
     }
 }

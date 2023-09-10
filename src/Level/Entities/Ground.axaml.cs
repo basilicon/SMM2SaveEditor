@@ -2,11 +2,14 @@ using Kaitai;
 using SMM2SaveEditor.Utility;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
+using System;
 
 namespace SMM2SaveEditor.Entities
 {
-    public partial class Ground : UserControl, IEntity
+    public partial class Ground : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         public byte x;
         public byte y;
         public byte id;
@@ -32,7 +35,7 @@ namespace SMM2SaveEditor.Entities
             }
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             x = io.ReadU1();
             y = io.ReadU1();
@@ -42,7 +45,7 @@ namespace SMM2SaveEditor.Entities
             UpdateSprite();
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 
@@ -54,14 +57,14 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             // throw new System.NotImplementedException();
             Canvas.SetLeft(this, x * 160);
             Canvas.SetBottom(this, y * 160);
 
             sprite.Source = bitmap;
-            sprite.PointerPressed += (this as IEntity).OnClick;
+            sprite.PointerPressed += OnClick;
         }
     }
 }

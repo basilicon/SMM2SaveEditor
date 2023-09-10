@@ -10,13 +10,13 @@ using SMM2SaveEditor.Utility;
 using System.IO;
 using System.Diagnostics;
 using SMM2SaveEditor.Utility.EditorHelpers;
+using System;
 
 namespace SMM2SaveEditor
 {
     public partial class MainWindow : Window
     {
         private Level level;
-        private Grid? levelGrid;
         private EntityEditor entityEditor;
         private ZoomBorder? zoomBorder;
 
@@ -26,16 +26,19 @@ namespace SMM2SaveEditor
         {
             this.InitializeComponent();
 
-            levelGrid = this.Find<Grid>("LevelGrid");
-            level = new();
-            level.LoadFromStream(new KaitaiStream(new byte[0x5BFD0]), levelGrid);
+            level = this.Find<Level>("Level");
+            level.LoadFromStream(new KaitaiStream(new byte[0x5BFD0]));
 
             entityEditor = new();
             this.Find<Grid>("EditingArea")?.Children.Add(entityEditor);
             Grid.SetColumn(entityEditor, 2);
 
             zoomBorder = this.Find<ZoomBorder>("ZoomBorder");
-            if (zoomBorder != null) zoomBorder.ZoomTo(0.5, 0, 0, true);
+            if (zoomBorder == null) throw new MissingMemberException("No zoom border found!");
+            zoomBorder.KeyDown += (s, e) =>
+            {
+                if (e.Key == Avalonia.Input.Key.Space) zoomBorder.UniformToFill();
+            };
 
             Debug.WriteLine("Launched application!");
         }
@@ -102,22 +105,11 @@ namespace SMM2SaveEditor
 
         private async void LoadFromFile(string path)
         {
-            // Debug.Log("Decrypting bytes from file...");
-
             byte[] bytes = await File.ReadAllBytesAsync(path);
 
             bytes = LevelCrypto.DecryptLevel(bytes);
 
-            //try
-            //{
-            //    bytes = LevelCrypto.DecryptLevel(bytes);
-            //} catch 
-            //{
-            //    Debug.WriteLine($"Failed to decrypt level {path}. (This level may be corrupted.)");
-            //    return;
-            //}
-
-            level.LoadFromStream(new KaitaiStream(bytes), levelGrid);
+            level.LoadFromStream(new KaitaiStream(bytes));
         }
     }
 }

@@ -1,11 +1,14 @@
 using Avalonia.Controls;
 using Kaitai;
 using SMM2SaveEditor.Utility;
+using System;
 
 namespace SMM2SaveEditor.Entities.Nodes
 {
-    public partial class PiranhaCreeperNode : UserControl, IEntity
+    public partial class PiranhaCreeperNode : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         byte unknown1;
         byte direction;
         ushort unknown2;
@@ -15,14 +18,14 @@ namespace SMM2SaveEditor.Entities.Nodes
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             unknown1 = io.ReadU1();
             direction = io.ReadU1();
             unknown2 = io.ReadU2le();
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 
@@ -33,7 +36,7 @@ namespace SMM2SaveEditor.Entities.Nodes
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

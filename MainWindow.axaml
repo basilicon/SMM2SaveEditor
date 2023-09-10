@@ -4,6 +4,7 @@
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:paz="using:Avalonia.Controls.PanAndZoom"
+		xmlns:smm2="using:SMM2SaveEditor"
         WindowStartupLocation="CenterScreen" UseLayoutRounding="True"
         Title="SMM2SaveEditor">
 
@@ -22,10 +23,7 @@
 				<paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
 								Background="SlateBlue" ClipToBounds="True" Focusable="True"
 								VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-					<Grid Name="LevelGrid" Background="LightGray" Width="39400" Height="10140"
-						  RowDefinitions="*,4320,*,4320,*" ColumnDefinitions="*,38400,*">
-
-					</Grid>
+					<smm2:Level Name="Level"/>
 				</paz:ZoomBorder>
 			</ScrollViewer>
 			<GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>

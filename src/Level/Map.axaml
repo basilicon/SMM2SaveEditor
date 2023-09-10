@@ -4,6 +4,6 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 >
-	<Canvas Width="38400" Height="4320"	Background="CadetBlue" Name="MapCanvas">
+	<Canvas Width="38400" Height="4320" Background="CadetBlue" Name="MapCanvas">
 	</Canvas>
 </UserControl>

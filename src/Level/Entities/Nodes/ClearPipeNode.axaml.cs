@@ -1,11 +1,14 @@
 using Avalonia.Controls;
 using Kaitai;
 using SMM2SaveEditor.Utility;
+using System;
 
 namespace SMM2SaveEditor.Entities.Nodes
 {
-    public partial class ClearPipeNode : UserControl, IEntity
+    public partial class ClearPipeNode : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         byte type;
         byte index;
         byte x;
@@ -20,7 +23,7 @@ namespace SMM2SaveEditor.Entities.Nodes
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas)
+        public override void LoadFromStream(KaitaiStream io)
         {
             type = io.ReadU1();
             index = io.ReadU1();
@@ -37,7 +40,7 @@ namespace SMM2SaveEditor.Entities.Nodes
             // transform.position = new Vector2(x, y);
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer();
 
@@ -53,7 +56,7 @@ namespace SMM2SaveEditor.Entities.Nodes
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

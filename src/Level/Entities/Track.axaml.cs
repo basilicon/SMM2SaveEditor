@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using SMM2SaveEditor.Utility;
 using Avalonia.Controls;
+using System;
 
 namespace SMM2SaveEditor.Entities
 {
-    public partial class Track : UserControl, IEntity
+    public partial class Track : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         ushort unknown1;
         byte flags;
         byte x;
@@ -22,7 +25,7 @@ namespace SMM2SaveEditor.Entities
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             unknown1 = io.ReadU2le();
             flags = io.ReadU1();
@@ -37,7 +40,7 @@ namespace SMM2SaveEditor.Entities
             Canvas.SetBottom(this, y * 160);
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(12);
 
@@ -53,7 +56,7 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

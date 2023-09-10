@@ -2,13 +2,16 @@ using Avalonia.Controls;
 using Kaitai;
 using SMM2SaveEditor.Entities.Nodes;
 using SMM2SaveEditor.Utility;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SMM2SaveEditor.Entities
 {
-    public partial class TrackBlock : UserControl, IEntity
+    public partial class TrackBlock : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         public byte unknown1;
         public byte index;
         public byte unknown2;
@@ -19,17 +22,17 @@ namespace SMM2SaveEditor.Entities
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             unknown1 = io.ReadU1();
             index = io.ReadU1();
             byte numNodes = io.ReadU1();
             unknown2 = io.ReadU1();
 
-            LevelUtility.FillLists(ref nodes, numNodes, io, canvas);
+            LevelUtility.FillLists(ref nodes, numNodes, io);
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4 + (int)Maxes.TrackBlockNode * 4);
 
@@ -43,7 +46,7 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

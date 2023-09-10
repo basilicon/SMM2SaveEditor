@@ -2,12 +2,15 @@ using Avalonia.Controls;
 using Kaitai;
 using SMM2SaveEditor.Entities.Nodes;
 using SMM2SaveEditor.Utility;
+using System;
 using System.Collections.Generic;
 
 namespace SMM2SaveEditor.Entities
 {
-    public partial class ExclamationBlock : UserControl, IEntity
+    public partial class ExclamationBlock : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         byte unknown1;
         byte index;
         byte unknown2;
@@ -18,7 +21,7 @@ namespace SMM2SaveEditor.Entities
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             unknown1 = io.ReadU1();
             index = io.ReadU1();
@@ -28,7 +31,7 @@ namespace SMM2SaveEditor.Entities
             LevelUtility.FillLists(ref nodes, numNodes, io);
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new();
 
@@ -42,7 +45,7 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

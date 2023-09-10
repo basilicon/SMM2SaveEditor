@@ -3,11 +3,14 @@ using SMM2SaveEditor.Utility;
 using System.Collections.Generic;
 using SMM2SaveEditor.Entities.Nodes;
 using Avalonia.Controls;
+using System;
 
 namespace SMM2SaveEditor.Entities
 {
-    public partial class Snake : UserControl, IEntity
+    public partial class Snake : Entity
     {
+        public event EventHandler PostSpriteUpdate;
+
         byte index;
         ushort unknown1;
         List<SnakeNode> nodes = new(120);
@@ -17,16 +20,16 @@ namespace SMM2SaveEditor.Entities
             InitializeComponent();
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             index = io.ReadU1();
             byte numNodes = io.ReadU1();
             unknown1 = io.ReadU2le();
 
-            LevelUtility.FillLists(ref nodes, numNodes, io, canvas);
+            LevelUtility.FillLists(ref nodes, numNodes, io);
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4 + (int)Maxes.SnakeNode * 8);
 
@@ -39,7 +42,7 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
             throw new System.NotImplementedException();
         }

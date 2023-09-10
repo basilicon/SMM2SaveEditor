@@ -12,7 +12,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
     {
         public static EntityEditor? Instance { get; set; }
 
-        private IEntity? objRef = null;
+        private Entity? objRef = null;
 
         private List<string> labels;
         private Grid grid;
@@ -63,9 +63,11 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         // TODO: MOVE MENU TO CANVAS IN MAINWINDOW
         // TODO: ADD SUPPORT FOR FORMATTING
-        public void OpenOptions(Point p, IEntity entity)
+        public void OpenOptions(Point p, Entity entity)
         {
             grid.Children.RemoveAll(grid.Children);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
             objRef = entity;
 
@@ -117,6 +119,19 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     numericUpDown.ValueChanged += delegate { OnApply(); };
 
                     o = numericUpDown;
+                }
+                else 
+                if (type == typeof(string))
+                {
+                    TextBox textBox = new();
+                    textBox.Text = (string)kvp.Value;
+                    textBox.TextInput += delegate { OnApply(); };
+
+                    textBox.TextWrapping = TextWrapping.Wrap;
+                    textBox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
+                    textBox.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+
+                    o = textBox;
                 }
                 else
                 {

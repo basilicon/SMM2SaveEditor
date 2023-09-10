@@ -21,11 +21,6 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             dropdown = this.Find<ComboBox>("Dropdown");
         }
 
-        private void Dropdown_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            SelectionChanged.Invoke(sender, e);
-        }
-
         public void SetEnum<T>(T defaultValue) where T : Enum
         {
             SetEnum(typeof(T), defaultValue);
@@ -34,6 +29,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         public void SetEnum(Type T, object? defaultValue = null)
         {
             List<string> enums = new(Enum.GetNames(T));
+            enums.Sort();
 
             for (int i = 0; i < enums.Count; i++)
             {

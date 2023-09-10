@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using System.Diagnostics;
+using System;
 
 namespace SMM2SaveEditor
 {
-    public partial class Map : UserControl, IEntity
+    public partial class Map : Entity
     {
         public Theme theme;
         public AutoscrollType autoscrollType;
@@ -47,10 +48,10 @@ namespace SMM2SaveEditor
         {
             InitializeComponent();
             myCanvas = this.Find<Canvas>("MapCanvas");
-            // myCanvas.PointerPressed += (this as IEntity).OnClick;
+            myCanvas.PointerPressed += OnClick;
         }
 
-        public void LoadFromStream(KaitaiStream io, Canvas? canvas = null)
+        public override void LoadFromStream(KaitaiStream io)
         {
             theme = (Theme)io.ReadU1();
             autoscrollType = (AutoscrollType)io.ReadU1();
@@ -89,9 +90,11 @@ namespace SMM2SaveEditor
             LevelUtility.FillLists(ref icicles, icicleCount, io, myCanvas);
 
             unknown2 = io.ReadBytes(0xDBC);
+
+            UpdateSprite();
         }
 
-        public byte[] GetBytes()
+        public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(0xFFFF);
 
@@ -136,9 +139,19 @@ namespace SMM2SaveEditor
             return bb.GetBytes();
         }
 
-        public void UpdateSprite()
+        public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            if (orientation == Orientation.horizontal)
+            {
+                Width = 38400;
+                Height = 4320;
+            } else
+            {
+                Width = 4320;
+                Height = 38400;
+            }
+
+            base.UpdateSprite();
         }
     }
 }

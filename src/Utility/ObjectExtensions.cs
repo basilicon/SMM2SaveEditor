@@ -32,13 +32,13 @@ public static class ObjectExtensions
         }
     }
 
-    public static void SetValuesFromDictionary<T>(this T obj, IDictionary<string, object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
+    public static void SetValuesFromDictionary<T>(this T obj, IDictionary<string, object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
         where T : class
     {
         obj.SetValuesFromDictionary(typeof(T), source);
     }
 
-    public static void SetValuesFromDictionary(this object obj, Type type, IDictionary<string, object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
+    public static void SetValuesFromDictionary(this object obj, Type type, IDictionary<string, object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
     {
         FieldInfo[] fields = type.GetFields(bindingAttr);
 
@@ -56,7 +56,7 @@ public static class ObjectExtensions
 
     }
 
-    public static IDictionary<string, object> AsDictionary(this object source, Type type, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
+    public static IDictionary<string, object> AsDictionary(this object source, Type type, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
     {
         IDictionary<string, object> dict = new Dictionary<string, object>();
         FieldInfo[] fields = type.GetFields(bindingAttr);

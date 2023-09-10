@@ -231,14 +231,14 @@ namespace SMM2SaveEditor.Utility
 
     static class LevelUtility
     {
-        public static void FillLists<T>(ref List<T> entities, int numEntities, KaitaiStream io, Canvas? canvas = null) where T : UserControl, IEntity, new()
+        public static void FillLists<T>(ref List<T> entities, int numEntities, KaitaiStream io, Canvas? canvas = null) where T : Entity, new()
         {
             entities = new List<T>(numEntities);
 
             for (int i = 0; i < numEntities; i++)
             {
                 T entity = new();
-                entity.LoadFromStream(io, canvas);
+                entity.LoadFromStream(io);
                 canvas?.Children.Add(entity);
                 entities.Add(entity);
             }
@@ -251,7 +251,7 @@ namespace SMM2SaveEditor.Utility
             io.ReadBytes(sizeOfEntity * Math.Max(maxEntities - numEntities, 0));
         }
 
-        public static byte[] GetBytesFromList<T>(List<T> entities) where T : IEntity, new()
+        public static byte[] GetBytesFromList<T>(List<T> entities) where T : Entity, new()
         {
             string entityName = typeof(T).Name;
             int maxEntities = (int)Enum.Parse(typeof(Maxes), entityName);
