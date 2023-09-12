@@ -11,11 +11,14 @@ using System.IO;
 using System.Diagnostics;
 using SMM2SaveEditor.Utility.EditorHelpers;
 using System;
+using Avalonia.Media.Imaging;
 
 namespace SMM2SaveEditor
 {
     public partial class MainWindow : Window
     {
+        public static MainWindow? Instance { get; private set; }
+
         private Level level;
         private EntityEditor entityEditor;
         private ZoomBorder? zoomBorder;
@@ -24,10 +27,13 @@ namespace SMM2SaveEditor
 
         public MainWindow()
         {
+            Instance = this;
+
             this.InitializeComponent();
 
             level = this.Find<Level>("Level");
-            level.LoadFromStream(new KaitaiStream(new byte[0x5BFD0]));
+            // lol
+            //level.LoadFromStream(new KaitaiStream(new byte[0x5BFD0]));
 
             entityEditor = new();
             this.Find<Grid>("EditingArea")?.Children.Add(entityEditor);
@@ -40,11 +46,22 @@ namespace SMM2SaveEditor
                 if (e.Key == Avalonia.Input.Key.Space) zoomBorder.UniformToFill();
             };
 
+            Icon = new(new Bitmap(
+#if RELEASE
+                "./Assets/smm2saveeditor.ico"
+#else
+                "../../../Assets/smm2saveeditor.ico"
+#endif
+                ));
+
+            
+
             Debug.WriteLine("Launched application!");
         }
 
         private void InitializeComponent()
         {
+            Debug.WriteLine("Initializing window...");
             AvaloniaXamlLoader.Load(this);
         }
 
@@ -103,13 +120,20 @@ namespace SMM2SaveEditor
             await File.WriteAllBytesAsync(storageBookmarkFile.Path.LocalPath, level.GetBytes());
         }
 
-        private async void LoadFromFile(string path)
+        public async void LoadFromFile(string path)
         {
-            byte[] bytes = await File.ReadAllBytesAsync(path);
+            Debug.WriteLine("Attempting to load level from " + path);
 
-            bytes = LevelCrypto.DecryptLevel(bytes);
-
-            level.LoadFromStream(new KaitaiStream(bytes));
+            try
+            {
+                byte[] bytes = await File.ReadAllBytesAsync(path);
+                bytes = LevelCrypto.DecryptLevel(bytes);
+                level.LoadFromStream(new KaitaiStream(bytes));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

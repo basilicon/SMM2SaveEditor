@@ -4,5 +4,6 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 	<Grid Name="LevelGrid" Background="LightGray"
-		RowDefinitions="600,*,600,*,600" ColumnDefinitions="1000,*,1000"/>
+		RowDefinitions="600,4320,600,4320,600" ColumnDefinitions="1000,38400,1000"
+		  ShowGridLines="True"/>
 </UserControl>

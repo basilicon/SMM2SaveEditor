@@ -7,7 +7,6 @@
 		xmlns:smm2="using:SMM2SaveEditor"
         WindowStartupLocation="CenterScreen" UseLayoutRounding="True"
         Title="SMM2SaveEditor">
-
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
