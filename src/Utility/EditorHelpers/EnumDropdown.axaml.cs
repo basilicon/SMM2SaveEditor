@@ -42,7 +42,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 if (dropdown.SelectedValue is ComboBoxItem item) {
                     enumValue = Enum.Parse(T, item.Content.ToString());
-                    SelectionChanged.Invoke(sender, e);
+                    SelectionChanged.Invoke(this, e);
                 }
             };
 

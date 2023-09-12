@@ -5,6 +5,7 @@ using SMM2SaveEditor.Utility;
 using SMM2SaveEditor.Utility.EditorHelpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SMM2SaveEditor.Utility.EditorHelpers
 {
@@ -61,8 +62,26 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             objRef.UpdateSprite();
         }
 
-        // TODO: MOVE MENU TO CANVAS IN MAINWINDOW
-        // TODO: ADD SUPPORT FOR FORMATTING
+        private void ApplyOption(string key, object value)
+        {
+            if (objRef == null)
+            {
+                Debug.WriteLine("Object reference not set!");
+                return;
+            }
+
+            Type type = objRef.GetType();
+            var field = type.GetField(key);
+
+            if (field == null)
+            {
+                Debug.WriteLine($"Property {key} is invalid!");
+                return;
+            }
+
+            field.SetValue(objRef, value);
+        }
+
         public void OpenOptions(Point p, Entity entity)
         {
             grid.Children.RemoveAll(grid.Children);
@@ -97,7 +116,9 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     EnumDropdown enumDropdown = new();
                     enumDropdown.SetEnum(type, kvp.Value);
-                    enumDropdown.SelectionChanged += delegate { OnApply(); };
+                    enumDropdown.SelectionChanged += (o, e) => {
+                        ApplyOption(kvp.Key, (o as EnumDropdown).enumValue);
+                    };
 
                     o = enumDropdown;
                 } 
@@ -106,7 +127,10 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     FlagEditor flagEditor = new();
                     flagEditor.SetFlag((uint)kvp.Value);
-                    flagEditor.ValueChanged += delegate { OnApply(); };
+                    flagEditor.ValueChanged += (o) =>
+                    {
+                        ApplyOption(kvp.Key, (o as FlagEditor).flag);
+                    };
 
                     o = flagEditor;
                 }
@@ -116,7 +140,9 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     NumericUpDown numericUpDown = new();
                     numericUpDown.Increment = 1;
                     numericUpDown.Value = Convert.ToDecimal(kvp.Value);
-                    numericUpDown.ValueChanged += delegate { OnApply(); };
+                    numericUpDown.ValueChanged += (o, e) => {
+                        ApplyOption(kvp.Key, Convert.ToInt64((o as NumericUpDown).Value)); 
+                    };
 
                     o = numericUpDown;
                 }
@@ -125,7 +151,9 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     TextBox textBox = new();
                     textBox.Text = (string)kvp.Value;
-                    textBox.TextInput += delegate { OnApply(); };
+                    textBox.TextChanged += (o, e) => {
+                        ApplyOption(kvp.Key, (o as TextBox).Text);
+                    };
 
                     textBox.TextWrapping = TextWrapping.Wrap;
                     textBox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
@@ -137,7 +165,9 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 {
                     TextBox valueBlock = new();
                     valueBlock.Text = kvp.Value.ToString();
-                    valueBlock.TextInput += delegate { OnApply(); };
+                    valueBlock.TextInput += (o, e) => {
+                        ApplyOption(kvp.Key, (o as TextBox).Text);
+                    };
 
                     o = valueBlock;
                 }
