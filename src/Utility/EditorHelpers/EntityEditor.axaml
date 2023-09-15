@@ -6,6 +6,6 @@
              x:Class="SMM2SaveEditor.Utility.EditorHelpers.EntityEditor" 
 			 Background="DarkGray">
 	<ScrollViewer HorizontalScrollBarVisibility="Auto">
-		<Grid ColumnDefinitions="*,*" Name="EditorGrid" VerticalAlignment="Top"/>
+		<StackPanel Name="EditorStack" Orientation="Vertical"/>
 	</ScrollViewer>
 </UserControl>

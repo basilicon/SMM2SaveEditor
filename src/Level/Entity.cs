@@ -7,6 +7,7 @@ using SMM2SaveEditor.Utility.EditorHelpers;
 using Avalonia.VisualTree;
 using Avalonia.Media;
 using System;
+using System.Collections;
 
 namespace SMM2SaveEditor
 {
@@ -39,7 +40,7 @@ namespace SMM2SaveEditor
 
                 Entity? styledElement = visual.FindAncestorOfType<Entity>();
                 e.Handled = true;
-                EntityEditor.Instance.OpenOptions(e.GetCurrentPoint(visual).Position, styledElement);
+                EntityEditor.Instance.OpenOptions(styledElement);
             }
         }
     }

@@ -247,8 +247,8 @@ namespace SMM2SaveEditor.Entities
         public Obj()
         {
             InitializeComponent();
-            img = this.Find<Image>("Sprite");
-            grid = this.Find<Grid>("LayoutGrid");
+            img = this.Find<Image>("Sprite")!;
+            grid = this.Find<Grid>("LayoutGrid")!;
         }
 
         public override void LoadFromStream(KaitaiStream io) 
@@ -864,7 +864,7 @@ namespace SMM2SaveEditor.Entities
             }
 
             object myMapping;
-            if (!spriteMappings.TryGetValue((ushort)id, out myMapping))
+            if (!spriteMappings.TryGetValue((ushort)id, out myMapping!))
             {
                 throw new System.Exception($"No valid sprite mapping for {id}!");
             }
@@ -923,7 +923,7 @@ namespace SMM2SaveEditor.Entities
             }
 
             image.Source = bitmap;
-            image.PointerPressed += OnClick;
+            image.PointerPressed += OnClick!;
         }
     }
 }

@@ -6,6 +6,7 @@ using SMM2SaveEditor.Utility.EditorHelpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace SMM2SaveEditor.Utility.EditorHelpers
 {
@@ -15,189 +16,33 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private Entity? objRef = null;
 
-        private List<string> labels;
-        private Grid grid;
+        private StackPanel editorStack;
 
         public EntityEditor()
         {
             Instance = this;
             InitializeComponent();
 
-            grid = this.Find<Grid>("EditorGrid");
-            if (grid == null) throw new Exception("No grid found!");
+            editorStack = this.Find<StackPanel>("EditorStack")!;
         }
 
-        private void OnApply()
+        public void OpenOptions(Entity entity)
         {
-            if (labels == null || objRef == null) return;
-
-            IDictionary<string, object> options = new Dictionary<string, object>();
-
-            foreach (var child in grid.Children)
-            {
-                if (Grid.GetColumn(child) == 0) continue;
-
-                int row = Grid.GetRow(child);
-                string key = labels[row];
-
-                if (child is EnumDropdown dropdown)
-                {
-                    options.Add(key, dropdown.enumValue);
-                }
-                else if (child is FlagEditor flagEditor)
-                {
-                    options.Add(key, flagEditor.flag);
-                }
-                else if (child is NumericUpDown numericUpDown)
-                {
-                    options.Add(key, Convert.ToInt32(numericUpDown.Value));
-                }
-                if (child is TextBox textBox)
-                {
-                    options.Add(key, textBox.Text);
-                }
-            }
-
-            objRef.SetValuesFromDictionary(objRef.GetType(), options);
-            objRef.UpdateSprite();
-        }
-
-        private void ApplyOption(string key, object value)
-        {
-            if (objRef == null)
-            {
-                Debug.WriteLine("Object reference not set!");
-                return;
-            }
-
-            Type type = objRef.GetType();
-            var field = type.GetField(key);
-
-            if (field == null)
-            {
-                Debug.WriteLine($"Property {key} is invalid!");
-                return;
-            }
-
-            field.SetValue(objRef, value);
-        }
-
-        public void OpenOptions(Point p, Entity entity)
-        {
-            grid.Children.RemoveAll(grid.Children);
+            editorStack.Children.RemoveAll(editorStack.Children);
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
             objRef = entity;
 
-            IDictionary<string, object> options = entity.AsDictionary(entity.GetType());
-
-            grid.ColumnDefinitions = new ColumnDefinitions("2*,*");
-            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(options.Count));
-
-            int counter = 0;
-            labels = new(options.Count);
-            foreach (KeyValuePair<string, object> kvp in options)
+            foreach (Type t in entity.GetType().GetInheritanceHierarchy())
             {
-                TextBlock textBlock = new();
-                textBlock.Text = kvp.Key;
-                textBlock.TextAlignment = TextAlignment.Center;
-                textBlock.MinHeight = 20;
-                grid.Children.Add(textBlock);
-                Grid.SetColumn(textBlock, 0);
-                Grid.SetRow(textBlock, counter);
-                textBlock.Margin = new Thickness(5);
+                ObjectEditor objectEditor = new();
+                editorStack.Children.Add(objectEditor);
+                objectEditor.OpenOptions((Convert.ChangeType(entity, t) as Entity)!);
 
-                Type type = kvp.Value.GetType();
-
-                Control o = new();
-
-                if (type.IsSubclassOf(typeof(Enum))) 
-                {
-                    EnumDropdown enumDropdown = new();
-                    enumDropdown.SetEnum(type, kvp.Value);
-                    enumDropdown.SelectionChanged += (o, e) => {
-                        ApplyOption(kvp.Key, (o as EnumDropdown).enumValue);
-                    };
-
-                    o = enumDropdown;
-                } 
-                else 
-                if (kvp.Key == "flag" || kvp.Key == "cflag")
-                {
-                    FlagEditor flagEditor = new();
-                    flagEditor.SetFlag((uint)kvp.Value);
-                    flagEditor.ValueChanged += (o) =>
-                    {
-                        ApplyOption(kvp.Key, (o as FlagEditor).flag);
-                    };
-
-                    o = flagEditor;
-                }
-                else 
-                if (IsIntegerType(type))
-                {
-                    NumericUpDown numericUpDown = new();
-                    numericUpDown.Increment = 1;
-                    numericUpDown.Value = Convert.ToDecimal(kvp.Value);
-                    numericUpDown.ValueChanged += (o, e) => {
-                        ApplyOption(kvp.Key, Convert.ToInt64((o as NumericUpDown).Value)); 
-                    };
-
-                    o = numericUpDown;
-                }
-                else 
-                if (type == typeof(string))
-                {
-                    TextBox textBox = new();
-                    textBox.Text = (string)kvp.Value;
-                    textBox.TextChanged += (o, e) => {
-                        ApplyOption(kvp.Key, (o as TextBox).Text);
-                    };
-
-                    textBox.TextWrapping = TextWrapping.Wrap;
-                    textBox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
-                    textBox.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
-
-                    o = textBox;
-                }
-                else
-                {
-                    TextBox valueBlock = new();
-                    valueBlock.Text = kvp.Value.ToString();
-                    valueBlock.TextInput += (o, e) => {
-                        ApplyOption(kvp.Key, (o as TextBox).Text);
-                    };
-
-                    o = valueBlock;
-                }
-
-                grid.Children.Add(o);
-                Grid.SetColumn(o, 1);
-                Grid.SetRow(o, counter);
-                o.Margin = new Thickness(5);
-
-                counter++;
-                labels.Add(kvp.Key);
+                Debug.WriteLine(t.Name);
             }
-        }
 
-        private static bool IsIntegerType(Type t)
-        {
-            switch (Type.GetTypeCode(t))
-            {
-                case TypeCode.Byte:
-                case TypeCode.SByte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                    return true;
-                default:
-                    return false;
-            }
         }
     }
 }

@@ -129,12 +129,6 @@ namespace SMM2SaveEditor.Utility
                 throw new Exception("Decryption error: CMAC digest is invalid.");
             }
 
-            if (false) // might be able to just remove this
-            {
-                // write bcd header
-                writer.Write(buf, 0, 0x10);
-            }
-
             // Decrypted course data
             writer.Write(decrypted, 0, decrypted.Length);
 

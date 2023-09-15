@@ -15,7 +15,7 @@ public static class ObjectExtensions
 
         foreach (var item in source)
         {
-            someObjectType.GetProperty(item.Key).SetValue(someObject, item.Value, null);
+            someObjectType.GetProperty(item.Key)!.SetValue(someObject, item.Value, null);
         }
 
         return someObject;
@@ -28,7 +28,7 @@ public static class ObjectExtensions
 
         foreach (var item in source)
         {
-            type.GetProperty(item.Key).SetValue(obj, item.Value, null);
+            type.GetProperty(item.Key)!.SetValue(obj, item.Value, null);
         }
     }
 
@@ -69,6 +69,17 @@ public static class ObjectExtensions
         }
 
         return dict;
+    }
+
+    public static IEnumerable<Type> GetInheritanceHierarchy(this Type type)
+    {
+        if (!type.IsSubclassOf(typeof(Entity))) yield break;
+
+        for (var current = type; current != null; current = current.BaseType)
+        {
+            if (current == typeof(Entity)) yield break;
+            yield return current;
+        }
     }
 
     public static string EqualSpacingDefinition(int count)
