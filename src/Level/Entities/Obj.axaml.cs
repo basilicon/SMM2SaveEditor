@@ -293,6 +293,8 @@ namespace SMM2SaveEditor.Entities
         // sorry modders LUL
         public override void UpdateSprite()
         {
+            if ((width == 0) || (height == 0)) return;
+
             Canvas.SetLeft(this, x - 80 * width);
             Canvas.SetBottom(this, y - 80);
             SetValue(WidthProperty, width * 160);
@@ -416,7 +418,10 @@ namespace SMM2SaveEditor.Entities
                     Canvas.SetLeft(this, x - 80);
                     SetSprite(stid);
                     break;
-                // no alternate sprite
+
+                case ObjId.None:
+                    Debug.WriteLine("Object of type None found!");
+                    break;
                 default:
                     SetSprite(stid);
                     break;
@@ -854,6 +859,13 @@ namespace SMM2SaveEditor.Entities
             object spriteMapping = FindSpriteMapping();
 
             
+        }
+
+        protected void setFlagByMask(uint mask, bool flagValue)
+        {
+            uint newMask = uint.MaxValue;
+            if (flagValue) newMask ^= mask;
+            flag &= newMask;
         }
 
         private object FindSpriteMapping()

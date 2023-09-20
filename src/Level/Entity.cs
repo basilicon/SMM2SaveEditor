@@ -38,7 +38,7 @@ namespace SMM2SaveEditor
                 //UserControl userControl = visual.FindAncestorOfType<UserControl>();
                 //userControl.Content = border;
 
-                Entity? styledElement = visual.FindAncestorOfType<Entity>();
+                Entity styledElement = visual.FindAncestorOfType<Entity>()!;
                 e.Handled = true;
                 EntityEditor.Instance.OpenOptions(styledElement);
             }

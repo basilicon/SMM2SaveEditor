@@ -51,10 +51,9 @@ namespace SMM2SaveEditor
         public Level()
         {
             InitializeComponent();
-            levelGrid = this.Find<Grid>("LevelGrid");
-            if (levelGrid == null) throw new MissingMemberException("No level grid!");
+            levelGrid = this.Find<Grid>("LevelGrid")!;
 
-            levelGrid.PointerPressed += OnClick;
+            levelGrid.PointerPressed += OnClick!;
         }
 
         public override void LoadFromStream(KaitaiStream io)
