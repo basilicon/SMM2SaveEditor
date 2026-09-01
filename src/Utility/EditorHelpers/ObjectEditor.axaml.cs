@@ -115,6 +115,15 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             }
 
             field.SetValue(objRef, Convert.ChangeType(value, field.FieldType));
+
+            try
+            {
+                objRef.UpdateSprite();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to update sprite: {ex.Message}");
+            }
         }
 
         public void OpenOptions(Entity entity)
