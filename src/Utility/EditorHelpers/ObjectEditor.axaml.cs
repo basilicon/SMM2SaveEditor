@@ -144,7 +144,13 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             foreach (KeyValuePair<string, object> kvp in options)
             {
                 TextBlock textBlock = new();
-                textBlock.Text = kvp.Key;
+                string labelText = kvp.Key;
+                if (entity is Entities.Track)
+                {
+                    if (kvp.Key == "unknown2") labelText = "Endpoint 1";
+                    else if (kvp.Key == "unknown3") labelText = "Endpoint 2";
+                }
+                textBlock.Text = labelText;
                 textBlock.TextAlignment = TextAlignment.Left;
                 textBlock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
                 textBlock.MinHeight = 20;
@@ -166,6 +172,18 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     };
 
                     o = enumDropdown;
+                }
+                else
+                if ((kvp.Key == "unknown2" || kvp.Key == "unknown3") && entity is Entities.Track)
+                {
+                    TrackEndpointEditor endpointEditor = new();
+                    endpointEditor.SetValue(Convert.ToUInt16(kvp.Value));
+                    endpointEditor.ValueChanged += (val) =>
+                    {
+                        ApplyOption(kvp.Key, val);
+                    };
+
+                    o = endpointEditor;
                 }
                 else
                 if ((kvp.Key == "flag" || kvp.Key == "cflag") && entity is Obj obj)

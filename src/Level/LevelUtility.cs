@@ -274,6 +274,18 @@ namespace SMM2SaveEditor.Utility
         TrackBlockNode = 10,
     }
 
+    public enum TrackSocket : byte
+    {
+        East = 0,
+        West = 1,
+        North = 2,
+        South = 3,
+        SouthEast = 4,
+        NorthWest = 5,
+        SouthWest = 6,
+        NorthEast = 7
+    }
+
     public enum Sizes
     {
         Level = 512,

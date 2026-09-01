@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="120"
+             x:Class="SMM2SaveEditor.Utility.EditorHelpers.TrackEndpointEditor">
+	<StackPanel Spacing="4">
+		<Grid ColumnDefinitions="*,Auto" Margin="0,2">
+			<ComboBox Name="SocketDropdown" HorizontalAlignment="Stretch" Margin="0,0,5,0"/>
+			<CheckBox Name="CappedCheckBox" Grid.Column="1" Content="Capped" VerticalAlignment="Center"/>
+		</Grid>
+		<Grid ColumnDefinitions="Auto,*" Margin="0,2">
+			<TextBlock Text="Raw (Hex): " VerticalAlignment="Center" FontSize="11" Foreground="#888888"/>
+			<TextBox Name="HexTextBox" Grid.Column="1" Height="26" FontSize="11" FontFamily="Consolas,Menlo,monospace"/>
+		</Grid>
+	</StackPanel>
+</UserControl>
