@@ -209,7 +209,15 @@ namespace SMM2SaveEditor.Utility
         curve_upper_left = 4,
         curve_upper_right = 5,
         curve_lower_right = 6,
-        curve_lower_left = 7
+        curve_lower_left = 7,
+        y_shape_up_left = 8,
+        y_shape_up_right = 9,
+        y_shape_down_left = 10,
+        y_shape_down_right = 11,
+        y_shape_left_up = 12,
+        y_shape_right_up = 13,
+        y_shape_left_down = 14,
+        y_shape_right_down = 15
     }
 
     public enum SoundEffectId : byte

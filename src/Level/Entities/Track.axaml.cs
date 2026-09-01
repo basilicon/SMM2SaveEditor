@@ -67,30 +67,20 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            bool isLarge = (flags & 0x1) != 0;
+            int typeId = (int)type;
+            bool isLarge = typeId >= 8;
             int tileSpan = isLarge ? 5 : 3;
-            int offset = isLarge ? 2 : 1;
             int size = tileSpan * 160;
 
-            Canvas.SetLeft(this, (x - offset) * 160);
-            Canvas.SetBottom(this, (y - offset) * 160);
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
             Width = size;
             Height = size;
 
-            int spriteIndex = (int)type;
-            if (isLarge && spriteIndex < 8)
-            {
-                spriteIndex += 8;
-            }
-
-            string spriteName = $"T{spriteIndex}";
+            string spriteName = $"T{typeId}";
             if (!bitmaps.TryGetValue(spriteName, out var bitmap))
             {
                 bitmap = AssetHelper.LoadBitmap($"Assets/sprites/{spriteName}.png");
-                if (bitmap == null && isLarge)
-                {
-                    bitmap = AssetHelper.LoadBitmap($"Assets/sprites/T{(int)type}.png");
-                }
                 if (bitmap == null)
                 {
                     bitmap = AssetHelper.LoadBitmap("Assets/sprites/T.png");
