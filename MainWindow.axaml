@@ -23,8 +23,9 @@
 							  HorizontalScrollBarVisibility="Auto">
 				<paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
 								Background="SlateBlue" ClipToBounds="True" Focusable="True"
+								RenderOptions.BitmapInterpolationMode="None"
 								VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-					<smm2:Level Name="Level"/>
+					<smm2:Level Name="Level" RenderOptions.BitmapInterpolationMode="None"/>
 				</paz:ZoomBorder>
 			</ScrollViewer>
 			<GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>

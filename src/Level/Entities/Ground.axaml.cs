@@ -22,6 +22,8 @@ namespace SMM2SaveEditor.Entities
         {
             InitializeComponent();
             sprite = this.Find<Image>("Sprite");
+            Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(this, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
+            if (sprite != null) Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(sprite, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
 
             if (bitmap == null)
             {
