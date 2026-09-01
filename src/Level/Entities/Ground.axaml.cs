@@ -25,13 +25,7 @@ namespace SMM2SaveEditor.Entities
 
             if (bitmap == null)
             {
-                bitmap = new Bitmap(
-#if RELEASE
-                "./Assets/sprites/7.png"
-#else
-                "../../../Assets/sprites/7.png"
-#endif
-                );
+                bitmap = AssetHelper.LoadBitmap("Assets/sprites/7.png");
             }
         }
 

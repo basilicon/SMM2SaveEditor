@@ -11,8 +11,10 @@
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
 				<MenuItem Header="Open..." Click="OnOpenLevel"/>
+				<MenuItem Header="Save..." Click="OnSaveLevel"/>
 				<MenuItem Header="Export..." Click="OnExportLevel"/>
-				<MenuItem Header="Save..."/>
+				<Separator/>
+				<MenuItem Header="Register .bcd File Association in Windows" Click="OnRegisterAssociation"/>
 			</MenuItem>
 		</Menu>
 		<Grid ColumnDefinitions="3*,5,*" Name="EditingArea">

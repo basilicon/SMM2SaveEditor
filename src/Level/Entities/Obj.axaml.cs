@@ -387,6 +387,10 @@ namespace SMM2SaveEditor.Entities
                 case ObjId.OnOffTrampoline:
                 case ObjId.MushroomTrampoline:
                 case ObjId.ConveyorBelt:
+                    if (id == ObjId.ConveyorBelt && width % 2 == 0)
+                    {
+                        Canvas.SetLeft(this, x - 80 * (width - 1));
+                    }
                     if ((flag & 0x4) == 0) HandlePlatformSprite(stid);
                     else HandlePlatformSprite(stid, "D", "E", "C");
                     break;
@@ -905,23 +909,22 @@ namespace SMM2SaveEditor.Entities
                 return;
             }
 
-            string loc =
-#if RELEASE                
-                "./Assets/sprites/" +
-#else
-                "../../../Assets/sprites/" +
-#endif
-                name + ".png";
-
             try
             {
-                Bitmap bitmap = new Bitmap(loc);
-                SetSprite(bitmap, image);
-                bitmaps.Add(name, bitmap);
+                Bitmap? bitmap = AssetHelper.LoadBitmap($"Assets/sprites/{name}.png");
+                if (bitmap != null)
+                {
+                    SetSprite(bitmap, image);
+                    bitmaps.Add(name, bitmap);
+                }
+                else
+                {
+                    Debug.WriteLine($"Could not find a sprite for {id} at Assets/sprites/{name}.png");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.WriteLine($"Could not find a sprite for {id} at {loc}");
+                Debug.WriteLine($"Could not load sprite for {id} ({name}): {ex.Message}");
             }
         }
 

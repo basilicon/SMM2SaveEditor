@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -20,14 +20,8 @@ class Program
 #endif
 
         Debug.WriteLine("Starting app...");
-        if (args.Length > 0)
-        {
-            Thread thread1 = new Thread(() => OpenFileImmediately(args[0]));
-            thread1.Start();
-        }
-
         BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+            .StartWithClassicDesktopLifetime(args);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
@@ -36,23 +30,4 @@ class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
-
-    public static void OpenFileImmediately(string path)
-    {
-        while (MainWindow.Instance == null)
-        {
-            Thread.Sleep(1000);
-        }
-        MainWindow.Instance.Loaded += delegate
-        {
-            try
-            {
-                MainWindow.Instance.LoadFromFile(path);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-            }
-        };
-    }
 }

@@ -11,10 +11,10 @@ namespace SMM2SaveEditor.Entities
     {
         public event EventHandler PostSpriteUpdate;
 
-        byte index;
-        byte numNodes;
-        ushort unknown;
-        List<ClearPipeNode> nodes = new((int)Maxes.ClearPipeNode);
+        public byte index;
+        public byte numNodes;
+        public ushort unknown;
+        public List<ClearPipeNode> nodes = new((int)Maxes.ClearPipeNode);
 
         public ClearPipe() 
         {
@@ -35,7 +35,7 @@ namespace SMM2SaveEditor.Entities
             ByteBuffer bb = new ByteBuffer();
 
             bb.Append(index);
-            bb.Append(numNodes);
+            bb.Append((byte)nodes.Count);
             bb.Append(unknown);
 
             bb.Append(LevelUtility.GetBytesFromList(nodes));
@@ -45,7 +45,7 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            // Clear pipe visual rendering not yet implemented
         }
     }
 }
