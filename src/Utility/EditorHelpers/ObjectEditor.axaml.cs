@@ -126,8 +126,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             editorHeader.Text = entityType.Name;
             IDictionary<string, object> options = entity.AsDictionary(entityType);
 
-            grid.ColumnDefinitions = new ColumnDefinitions("2*,*");
-            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(options.Count));
+            grid.ColumnDefinitions = new ColumnDefinitions("*,1.5*");
+            grid.RowDefinitions = new RowDefinitions(string.Join(",", System.Linq.Enumerable.Repeat("Auto", options.Count)));
 
             int counter = 0;
             labels = new(options.Count);
@@ -135,7 +135,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 TextBlock textBlock = new();
                 textBlock.Text = kvp.Key;
-                textBlock.TextAlignment = TextAlignment.Center;
+                textBlock.TextAlignment = TextAlignment.Left;
+                textBlock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
                 textBlock.MinHeight = 20;
                 grid.Children.Add(textBlock);
                 Grid.SetColumn(textBlock, 0);
@@ -186,12 +187,25 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     TextBox textBox = new();
                     textBox.Text = (string)kvp.Value;
                     textBox.TextChanged += (o, e) => {
-                        ApplyOption(kvp.Key, (o as TextBox)!.Text!);
+                        ApplyOption(kvp.Key, (o as TextBox)!.Text ?? string.Empty);
                     };
 
+                    textBox.AcceptsReturn = true;
+                    textBox.AcceptsTab = false;
                     textBox.TextWrapping = TextWrapping.Wrap;
                     textBox.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
                     textBox.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+
+                    if (kvp.Key.Contains("Description", StringComparison.OrdinalIgnoreCase))
+                    {
+                        textBox.MinHeight = 85;
+                        textBox.MaxHeight = 200;
+                    }
+                    else
+                    {
+                        textBox.MinHeight = 45;
+                        textBox.MaxHeight = 100;
+                    }
 
                     o = textBox;
                 }

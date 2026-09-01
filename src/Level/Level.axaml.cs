@@ -89,8 +89,8 @@ namespace SMM2SaveEditor
             unknown1 = io.ReadBytes(189);
             gameStyle = (GameStyle)io.ReadS2le();
             unknown2 = io.ReadU1();
-            levelName = Encoding.Unicode.GetString(io.ReadBytes(66));
-            levelDescription = Encoding.Unicode.GetString(io.ReadBytes(202));
+            levelName = ReadNullTerminatedString(io.ReadBytes(66));
+            levelDescription = ReadNullTerminatedString(io.ReadBytes(202));
 
             overworld = new Map();
             levelGrid.Children.Add(overworld);
@@ -139,15 +139,14 @@ namespace SMM2SaveEditor
             bb.Append((ushort)gameStyle);
             bb.Append(unknown2);
 
-            
-            byte[] levelNameChars = new UnicodeEncoding().GetBytes(levelName);
+            byte[] levelNameChars = new UnicodeEncoding().GetBytes(levelName ?? string.Empty);
             byte[] levelNameBuffer = new byte[66];
-            for (int i = 0; i < levelNameChars.Length; i++) levelNameBuffer[i] = levelNameChars[i];
+            for (int i = 0; i < Math.Min(levelNameChars.Length, 66); i++) levelNameBuffer[i] = levelNameChars[i];
             bb.Append(levelNameBuffer);
 
-            byte[] descriptionChars = new UnicodeEncoding().GetBytes(levelDescription);
+            byte[] descriptionChars = new UnicodeEncoding().GetBytes(levelDescription ?? string.Empty);
             byte[] descriptionBuffer = new byte[202];
-            for (int i = 0; i < descriptionChars.Length; i++) descriptionBuffer[i] = descriptionChars[i];
+            for (int i = 0; i < Math.Min(descriptionChars.Length, 202); i++) descriptionBuffer[i] = descriptionChars[i];
             bb.Append(descriptionBuffer);
 
             bb.Append(overworld.GetBytes());
@@ -165,6 +164,13 @@ namespace SMM2SaveEditor
             levelGrid.ColumnDefinitions = new ColumnDefinitions("1000," + Math.Max((int)overworld.Width, (int)subworld.Width).ToString() + ",1000");
 
             base.UpdateSprite();
+        }
+
+        private static string ReadNullTerminatedString(byte[] bytes)
+        {
+            string str = Encoding.Unicode.GetString(bytes);
+            int nullIndex = str.IndexOf('\0');
+            return nullIndex >= 0 ? str.Substring(0, nullIndex) : str;
         }
     }
 }
