@@ -14,7 +14,7 @@ class Program
     public static void Main(string[] args)
     {
 #if DEBUG
-        Trace.Listeners.Add(new TextWriterTraceListener("./mylog.txt"));
+        Trace.Listeners.Add(new TextWriterTraceListener("./log.txt"));
         Trace.AutoFlush = true;
         Trace.Indent();
 #endif
