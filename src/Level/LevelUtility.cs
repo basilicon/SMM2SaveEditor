@@ -244,8 +244,12 @@ namespace SMM2SaveEditor.Utility
             {
                 T entity = new();
                 entity.LoadFromStream(io);
-                canvas?.Children.Add(entity);
                 entities.Add(entity);
+            }
+
+            if (canvas != null && entities.Count > 0)
+            {
+                canvas.Children.AddRange(entities);
             }
 
             // toss remaining data

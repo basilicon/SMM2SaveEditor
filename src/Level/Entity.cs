@@ -22,25 +22,20 @@ namespace SMM2SaveEditor
             ParentEntity?.UpdateSprite();
         }
 
-        public void OnClick(object sender, PointerPressedEventArgs e)
+        public void OnClick(object? sender, PointerPressedEventArgs e)
         {
-            if (e.GetCurrentPoint(sender as Visual).Properties.PointerUpdateKind != PointerUpdateKind.RightButtonPressed) return;
+            var point = e.GetCurrentPoint(sender as Visual);
+            if (!point.Properties.IsRightButtonPressed && point.Properties.PointerUpdateKind != PointerUpdateKind.RightButtonPressed)
+                return;
 
-            if (EntityEditor.Instance != null && sender is Visual visual)
+            if (EntityEditor.Instance != null)
             {
-                // add border or smth
-                //Border border = new()
-                //{
-                //    BorderBrush = Brushes.Black,
-                //    BorderThickness = new Thickness(2),
-                //    CornerRadius = new CornerRadius(2)
-                //};
-                //UserControl userControl = visual.FindAncestorOfType<UserControl>();
-                //userControl.Content = border;
-
-                Entity styledElement = visual.FindAncestorOfType<Entity>()!;
-                e.Handled = true;
-                EntityEditor.Instance.OpenOptions(styledElement);
+                Entity? targetEntity = (sender as Entity) ?? (sender as Visual)?.FindAncestorOfType<Entity>() ?? this;
+                if (targetEntity != null)
+                {
+                    e.Handled = true;
+                    EntityEditor.Instance.OpenOptions(targetEntity);
+                }
             }
         }
     }

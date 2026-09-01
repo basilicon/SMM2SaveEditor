@@ -18,7 +18,6 @@ namespace SMM2SaveEditor.Entities
 
         public ExclamationBlock() 
         {
-            InitializeComponent();
         }
 
         public override void LoadFromStream(KaitaiStream io)

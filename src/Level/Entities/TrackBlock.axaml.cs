@@ -19,7 +19,6 @@ namespace SMM2SaveEditor.Entities
 
         public TrackBlock()
         {
-            InitializeComponent();
         }
 
         public override void LoadFromStream(KaitaiStream io)

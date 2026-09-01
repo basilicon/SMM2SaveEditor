@@ -17,7 +17,6 @@ namespace SMM2SaveEditor.Entities
 
         public Snake()
         {
-            InitializeComponent();
         }
 
         public override void LoadFromStream(KaitaiStream io)

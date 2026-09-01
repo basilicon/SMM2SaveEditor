@@ -18,7 +18,10 @@ namespace SMM2SaveEditor.Entities
 
         public SoundEffect()
         {
-            InitializeComponent();
+            Width = 160;
+            Height = 160;
+            Content = new Avalonia.Controls.Shapes.Rectangle { Fill = Avalonia.Media.Brushes.BlanchedAlmond };
+            PointerPressed += OnClick;
         }
 
         public override void LoadFromStream(KaitaiStream io)

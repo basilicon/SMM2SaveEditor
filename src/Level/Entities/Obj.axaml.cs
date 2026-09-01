@@ -246,11 +246,16 @@ namespace SMM2SaveEditor.Entities
 
         public Obj()
         {
-            InitializeComponent();
-            img = this.Find<Image>("Sprite")!;
-            grid = this.Find<Grid>("LayoutGrid")!;
+            Width = 160;
+            Height = 160;
+            ZIndex = 9;
+            img = new Image { Stretch = Avalonia.Media.Stretch.Uniform };
+            grid = new Grid();
+            grid.Children.Add(img);
+            Content = grid;
             Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(this, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
-            if (img != null) Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(img, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
+            Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(img, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
+            PointerPressed += OnClick!;
         }
 
         public override void LoadFromStream(KaitaiStream io) 
@@ -941,7 +946,6 @@ namespace SMM2SaveEditor.Entities
 
             Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(image, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
             image.Source = bitmap;
-            image.PointerPressed += OnClick!;
         }
     }
 }

@@ -20,10 +20,13 @@ namespace SMM2SaveEditor.Entities
 
         public Ground()
         {
-            InitializeComponent();
-            sprite = this.Find<Image>("Sprite");
+            Width = 160;
+            Height = 160;
+            sprite = new Image { Stretch = Avalonia.Media.Stretch.Fill };
+            Content = sprite;
             Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(this, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
-            if (sprite != null) Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(sprite, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
+            Avalonia.Media.RenderOptions.SetBitmapInterpolationMode(sprite, Avalonia.Media.Imaging.BitmapInterpolationMode.None);
+            PointerPressed += OnClick;
 
             if (bitmap == null)
             {
@@ -55,12 +58,10 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            // throw new System.NotImplementedException();
             Canvas.SetLeft(this, x * 160);
             Canvas.SetBottom(this, y * 160);
 
             sprite.Source = bitmap;
-            sprite.PointerPressed += OnClick;
         }
     }
 }

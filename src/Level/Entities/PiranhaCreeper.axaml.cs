@@ -18,7 +18,6 @@ namespace SMM2SaveEditor.Entities
 
         public PiranhaCreeper()
         {
-            InitializeComponent();
         }
 
         public override void LoadFromStream(KaitaiStream io)

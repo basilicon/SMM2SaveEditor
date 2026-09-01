@@ -16,7 +16,10 @@ namespace SMM2SaveEditor.Entities
 
         public Icicle()
         {
-            InitializeComponent();
+            Width = 160;
+            Height = 160;
+            Content = new Avalonia.Controls.Shapes.Rectangle { Fill = Avalonia.Media.Brushes.LightCyan };
+            PointerPressed += OnClick;
         }
 
         public override void LoadFromStream(KaitaiStream io)
