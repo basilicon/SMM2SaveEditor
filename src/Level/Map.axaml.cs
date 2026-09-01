@@ -29,16 +29,16 @@ namespace SMM2SaveEditor
         public int unknownFlag;
         public int unknown1;
 
-        List<Obj> objects = new(); // 2600
-        List<SoundEffect> sounds = new(); // 300
-        List<Snake> snakes = new(); // 5
-        List<ClearPipe> clearPipes = new(); // 200
-        List<PiranhaCreeper> piranhaCreepers = new(); // 10
-        List<ExclamationBlock> exclamationBlocks = new(); // 10
-        List<TrackBlock> trackBlocks = new(); // 10
-        List<Ground> ground = new(); // 4000
-        List<Track> tracks = new(); // 1500
-        List<Icicle> icicles = new(); // 30
+        public List<Obj> objects = new(); // 2600
+        public List<SoundEffect> sounds = new(); // 300
+        public List<Snake> snakes = new(); // 5
+        public List<ClearPipe> clearPipes = new(); // 200
+        public List<PiranhaCreeper> piranhaCreepers = new(); // 10
+        public List<ExclamationBlock> exclamationBlocks = new(); // 10
+        public List<TrackBlock> trackBlocks = new(); // 10
+        public List<Ground> ground = new(); // 4000
+        public List<Track> tracks = new(); // 1500
+        public List<Icicle> icicles = new(); // 30
 
         byte[] unknown2 = new byte[3516];
 

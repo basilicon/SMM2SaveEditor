@@ -35,8 +35,8 @@ namespace SMM2SaveEditor
         public int clearTime;
 
         // subworlds
-        Map overworld = new();
-        Map subworld = new();
+        public Map overworld = new();
+        public Map subworld = new();
 
         // unknown garbage
         public int unknownGameVersion;
