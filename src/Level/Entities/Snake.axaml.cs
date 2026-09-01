@@ -11,9 +11,9 @@ namespace SMM2SaveEditor.Entities
     {
         public event EventHandler PostSpriteUpdate;
 
-        byte index;
-        ushort unknown1;
-        List<SnakeNode> nodes = new(120);
+        public byte index;
+        public ushort unknown1;
+        public List<SnakeNode> nodes = new(120);
 
         public Snake()
         {
@@ -43,7 +43,7 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            base.UpdateSprite();
         }
     }
 }

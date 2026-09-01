@@ -9,7 +9,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
     {
         public uint flag = 0;
 
-        ContentControl contentControl;
+        ContentControl flagSummaryArea;
+        ContentControl flagEditorArea;
 
         ScrollViewer scrollViewer;
         Grid grid;
@@ -29,16 +30,18 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         {
             InitializeComponent();
 
-            contentControl = this.Find<ContentControl>("FlagEditorArea")!;
+            flagSummaryArea = this.Find<ContentControl>("FlagSummaryArea")!;
+            flagEditorArea = this.Find<ContentControl>("FlagEditorArea")!;
 
             textBox = new();
             textBox.Text = flag.ToString("X");
             textBox.TextChanged += TextBox_TextChanged;
-            contentControl.Content = textBox;
+            flagSummaryArea.Content = textBox;
 
             scrollViewer = new();
-            scrollViewer.MaxHeight = 400;
-            scrollViewer.VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible;
+            scrollViewer.MaxHeight = 350;
+            scrollViewer.HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled;
+            scrollViewer.VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto;
 
             grid = new();
             SetupGrid();
@@ -59,14 +62,13 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         {
             if (bIsExpanded)
             {
-                textBox.Text = flag.ToString("X");
-                contentControl.Content = textBox;
+                flagEditorArea.Content = null;
                 toggleExpandButton.Content = "Expand";
             } 
             else
             {
                 UpdateGrid();
-                contentControl.Content = scrollViewer;
+                flagEditorArea.Content = scrollViewer;
                 toggleExpandButton.Content = "Minimize";
             }
 
@@ -83,6 +85,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             try
             {
                 flag = uint.Parse(textBox.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
+                UpdateCheckboxes();
                 ValueChanged?.Invoke(this);
             }
             catch
@@ -123,7 +126,13 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 string label = FlagDatabase.GetFlagLabel(objId, counter);
                 string? tip = FlagDatabase.GetFlagTooltip(objId, counter);
 
-                checkBox.Content = label;
+                TextBlock textBlock = new TextBlock
+                {
+                    Text = label,
+                    TextWrapping = Avalonia.Media.TextWrapping.Wrap
+                };
+
+                checkBox.Content = textBlock;
                 checkBox.IsChecked = (counter & flag) != 0;
                 checkBox.Margin = new Avalonia.Thickness(2);
 
@@ -137,12 +146,27 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 Grid.SetRow(checkBox, rowIndex++);
 
                 uint copy = counter;
-                checkBox.Click += delegate { flag ^= copy; ValueChanged?.Invoke(this); };
+                checkBox.Click += delegate
+                {
+                    flag ^= copy;
+                    textBox.Text = flag.ToString("X");
+                    ValueChanged?.Invoke(this);
+                };
 
                 counter <<= 1;
             }
 
             scrollViewer.Content = grid;
+        }
+
+        private void UpdateCheckboxes()
+        {
+            uint counter = 1;
+            for (int i = 0; i < checkedList.Count; i++)
+            {
+                checkedList[i].IsChecked = (counter & flag) != 0;
+                counter <<= 1;
+            }
         }
 
         private void UpdateGrid()

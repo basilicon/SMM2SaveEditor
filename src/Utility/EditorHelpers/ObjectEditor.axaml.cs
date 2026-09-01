@@ -159,7 +159,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     o = enumDropdown;
                 }
                 else
-                if (kvp.Key == "flag" || kvp.Key == "cflag")
+                if (kvp.Key.Contains("flag", StringComparison.OrdinalIgnoreCase))
                 {
                     FlagEditor flagEditor = new();
                     int? objId = null;
@@ -167,10 +167,14 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     {
                         objId = (int)obj.id;
                     }
-                    flagEditor.SetFlag((uint)kvp.Value, objId);
+                    else if (entity is SMM2SaveEditor.Entities.Track)
+                    {
+                        objId = -100;
+                    }
+                    flagEditor.SetFlag(Convert.ToUInt32(kvp.Value), objId);
                     flagEditor.ValueChanged += (o) =>
                     {
-                        ApplyOption(kvp.Key, (o as FlagEditor)!.flag);
+                        ApplyOption(kvp.Key, Convert.ChangeType((o as FlagEditor)!.flag, type));
                     };
 
                     o = flagEditor;

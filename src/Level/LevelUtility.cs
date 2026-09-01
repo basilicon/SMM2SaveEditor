@@ -194,6 +194,59 @@ namespace SMM2SaveEditor.Utility
         x3 = 3
     }
 
+    public enum IcicleType : byte
+    {
+        regular = 0,
+        fast_falling = 1
+    }
+
+    public enum TrackType : byte
+    {
+        horizontal = 0,
+        vertical = 1,
+        slope_up_right = 2,
+        slope_down_right = 3,
+        curve_upper_left = 4,
+        curve_upper_right = 5,
+        curve_lower_right = 6,
+        curve_lower_left = 7
+    }
+
+    public enum SoundEffectId : byte
+    {
+        shock = 0,
+        screaming = 1,
+        laughter = 2,
+        guillotine = 3,
+        applause = 4,
+        glory = 5,
+        punch = 6,
+        cheering = 7,
+        baby = 8,
+        applause_crowd = 9,
+        disco = 10,
+        flash = 11,
+        fireworks = 12,
+        heartbeat = 13,
+        silence = 14,
+        light_bulb = 15,
+        party_popper = 16,
+        audience = 17,
+        yeah = 18,
+        giggle = 19,
+        peace = 20,
+        oops = 21,
+        honk = 22,
+        ding_dong = 23,
+        bzzzt = 24,
+        boss_music = 25,
+        final_boss = 26,
+        super_mario_kart = 27,
+        super_mario_64 = 28,
+        super_mario_sunshine = 29,
+        super_mario_galaxy = 30
+    }
+
     public enum Maxes
     {
         Obj = 2600,

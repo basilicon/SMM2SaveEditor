@@ -47,7 +47,7 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            base.UpdateSprite();
         }
     }
 }

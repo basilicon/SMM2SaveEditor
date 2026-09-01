@@ -11,14 +11,14 @@ namespace SMM2SaveEditor.Entities
     {
         public event EventHandler PostSpriteUpdate;
 
-        ushort unknown1;
-        byte flags;
-        byte x;
-        byte y;
-        byte type;
-        ushort lid;
-        ushort unknown2;
-        ushort unknown3;
+        public ushort unknown1;
+        public byte flags;
+        public byte x;
+        public byte y;
+        public TrackType type;
+        public ushort lid;
+        public ushort unknown2;
+        public ushort unknown3;
 
         public Track() 
         {
@@ -34,13 +34,12 @@ namespace SMM2SaveEditor.Entities
             flags = io.ReadU1();
             x = io.ReadU1();
             y = io.ReadU1();
-            type = io.ReadU1();
+            type = (TrackType)io.ReadU1();
             lid = io.ReadU2le();
             unknown2 = io.ReadU2le();
             unknown3 = io.ReadU2le();
 
-            Canvas.SetLeft(this, x * 160);
-            Canvas.SetBottom(this, y * 160);
+            UpdateSprite();
         }
 
         public override byte[] GetBytes()
@@ -51,7 +50,7 @@ namespace SMM2SaveEditor.Entities
             bb.Append(flags);
             bb.Append(x);
             bb.Append(y);
-            bb.Append(type);
+            bb.Append((byte)type);
             bb.Append(lid);
             bb.Append(unknown2);
             bb.Append(unknown3);
@@ -61,7 +60,8 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
         }
     }
 }

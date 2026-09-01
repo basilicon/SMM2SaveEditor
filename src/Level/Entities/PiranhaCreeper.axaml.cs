@@ -11,10 +11,10 @@ namespace SMM2SaveEditor.Entities
     {
         public event EventHandler PostSpriteUpdate;
 
-        byte unknown1;
-        byte index;
-        byte unknown2;
-        List<PiranhaCreeperNode> nodes = new((int)Maxes.PiranhaCreeperNode);
+        public byte unknown1;
+        public byte index;
+        public byte unknown2;
+        public List<PiranhaCreeperNode> nodes = new((int)Maxes.PiranhaCreeperNode);
 
         public PiranhaCreeper()
         {
@@ -46,7 +46,7 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            base.UpdateSprite();
         }
     }
 }

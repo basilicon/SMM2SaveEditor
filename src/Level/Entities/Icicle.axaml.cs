@@ -9,10 +9,10 @@ namespace SMM2SaveEditor.Entities
     {
         public event EventHandler PostSpriteUpdate;
 
-        byte x;
-        byte y;
-        byte type;
-        byte unknown1;
+        public byte x;
+        public byte y;
+        public IcicleType type;
+        public byte unknown1;
 
         public Icicle()
         {
@@ -26,11 +26,10 @@ namespace SMM2SaveEditor.Entities
         {
             x = io.ReadU1();
             y = io.ReadU1();
-            type = io.ReadU1();
+            type = (IcicleType)io.ReadU1();
             unknown1 = io.ReadU1();
 
-            Canvas.SetLeft(this, x);
-            Canvas.SetBottom(this, y);
+            UpdateSprite();
         }
 
         public override byte[] GetBytes()
@@ -39,7 +38,7 @@ namespace SMM2SaveEditor.Entities
 
             bb.Append(x);
             bb.Append(y);
-            bb.Append(type);
+            bb.Append((byte)type);
             bb.Append(unknown1);
 
             return bb.GetBytes();
@@ -47,7 +46,8 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
         }
     }
 }

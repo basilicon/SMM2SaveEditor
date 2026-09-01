@@ -11,10 +11,10 @@ namespace SMM2SaveEditor.Entities
     {
         public event EventHandler PostSpriteUpdate;
 
-        byte id;
-        byte x;
-        byte y;
-        byte unknown1;
+        public SoundEffectId id;
+        public byte x;
+        public byte y;
+        public byte unknown1;
 
         public SoundEffect()
         {
@@ -26,20 +26,19 @@ namespace SMM2SaveEditor.Entities
 
         public override void LoadFromStream(KaitaiStream io)
         {
-            id = io.ReadU1();
+            id = (SoundEffectId)io.ReadU1();
             x = io.ReadU1();
             y = io.ReadU1();
             unknown1 = io.ReadU1();
 
-            Canvas.SetLeft(this, x * 160);
-            Canvas.SetBottom(this, y * 160);
+            UpdateSprite();
         }
 
         public override byte[] GetBytes()
         {
             ByteBuffer bb = new ByteBuffer(4);
 
-            bb.Append(id);
+            bb.Append((byte)id);
             bb.Append(x);
             bb.Append(y);
             bb.Append(unknown1);
@@ -49,7 +48,8 @@ namespace SMM2SaveEditor.Entities
 
         public override void UpdateSprite()
         {
-            throw new System.NotImplementedException();
+            Canvas.SetLeft(this, x * 160);
+            Canvas.SetBottom(this, y * 160);
         }
     }
 }

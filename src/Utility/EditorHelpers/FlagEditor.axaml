@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SMM2SaveEditor.Utility.EditorHelpers.FlagEditor">
-	<DockPanel>
-		<Button DockPanel.Dock="Right" Name="ToggleExpand">
-			Expand
-		</Button>
-		<ContentControl Margin="10" Name="FlagEditorArea">
-		</ContentControl>
-	</DockPanel>
+	<Grid RowDefinitions="Auto,Auto">
+		<DockPanel Grid.Row="0" Margin="0,0,0,5">
+			<Button DockPanel.Dock="Right" Name="ToggleExpand" Margin="5,0,0,0" VerticalAlignment="Center">
+				Expand
+			</Button>
+			<ContentControl Name="FlagSummaryArea"/>
+		</DockPanel>
+		<ContentControl Grid.Row="1" Name="FlagEditorArea"/>
+	</Grid>
 </UserControl>
