@@ -1,0 +1,57 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ publish ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Windows Standalone
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore SMM2SaveEditor.csproj
+
+      - name: Publish Standalone Windows x64
+        run: >
+          dotnet publish SMM2SaveEditor.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o ./publish/windows-x64
+
+      - name: Zip Build Output
+        shell: pwsh
+        run: |
+          Compress-Archive -Path ./publish/windows-x64/* -DestinationPath ./SMM2SaveEditor-win-x64.zip
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SMM2SaveEditor-Windows-x64
+          path: ./SMM2SaveEditor-win-x64.zip
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/publish'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest-publish' }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'Latest Publish Build' }}
+          files: ./SMM2SaveEditor-win-x64.zip
+          prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
