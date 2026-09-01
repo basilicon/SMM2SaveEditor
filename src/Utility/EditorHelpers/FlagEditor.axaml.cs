@@ -23,11 +23,13 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         public delegate void FlagEditorValueChangedHandler(object sender);
         public event FlagEditorValueChangedHandler ValueChanged;
 
+        public int? objId = null;
+
         public FlagEditor()
         {
             InitializeComponent();
 
-            contentControl = this.Find<ContentControl>("FlagEditorArea");
+            contentControl = this.Find<ContentControl>("FlagEditorArea")!;
 
             textBox = new();
             textBox.Text = flag.ToString("X");
@@ -41,13 +43,14 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             grid = new();
             SetupGrid();
 
-            toggleExpandButton = this.Find<Button>("ToggleExpand");
+            toggleExpandButton = this.Find<Button>("ToggleExpand")!;
             toggleExpandButton.Click += Button_Click;
         }
 
-        public void SetFlag(uint newFlag)
+        public void SetFlag(uint newFlag, int? newObjId = null)
         {
             flag = newFlag;
+            objId = newObjId;
             textBox.Text = flag.ToString("X");
             UpdateGrid();
         }
@@ -72,7 +75,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private void TextBox_TextChanged(object? sender, TextChangedEventArgs e)
         {
-            if (textBox.Text == "")
+            if (string.IsNullOrEmpty(textBox.Text))
             {
                 flag = 0; return;
             }
@@ -80,7 +83,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             try
             {
                 flag = uint.Parse(textBox.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
-                ValueChanged.Invoke(this);
+                ValueChanged?.Invoke(this);
             }
             catch
             {
@@ -90,22 +93,51 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private void SetupGrid()
         {
-            uint counter = 1;
-            int size = sizeof(uint) * 8;
+            grid.Children.Clear();
+            checkedList.Clear();
 
-            grid.RowDefinitions = new RowDefinitions(ObjectExtensions.EqualSpacingDefinition(size));
+            int size = sizeof(uint) * 8;
+            grid.RowDefinitions = new RowDefinitions(string.Join(",", System.Linq.Enumerable.Repeat("Auto", size + 1)));
+
+            uint counter = 1;
+            int rowIndex = 0;
+
+            string? notes = FlagDatabase.GetObjectNotes(objId);
+            if (!string.IsNullOrEmpty(notes))
+            {
+                TextBlock notesBlock = new TextBlock
+                {
+                    Text = notes,
+                    TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                    FontStyle = Avalonia.Media.FontStyle.Italic,
+                    Foreground = Avalonia.Media.Brushes.Gray,
+                    Margin = new Avalonia.Thickness(2, 2, 2, 6)
+                };
+                grid.Children.Add(notesBlock);
+                Grid.SetRow(notesBlock, rowIndex++);
+            }
 
             for (int i = 0; i < size; i++)
             {
                 CheckBox checkBox = new();
-                checkBox.Content = "0x" + counter.ToString("X");
+                string label = FlagDatabase.GetFlagLabel(objId, counter);
+                string? tip = FlagDatabase.GetFlagTooltip(objId, counter);
+
+                checkBox.Content = label;
                 checkBox.IsChecked = (counter & flag) != 0;
+                checkBox.Margin = new Avalonia.Thickness(2);
+
+                if (!string.IsNullOrEmpty(tip))
+                {
+                    ToolTip.SetTip(checkBox, tip);
+                }
+
                 grid.Children.Add(checkBox);
                 checkedList.Add(checkBox);
-                Grid.SetRow(checkBox, i);
+                Grid.SetRow(checkBox, rowIndex++);
 
                 uint copy = counter;
-                checkBox.Click += delegate { flag ^= copy; ValueChanged.Invoke(this); };
+                checkBox.Click += delegate { flag ^= copy; ValueChanged?.Invoke(this); };
 
                 counter <<= 1;
             }
@@ -115,13 +147,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private void UpdateGrid()
         {
-            uint counter = 1;
-
-            for (int i = 0; i < checkedList.Count; i++) 
-            {
-                checkedList[i].IsChecked = (counter & flag) != 0;
-                counter <<= 1;
-            }
+            SetupGrid();
         }
     }
 }

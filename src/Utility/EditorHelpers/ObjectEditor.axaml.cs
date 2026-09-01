@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using SMM2SaveEditor.Utility;
 using SMM2SaveEditor.Utility.EditorHelpers;
+using SMM2SaveEditor.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -161,7 +162,12 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 if (kvp.Key == "flag" || kvp.Key == "cflag")
                 {
                     FlagEditor flagEditor = new();
-                    flagEditor.SetFlag((uint)kvp.Value);
+                    int? objId = null;
+                    if (entity is Obj obj)
+                    {
+                        objId = (int)obj.id;
+                    }
+                    flagEditor.SetFlag((uint)kvp.Value, objId);
                     flagEditor.ValueChanged += (o) =>
                     {
                         ApplyOption(kvp.Key, (o as FlagEditor)!.flag);
