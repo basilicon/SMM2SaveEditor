@@ -12,8 +12,27 @@ permissions:
 
 jobs:
   build:
-    name: Build Windows Standalone
-    runs-on: windows-latest
+    name: Build (${{ matrix.target.os }})
+    runs-on: ${{ matrix.target.runs-on }}
+    strategy:
+      matrix:
+        target:
+          - os: Windows-x64
+            rid: win-x64
+            runs-on: windows-latest
+            archive: SMM2SaveEditor-win-x64.zip
+          - os: Linux-x64
+            rid: linux-x64
+            runs-on: ubuntu-latest
+            archive: SMM2SaveEditor-linux-x64.tar.gz
+          - os: macOS-arm64
+            rid: osx-arm64
+            runs-on: macos-latest
+            archive: SMM2SaveEditor-osx-arm64.tar.gz
+          - os: macOS-x64
+            rid: osx-x64
+            runs-on: macos-13
+            archive: SMM2SaveEditor-osx-x64.tar.gz
 
     steps:
       - name: Checkout Repository
@@ -27,26 +46,32 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore SMM2SaveEditor.csproj
 
-      - name: Publish Standalone Windows x64
+      - name: Publish Standalone Binary
         run: >
           dotnet publish SMM2SaveEditor.csproj
           -c Release
-          -r win-x64
+          -r ${{ matrix.target.rid }}
           --self-contained true
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
-          -o ./publish/windows-x64
+          -o ./publish/${{ matrix.target.rid }}
 
-      - name: Zip Build Output
+      - name: Archive Output (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          Compress-Archive -Path ./publish/windows-x64/* -DestinationPath ./SMM2SaveEditor-win-x64.zip
+          Compress-Archive -Path ./publish/${{ matrix.target.rid }}/* -DestinationPath ./${{ matrix.target.archive }}
+
+      - name: Archive Output (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          tar -czvf ./${{ matrix.target.archive }} -C ./publish/${{ matrix.target.rid }} .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SMM2SaveEditor-Windows-x64
-          path: ./SMM2SaveEditor-win-x64.zip
+          name: ${{ matrix.target.os }}
+          path: ./${{ matrix.target.archive }}
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/publish'
@@ -54,7 +79,7 @@ jobs:
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'latest-publish' }}
           name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'Latest Publish Build' }}
-          files: ./SMM2SaveEditor-win-x64.zip
+          files: ./${{ matrix.target.archive }}
           prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
