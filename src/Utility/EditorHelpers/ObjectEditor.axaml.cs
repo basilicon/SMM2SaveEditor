@@ -174,10 +174,10 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     o = enumDropdown;
                 }
                 else
-                if ((kvp.Key == "unknown2" || kvp.Key == "unknown3") && entity is Entities.Track)
+                if ((kvp.Key == "unknown2" || kvp.Key == "unknown3") && entity is Entities.Track trackEntity)
                 {
                     TrackEndpointEditor endpointEditor = new();
-                    endpointEditor.SetValue(Convert.ToUInt16(kvp.Value));
+                    endpointEditor.SetValue(Convert.ToUInt16(kvp.Value), trackEntity.type, kvp.Key == "unknown2" ? 1 : 2);
                     endpointEditor.ValueChanged += (val) =>
                     {
                         ApplyOption(kvp.Key, val);

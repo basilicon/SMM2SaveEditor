@@ -179,6 +179,12 @@ namespace SMM2SaveEditor
             }
         }
 
+        private void OnOpenSaveSlotManager(object sender, RoutedEventArgs e)
+        {
+            var window = new SMM2SaveEditor.Utility.EditorHelpers.SaveSlotManagerWindow(this);
+            window.Show(this);
+        }
+
         public static void RegisterBcdAssociation()
         {
             if (!OperatingSystem.IsWindows()) return;

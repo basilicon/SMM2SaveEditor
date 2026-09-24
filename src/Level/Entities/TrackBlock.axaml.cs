@@ -15,7 +15,7 @@ namespace SMM2SaveEditor.Entities
         public byte unknown1;
         public byte index;
         public byte unknown2;
-        List<TrackBlockNode> nodes = new((int)Maxes.TrackBlockNode);
+        public List<TrackBlockNode> nodes = new((int)Maxes.TrackBlockNode);
 
         public TrackBlock()
         {

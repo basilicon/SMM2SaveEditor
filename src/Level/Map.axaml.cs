@@ -147,8 +147,8 @@ namespace SMM2SaveEditor
                 Height = 4320;
             } else
             {
-                Width = 4320;
-                Height = 38400;
+                Width = 7680;
+                Height = 27200;
             }
 
             base.UpdateSprite();

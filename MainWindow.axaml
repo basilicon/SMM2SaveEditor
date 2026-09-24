@@ -14,6 +14,8 @@
 				<MenuItem Header="Save..." Click="OnSaveLevel"/>
 				<MenuItem Header="Export..." Click="OnExportLevel"/>
 				<Separator/>
+				<MenuItem Header="Save Slot Manager..." Click="OnOpenSaveSlotManager"/>
+				<Separator/>
 				<MenuItem Header="Register .bcd File Association in Windows" Click="OnRegisterAssociation"/>
 			</MenuItem>
 		</Menu>

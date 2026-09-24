@@ -67,12 +67,24 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             };
         }
 
-        public void SetValue(ushort value)
+        public void SetValue(ushort value, TrackType trackType = TrackType.horizontal, int endpointIndex = 1)
         {
-            UpdateInternal(value, refreshHex: true);
+            int typeId = (int)trackType;
+            int defaultPort = 0;
+            if (typeId >= 0 && typeId < Entities.Track.TrackPorts.Length)
+            {
+                var ports = Entities.Track.TrackPorts[typeId];
+                defaultPort = endpointIndex == 1 ? ports.port1 : ports.port2;
+            }
+
+            byte lo = (byte)(value & 0xFF);
+            int rawSocket = lo & 0x0F;
+            int displayPort = Entities.Track.ResolvePort(typeId, endpointIndex, rawSocket, defaultPort);
+
+            UpdateInternal(value, displayPort, refreshHex: true);
         }
 
-        private void UpdateInternal(ushort newValue, bool refreshHex = true)
+        private void UpdateInternal(ushort newValue, int? displayPort = null, bool refreshHex = true)
         {
             Value = newValue;
             isUpdating = true;
@@ -80,7 +92,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             try
             {
                 byte lo = (byte)(newValue & 0xFF);
-                int socketNum = lo & 0x0F;
+                int socketNum = displayPort ?? (lo & 0x0F);
                 bool isCapped = (lo & 0xF0) == 0x70;
 
                 if (socketNum >= 0 && socketNum <= 7)

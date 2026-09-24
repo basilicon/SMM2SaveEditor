@@ -122,9 +122,8 @@ namespace SMM2SaveEditor.Entities
                 byte u3_lo = (byte)(unknown3 & 0xFF);
                 byte u3_hi = (byte)(unknown3 >> 8);
 
-                // Use custom socket from byte if present, otherwise default topology port
-                int socket1 = (u2_lo & 0x0F) < 8 ? (u2_lo & 0x0F) : defaultP1;
-                int socket2 = (u3_lo & 0x0F) < 8 ? (u3_lo & 0x0F) : defaultP2;
+                int socket1 = ResolvePort(typeId, 1, u2_lo & 0x0F, defaultP1);
+                int socket2 = ResolvePort(typeId, 2, u3_lo & 0x0F, defaultP2);
 
                 if (defaultP3 == null)
                 {
@@ -146,7 +145,32 @@ namespace SMM2SaveEditor.Entities
             }
         }
 
-        private static readonly (int port1, int port2, int? port3)[] TrackPorts = new[]
+        public static int ResolvePort(int typeId, int endpointIndex, int socketValue, int defaultPort)
+        {
+            if (typeId >= 4 && typeId <= 7)
+            {
+                bool isNativeCurveTangent = (typeId == 4 && (endpointIndex == 1 ? socketValue == 1 : socketValue == 2))
+                                         || (typeId == 5 && (endpointIndex == 1 ? socketValue == 2 : socketValue == 0))
+                                         || (typeId == 6 && (endpointIndex == 1 ? socketValue == 1 : socketValue == 3))
+                                         || (typeId == 7 && (endpointIndex == 1 ? socketValue == 2 : socketValue == 0));
+
+                if (isNativeCurveTangent || socketValue == defaultPort)
+                {
+                    return defaultPort;
+                }
+
+                return socketValue;
+            }
+
+            if (socketValue >= 0 && socketValue <= 7)
+            {
+                return socketValue;
+            }
+
+            return defaultPort;
+        }
+
+        public static readonly (int port1, int port2, int? port3)[] TrackPorts = new[]
         {
             /* 0  horizontal        */ (1, 0, (int?)null),
             /* 1  vertical          */ (2, 3, (int?)null),

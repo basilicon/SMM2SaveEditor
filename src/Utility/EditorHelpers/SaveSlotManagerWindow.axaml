@@ -1,0 +1,69 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:util="using:SMM2SaveEditor.Utility"
+        x:Class="SMM2SaveEditor.Utility.EditorHelpers.SaveSlotManagerWindow"
+        Title="Coursebot Save Slot Manager"
+        Width="900" Height="650"
+        MinWidth="700" MinHeight="500"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="16">
+        <!-- Top Path Configuration -->
+        <Border DockPanel.Dock="Top" Background="#1AFFFFFF" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Save Folder:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Name="SavePathBox" Watermark="Path to emulator save folder (e.g. .../0000000000000001)" VerticalAlignment="Center"/>
+                <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Margin="8,0,0,0" Click="OnBrowseFolder"/>
+                <Button Grid.Row="0" Grid.Column="3" Content="Refresh" Margin="6,0,0,0" Click="OnRefresh"/>
+                <Button Grid.Row="0" Grid.Column="4" Content="Backup Save..." Margin="6,0,0,0" Click="OnBackupSave"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Name="DetectInfoText" 
+                           Foreground="#88FFFFFF" FontSize="11" Margin="0,6,0,0" 
+                           Text="Double-buffer detection: auto-syncs Switch subfolders '0' and '1' upon saving."/>
+            </Grid>
+        </Border>
+
+        <!-- Bottom Actions -->
+        <Border DockPanel.Dock="Bottom" Background="#1AFFFFFF" CornerRadius="8" Padding="12" Margin="0,12,0,0">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Name="StatusMessage" Text="Select a slot to manage." VerticalAlignment="Center" Foreground="#B0FFFFFF"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Name="LoadButton" Content="Load into Editor" Classes="accent" Click="OnLoadSlot"/>
+                    <Button Name="InjectButton" Content="Inject Current Level" Click="OnInjectLevel"/>
+                    <Button Name="ImportButton" Content="Import .bcd into Slot..." Click="OnImportBcd"/>
+                    <Button Name="ExportButton" Content="Export Slot to .bcd..." Click="OnExportBcd"/>
+                    <Button Content="Close" Click="OnClose"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Slot List -->
+        <Border Background="#0DFFFFFF" CornerRadius="8" Padding="8">
+            <ListBox Name="SlotsListBox" DoubleTapped="OnSlotDoubleTapped">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="util:SlotInfo">
+                        <Border Margin="2,4" Padding="10" CornerRadius="6" Background="#14FFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <!-- Slot ID Badge -->
+                                <Border Grid.Column="0" Background="#263E8C" CornerRadius="4" Padding="8,4" VerticalAlignment="Center" Margin="0,0,12,0">
+                                    <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" Foreground="White" FontSize="13"/>
+                                </Border>
+
+                                <!-- Level Name & Metadata -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" Foreground="White"/>
+                                    <TextBlock Text="{Binding StatusSummary}" FontSize="12" Foreground="#A0FFFFFF"/>
+                                </StackPanel>
+
+                                <!-- Modified Date / Status -->
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
+                                    <TextBlock Text="{Binding LastModified, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" FontSize="11" Foreground="#88FFFFFF" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{Binding Exists, Converter={x:Null}}" FontSize="11" HorizontalAlignment="Right"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </DockPanel>
+</Window>

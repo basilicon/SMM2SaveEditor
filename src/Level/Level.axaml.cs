@@ -93,6 +93,7 @@ namespace SMM2SaveEditor
             levelDescription = ReadNullTerminatedString(io.ReadBytes(202));
 
             overworld = new Map();
+            overworld.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
             levelGrid.Children.Add(overworld);
             Grid.SetColumn(overworld, 1);
             Grid.SetRow(overworld, 1);
@@ -100,6 +101,7 @@ namespace SMM2SaveEditor
             overworld.LoadFromStream(io);
 
             subworld = new Map();
+            subworld.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left;
             levelGrid.Children.Add(subworld);
             Grid.SetColumn(subworld, 1);
             Grid.SetRow(subworld, 3);
