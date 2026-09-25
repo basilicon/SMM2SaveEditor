@@ -56,6 +56,14 @@ namespace SMM2SaveEditor
             levelGrid.PointerPressed += OnClick!;
         }
 
+        public void RegenerateCreationId()
+        {
+            byte[] bytes = new byte[4];
+            using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+            rng.GetBytes(bytes);
+            unknownCreationId = BitConverter.ToUInt32(bytes, 0);
+        }
+
         public override void LoadFromStream(KaitaiStream io)
         {
             levelGrid.Children.RemoveAll(levelGrid.Children);

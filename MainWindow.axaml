@@ -1,36 +1,126 @@
 <Window x:Class="SMM2SaveEditor.MainWindow"
 		Height="1000" Width="1400"
-		MinWidth="600" MinHeight="300"
+		MinWidth="700" MinHeight="400"
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:paz="using:Avalonia.Controls.PanAndZoom"
 		xmlns:smm2="using:SMM2SaveEditor"
         WindowStartupLocation="CenterScreen" UseLayoutRounding="True"
-        Title="SMM2SaveEditor">
+        Title="SMM2 Course Editor">
 	<DockPanel>
+		<!-- Menu Bar -->
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
-				<MenuItem Header="Open..." Click="OnOpenLevel"/>
-				<MenuItem Header="Save..." Click="OnSaveLevel"/>
-				<MenuItem Header="Export..." Click="OnExportLevel"/>
+				<MenuItem Header="Open..." InputGesture="Ctrl+O" Click="OnOpenLevel"/>
+				<MenuItem Header="Save" InputGesture="Ctrl+S" Click="OnSaveLevel"/>
+				<MenuItem Header="Export..." InputGesture="Ctrl+Shift+S" Click="OnExportLevel"/>
 				<Separator/>
-				<MenuItem Header="Save Slot Manager..." Click="OnOpenSaveSlotManager"/>
+				<MenuItem Header="Save Slot Manager..." InputGesture="F3" Click="OnOpenSaveSlotManager"/>
 				<Separator/>
 				<MenuItem Header="Register .bcd File Association in Windows" Click="OnRegisterAssociation"/>
+				<Separator/>
+				<MenuItem Header="Exit" Click="OnExitApp"/>
+			</MenuItem>
+			<MenuItem Header="View">
+				<MenuItem Header="Zoom In" InputGesture="+" Click="OnZoomIn"/>
+				<MenuItem Header="Zoom Out" InputGesture="-" Click="OnZoomOut"/>
+				<MenuItem Header="Reset Zoom (100%)" InputGesture="R" Click="OnResetZoom"/>
+				<MenuItem Header="Fit to Window" InputGesture="Space" Click="OnZoomFit"/>
 			</MenuItem>
 		</Menu>
-		<Grid ColumnDefinitions="3*,5,*" Name="EditingArea">
+
+		<!-- SMM2 Quick Action Toolbar -->
+		<Border DockPanel.Dock="Top" Background="#181920" BorderBrush="#2A2D3A" BorderThickness="0,1,0,1" Padding="12,6">
+			<Grid ColumnDefinitions="Auto,*,Auto">
+				<!-- Left: Brand + Quick Actions -->
+				<StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="6">
+					<Border Background="{StaticResource SmmYellowBrush}" CornerRadius="4" Padding="7,3" Margin="0,0,6,0">
+						<TextBlock Text="SMM2" FontWeight="Black" FontSize="11" Foreground="#121316"/>
+					</Border>
+					<Button Classes="accent" Click="OnOpenLevel" ToolTip.Tip="Open Course (.bcd)">
+						<StackPanel Orientation="Horizontal" Spacing="4">
+							<TextBlock Text="📂" FontSize="11" VerticalAlignment="Center"/>
+							<TextBlock Text="Open" FontSize="12" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+					<Button Classes="toolbarBtn" Click="OnSaveLevel" ToolTip.Tip="Save Course (Ctrl+S)">
+						<StackPanel Orientation="Horizontal" Spacing="4">
+							<TextBlock Text="💾" FontSize="11" VerticalAlignment="Center"/>
+							<TextBlock Text="Save" FontSize="12" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+					<Button Classes="toolbarBtn" Click="OnExportLevel" ToolTip.Tip="Export to new file (Ctrl+Shift+S)">
+						<StackPanel Orientation="Horizontal" Spacing="4">
+							<TextBlock Text="📤" FontSize="11" VerticalAlignment="Center"/>
+							<TextBlock Text="Export" FontSize="12" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+					<Rectangle Width="1" Height="20" Fill="#2E3242" Margin="4,0"/>
+					<Button Classes="toolbarBtn" Click="OnOpenSaveSlotManager" ToolTip.Tip="Open Coursebot Save Slot Manager (F3)">
+						<StackPanel Orientation="Horizontal" Spacing="5">
+							<TextBlock Text="🗂️" FontSize="11" VerticalAlignment="Center"/>
+							<TextBlock Text="Save Slots" FontSize="12" VerticalAlignment="Center"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+
+				<!-- Center: Course Info Chip -->
+				<Border Grid.Column="1" HorizontalAlignment="Center" Background="#121317" BorderBrush="#2B2E3D" BorderThickness="1" CornerRadius="14" Padding="14,4">
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<TextBlock Name="CourseHeaderIcon" Text="⭐" FontSize="12" Foreground="{StaticResource SmmYellowBrush}" VerticalAlignment="Center"/>
+						<TextBlock Name="CourseHeaderTitle" Text="No Course Loaded" FontWeight="SemiBold" FontSize="12" Foreground="#D5D9E6" VerticalAlignment="Center"/>
+						<Border Name="CourseHeaderStyleBadge" Background="#282B37" CornerRadius="4" Padding="6,1" IsVisible="False" VerticalAlignment="Center">
+							<TextBlock Name="CourseHeaderStyleText" Text="" FontSize="10" FontWeight="Bold" Foreground="{StaticResource SmmYellowBrush}"/>
+						</Border>
+					</StackPanel>
+				</Border>
+
+				<!-- Right: Viewport Controls -->
+				<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="4">
+					<Button Classes="iconBtn" Click="OnZoomOut" ToolTip.Tip="Zoom Out (-)">
+						<TextBlock Text="−" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</Button>
+					<Button Classes="toolbarBtn" Click="OnZoomFit" ToolTip.Tip="Fit View to Window (Space)" Margin="2,0">
+						<TextBlock Text="⛶ Fit" FontSize="11" VerticalAlignment="Center"/>
+					</Button>
+					<Button Classes="iconBtn" Click="OnZoomIn" ToolTip.Tip="Zoom In (+)">
+						<TextBlock Text="+" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</Button>
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<!-- Bottom Status Bar -->
+		<Border DockPanel.Dock="Bottom" Background="#14151A" BorderBrush="#242733" BorderThickness="0,1,0,0" Padding="12,5">
+			<Grid ColumnDefinitions="Auto,*,Auto,Auto">
+				<StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+					<Border Width="8" Height="8" CornerRadius="4" Name="StatusDot" Background="#6C7284" VerticalAlignment="Center"/>
+					<TextBlock Name="StatusText" Text="Ready - Drop a .bcd file or click Open" FontSize="11" Foreground="#9AA0B2" VerticalAlignment="Center"/>
+				</StackPanel>
+
+				<TextBlock Grid.Column="2" Name="CoordsText" Text="X: 0  Y: 0" FontSize="11" Foreground="#6C7284" Margin="0,0,20,0" VerticalAlignment="Center"/>
+				<Border Grid.Column="3" Background="#1D1F27" CornerRadius="4" Padding="8,2" VerticalAlignment="Center">
+					<TextBlock Name="ZoomText" Text="Zoom: 100%" FontSize="11" FontWeight="Bold" Foreground="{StaticResource SmmYellowBrush}"/>
+				</Border>
+			</Grid>
+		</Border>
+
+		<!-- Main Workspace Area -->
+		<Grid ColumnDefinitions="3*,5,380" Name="EditingArea">
+			<!-- Canvas Column -->
 			<ScrollViewer Grid.Column="0"
-							  VerticalScrollBarVisibility="Auto"
-							  HorizontalScrollBarVisibility="Auto">
+						  VerticalScrollBarVisibility="Auto"
+						  HorizontalScrollBarVisibility="Auto">
 				<paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.2"
-								Background="SlateBlue" ClipToBounds="True" Focusable="True"
+								Background="#141519" ClipToBounds="True" Focusable="True"
 								RenderOptions.BitmapInterpolationMode="None"
 								VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 					<smm2:Level Name="Level" RenderOptions.BitmapInterpolationMode="None"/>
 				</paz:ZoomBorder>
 			</ScrollViewer>
-			<GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
+
+			<!-- Resizer Splitter -->
+			<GridSplitter Grid.Column="1" Background="#21232B" ResizeDirection="Columns" Width="5"/>
 		</Grid>
 	</DockPanel>
 </Window>

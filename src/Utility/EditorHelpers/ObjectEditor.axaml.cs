@@ -20,8 +20,11 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private StackPanel rootStackPanel;
         private Grid grid;
+        private Border? gridContainer;
         private TextBlock editorHeader;
         private ToggleButton expandButton;
+        private TextBlock? expandGlyph;
+        private Border? headerBorder;
 
         public ObjectEditor()
         {
@@ -29,36 +32,53 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             InitializeComponent();
 
             rootStackPanel = this.Find<StackPanel>("RootStackPanel")!;
-
             grid = this.Find<Grid>("EditorGrid")!;
-
+            gridContainer = this.Find<Border>("GridContainer");
             editorHeader = this.Find<TextBlock>("EditorHeader")!;
+            expandGlyph = this.Find<TextBlock>("ExpandGlyph");
+            headerBorder = this.Find<Border>("HeaderBorder");
 
             expandButton = this.Find<ToggleButton>("ExpandButton")!;
             expandButton.Click += (s, e) =>
             {
-                if (expandButton.IsChecked!.Value == false) // i hate null possible
+                if (expandButton.IsChecked == false)
                 {
                     HideEditorGrid();
-                } else
+                }
+                else
                 {
                     ShowEditorGrid();
                 }
             };
+
+            if (headerBorder != null)
+            {
+                headerBorder.PointerPressed += (s, e) =>
+                {
+                    if (expandButton.IsChecked == true)
+                    {
+                        HideEditorGrid();
+                    }
+                    else
+                    {
+                        ShowEditorGrid();
+                    }
+                };
+            }
         }
 
         private void ShowEditorGrid()
         {
-            if (rootStackPanel.Children.Contains(grid)) return;
-
-            rootStackPanel.Children.Add(grid);
-            expandButton.Content = "v";
+            if (gridContainer != null) gridContainer.IsVisible = true;
+            if (expandGlyph != null) expandGlyph.Text = "▼";
+            if (expandButton != null) expandButton.IsChecked = true;
         }
 
         private void HideEditorGrid()
         {
-            rootStackPanel.Children.Remove(grid);
-            expandButton.Content = ">";
+            if (gridContainer != null) gridContainer.IsVisible = false;
+            if (expandGlyph != null) expandGlyph.Text = "▶";
+            if (expandButton != null) expandButton.IsChecked = false;
         }
 
         // DEPRECATED
@@ -153,11 +173,13 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 textBlock.Text = labelText;
                 textBlock.TextAlignment = TextAlignment.Left;
                 textBlock.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                textBlock.MinHeight = 20;
+                textBlock.FontSize = 12;
+                textBlock.Foreground = new SolidColorBrush(Color.Parse("#A0A6B8"));
+                textBlock.MinHeight = 22;
                 grid.Children.Add(textBlock);
                 Grid.SetColumn(textBlock, 0);
                 Grid.SetRow(textBlock, counter);
-                textBlock.Margin = new Thickness(5);
+                textBlock.Margin = new Thickness(4, 3);
 
                 Type type = kvp.Value.GetType();
 
@@ -251,7 +273,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 grid.Children.Add(o);
                 Grid.SetColumn(o, 1);
                 Grid.SetRow(o, counter);
-                o.Margin = new Thickness(5);
+                o.Margin = new Thickness(4, 3);
 
                 counter++;
                 labels.Add(kvp.Key);

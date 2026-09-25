@@ -4,7 +4,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 >
-	<Canvas Background="CadetBlue" Name="MapCanvas"
+	<Canvas Background="#1B1E28" Name="MapCanvas"
 			HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 	</Canvas>
 </UserControl>

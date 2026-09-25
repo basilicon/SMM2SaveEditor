@@ -2,13 +2,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="300"
              x:Class="SMM2SaveEditor.Utility.EditorHelpers.ObjectEditor">
-	<StackPanel Spacing="5" Margin="10" Name="RootStackPanel">
-		<StackPanel Orientation="Horizontal" Spacing="5">
-			<ToggleButton Name="ExpandButton" IsChecked="True">v</ToggleButton>
-			<TextBlock Name="EditorHeader" FontSize="20" FontWeight="Bold">Header</TextBlock>
+	<Border Background="#1E202A" BorderBrush="#2D3142" BorderThickness="1" CornerRadius="8" Margin="0,4" ClipToBounds="True">
+		<StackPanel Spacing="0" Name="RootStackPanel">
+			<!-- Collapsible Section Header -->
+			<Border Background="#252836" Padding="12,8" BorderBrush="#2D3142" BorderThickness="0,0,0,1" Cursor="Hand" Name="HeaderBorder">
+				<Grid ColumnDefinitions="Auto,*,Auto">
+					<Border Grid.Column="0" Width="3" Height="14" CornerRadius="1.5" Background="{StaticResource SmmYellowBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+					<TextBlock Grid.Column="1" Name="EditorHeader" FontSize="13" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center">Header</TextBlock>
+					<ToggleButton Grid.Column="2" Name="ExpandButton" IsChecked="True" Width="24" Height="24" Padding="0" Background="Transparent" BorderThickness="0">
+						<TextBlock Name="ExpandGlyph" Text="▼" FontSize="10" Foreground="{StaticResource SmmYellowBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</ToggleButton>
+				</Grid>
+			</Border>
+
+			<!-- Properties Grid -->
+			<Border Name="GridContainer" Padding="10,8">
+				<Grid ColumnDefinitions="*,1.4*" Name="EditorGrid" VerticalAlignment="Top"/>
+			</Border>
 		</StackPanel>
-		<Grid ColumnDefinitions="*,*" Name="EditorGrid" VerticalAlignment="Top"/>
-	</StackPanel>
+	</Border>
 </UserControl>

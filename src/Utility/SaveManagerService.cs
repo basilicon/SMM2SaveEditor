@@ -13,6 +13,7 @@ namespace SMM2SaveEditor.Utility
         public int SlotIndex { get; set; }
         public string SlotId => $"{SlotIndex:D3}";
         public string DisplayName => $"Slot {SlotIndex:D3}";
+        public string InGameSlot => $"{(SlotIndex / 4) + 1}-{(SlotIndex % 4) + 1}";
         public string Title { get; set; } = "<Empty>";
         public string GameStyle { get; set; } = "";
         public string GameVersion { get; set; } = "";
@@ -21,6 +22,9 @@ namespace SMM2SaveEditor.Utility
         public DateTime? LastModified { get; set; }
         public bool Exists { get; set; }
         public bool IsCorrupted { get; set; }
+        public bool HasThumbnail { get; set; }
+        public string ThumbnailPath { get; set; } = "";
+        public Avalonia.Media.Imaging.Bitmap? ThumbnailBitmap { get; set; }
         public string StatusSummary { get; set; } = "Empty";
         public string FilePath { get; set; } = "";
     }
@@ -69,8 +73,21 @@ namespace SMM2SaveEditor.Utility
         public static List<string> GetTargetDirectories(string baseDir)
         {
             var targets = new List<string>();
-            string dir0 = Path.Combine(baseDir, "0");
-            string dir1 = Path.Combine(baseDir, "1");
+            string cleanDir = baseDir.TrimEnd('\\', '/');
+
+            // If user selected /0 or /1 directly, resolve parent
+            string dirName = Path.GetFileName(cleanDir);
+            string parent = Path.GetDirectoryName(cleanDir) ?? cleanDir;
+
+            if ((dirName == "0" || dirName == "1") && Directory.Exists(Path.Combine(parent, "0")) && Directory.Exists(Path.Combine(parent, "1")))
+            {
+                targets.Add(Path.Combine(parent, "0"));
+                targets.Add(Path.Combine(parent, "1"));
+                return targets;
+            }
+
+            string dir0 = Path.Combine(cleanDir, "0");
+            string dir1 = Path.Combine(cleanDir, "1");
 
             if (Directory.Exists(dir0) && Directory.Exists(dir1))
             {
@@ -79,7 +96,7 @@ namespace SMM2SaveEditor.Utility
             }
             else
             {
-                targets.Add(baseDir);
+                targets.Add(cleanDir);
             }
 
             return targets;
@@ -91,10 +108,20 @@ namespace SMM2SaveEditor.Utility
             if (string.IsNullOrWhiteSpace(baseDir) || !Directory.Exists(baseDir))
                 return slots;
 
-            // Pick active directory (either 1 or 0 whichever is newer, or baseDir)
-            string scanDir = baseDir;
-            string dir0 = Path.Combine(baseDir, "0");
-            string dir1 = Path.Combine(baseDir, "1");
+            string cleanDir = baseDir.TrimEnd('\\', '/');
+            string dirName = Path.GetFileName(cleanDir);
+            string parent = Path.GetDirectoryName(cleanDir) ?? cleanDir;
+
+            // Pick active directory (either 1 or 0 whichever is newer, or cleanDir)
+            string scanDir = cleanDir;
+            string dir0 = Path.Combine(cleanDir, "0");
+            string dir1 = Path.Combine(cleanDir, "1");
+
+            if ((dirName == "0" || dirName == "1") && Directory.Exists(Path.Combine(parent, "0")) && Directory.Exists(Path.Combine(parent, "1")))
+            {
+                dir0 = Path.Combine(parent, "0");
+                dir1 = Path.Combine(parent, "1");
+            }
 
             if (Directory.Exists(dir0) && Directory.Exists(dir1))
             {
@@ -114,7 +141,31 @@ namespace SMM2SaveEditor.Utility
                     FilePath = fullPath
                 };
 
-                if (File.Exists(fullPath))
+                string thumbFileName = $"course_thumb_{i:D3}.btl";
+                string thumbFullPath = Path.Combine(scanDir, thumbFileName);
+                if (File.Exists(thumbFullPath))
+                {
+                    info.HasThumbnail = true;
+                    info.ThumbnailPath = thumbFullPath;
+                    try
+                    {
+                        byte[] btlBytes = File.ReadAllBytes(thumbFullPath);
+                        byte[] imgBytes = ThumbnailCrypto.DecryptThumbnail(btlBytes);
+                        if (imgBytes != null && imgBytes.Length > 0)
+                        {
+                            using var ms = new MemoryStream(imgBytes);
+                            info.ThumbnailBitmap = new Avalonia.Media.Imaging.Bitmap(ms);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Thumbnail load failed for {thumbFileName}: {ex.Message}");
+                    }
+                }
+
+                bool isOccupiedInSave = SaveDataCrypto.GetSlotStatus(scanDir, i);
+
+                if (File.Exists(fullPath) && isOccupiedInSave)
                 {
                     info.Exists = true;
                     info.LastModified = File.GetLastWriteTime(fullPath);
@@ -154,7 +205,7 @@ namespace SMM2SaveEditor.Utility
             return slots;
         }
 
-        public static void WriteSlot(string baseDir, int slotIndex, byte[] encryptedBcd)
+        public static void WriteSlot(string baseDir, int slotIndex, byte[] encryptedBcd, byte[]? optionalBtl = null)
         {
             var targets = GetTargetDirectories(baseDir);
             string fileName = $"course_data_{slotIndex:D3}.bcd";
@@ -165,16 +216,82 @@ namespace SMM2SaveEditor.Utility
                     Directory.CreateDirectory(targetDir);
 
                 string destPath = Path.Combine(targetDir, fileName);
-
-                // Create backup of existing file
-                if (File.Exists(destPath))
-                {
-                    string backupPath = destPath + ".bak";
-                    try { File.Copy(destPath, backupPath, true); } catch { }
-                }
-
                 File.WriteAllBytes(destPath, encryptedBcd);
             }
+
+            if (optionalBtl != null && optionalBtl.Length > 0)
+            {
+                WriteThumbnail(baseDir, slotIndex, optionalBtl);
+            }
+            else
+            {
+                // Ensure a thumbnail exists for this slot. If not, generate a valid blank container
+                bool hasExistingThumb = false;
+                string thumbName = $"course_thumb_{slotIndex:D3}.btl";
+                foreach (var targetDir in targets)
+                {
+                    if (File.Exists(Path.Combine(targetDir, thumbName)))
+                    {
+                        hasExistingThumb = true;
+                        break;
+                    }
+                }
+
+                if (!hasExistingThumb)
+                {
+                    byte[] blankContainer = ThumbnailCrypto.EncryptThumbnail(Array.Empty<byte>());
+                    WriteThumbnail(baseDir, slotIndex, blankContainer);
+                }
+            }
+
+            // Automatically mark slot as OCCUPIED in save.dat
+            SaveDataCrypto.SetSlotStatus(baseDir, slotIndex, occupied: true);
+        }
+
+        public static bool WriteThumbnail(string baseDir, int slotIndex, byte[] btlBytes)
+        {
+            var targets = GetTargetDirectories(baseDir);
+            string fileName = $"course_thumb_{slotIndex:D3}.btl";
+
+            foreach (var targetDir in targets)
+            {
+                if (!Directory.Exists(targetDir))
+                    Directory.CreateDirectory(targetDir);
+
+                string destPath = Path.Combine(targetDir, fileName);
+                File.WriteAllBytes(destPath, btlBytes);
+            }
+
+            return true;
+        }
+
+        public static bool CopyThumbnail(string baseDir, int srcSlotIndex, int dstSlotIndex)
+        {
+            var targets = GetTargetDirectories(baseDir);
+            string srcFileName = $"course_thumb_{srcSlotIndex:D3}.btl";
+
+            byte[]? btlBytes = null;
+            foreach (var targetDir in targets)
+            {
+                string srcPath = Path.Combine(targetDir, srcFileName);
+                if (File.Exists(srcPath))
+                {
+                    btlBytes = File.ReadAllBytes(srcPath);
+                    break;
+                }
+            }
+
+            if (btlBytes == null || btlBytes.Length == 0) return false;
+
+            return WriteThumbnail(baseDir, dstSlotIndex, btlBytes);
+        }
+
+        public static bool DeleteThumbnail(string baseDir, int slotIndex)
+        {
+            // In SMM2, empty slots have a 114,688-byte encrypted container filled with zeros.
+            // Completely removing the file causes the game to report a missing file / corruption!
+            byte[] blankContainer = ThumbnailCrypto.EncryptThumbnail(Array.Empty<byte>());
+            return WriteThumbnail(baseDir, slotIndex, blankContainer);
         }
 
         public static string BackupSaveDirectory(string baseDir)

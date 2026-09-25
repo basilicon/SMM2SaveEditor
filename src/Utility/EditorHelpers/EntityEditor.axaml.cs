@@ -17,6 +17,9 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         private Entity? objRef = null;
 
         private StackPanel editorStack;
+        private Border emptyStatePanel;
+        private TextBlock entityTypeBadge;
+        private Border entityTypeBadgeContainer;
 
         public EntityEditor()
         {
@@ -24,15 +27,24 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             InitializeComponent();
 
             editorStack = this.Find<StackPanel>("EditorStack")!;
+            emptyStatePanel = this.Find<Border>("EmptyStatePanel")!;
+            entityTypeBadge = this.Find<TextBlock>("EntityTypeBadge")!;
+            entityTypeBadgeContainer = this.Find<Border>("EntityTypeBadgeContainer")!;
+
+            UpdateVisibility();
         }
 
         public void OpenOptions(Entity entity)
         {
-            editorStack.Children.RemoveAll(editorStack.Children);
+            editorStack.Children.Clear();
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
             objRef = entity;
+            if (entityTypeBadge != null)
+            {
+                entityTypeBadge.Text = entity.GetType().Name;
+            }
 
             foreach (Type t in entity.GetType().GetInheritanceHierarchy())
             {
@@ -43,6 +55,26 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 Debug.WriteLine(t.Name);
             }
 
+            UpdateVisibility();
+        }
+
+        public void ClearSelection()
+        {
+            objRef = null;
+            editorStack.Children.Clear();
+            if (entityTypeBadge != null)
+            {
+                entityTypeBadge.Text = string.Empty;
+            }
+            UpdateVisibility();
+        }
+
+        private void UpdateVisibility()
+        {
+            bool hasEntity = objRef != null && editorStack.Children.Count > 0;
+            if (emptyStatePanel != null) emptyStatePanel.IsVisible = !hasEntity;
+            if (editorStack != null) editorStack.IsVisible = hasEntity;
+            if (entityTypeBadgeContainer != null) entityTypeBadgeContainer.IsVisible = hasEntity;
         }
     }
 }

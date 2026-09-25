@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using SMM2SaveEditor;
 using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
@@ -27,13 +28,29 @@ namespace SMM2SaveEditor
         private IStorageBookmarkFile? storageBookmarkFile;
         private string? currentFilePath;
 
+        private TextBlock? courseHeaderTitle;
+        private Border? courseHeaderStyleBadge;
+        private TextBlock? courseHeaderStyleText;
+        private Border? statusDot;
+        private TextBlock? statusText;
+        private TextBlock? coordsText;
+        private TextBlock? zoomText;
+
         public MainWindow()
         {
             Instance = this;
 
             this.InitializeComponent();
 
-            level = this.Find<Level>("Level");
+            level = this.Find<Level>("Level")!;
+
+            courseHeaderTitle = this.Find<TextBlock>("CourseHeaderTitle");
+            courseHeaderStyleBadge = this.Find<Border>("CourseHeaderStyleBadge");
+            courseHeaderStyleText = this.Find<TextBlock>("CourseHeaderStyleText");
+            statusDot = this.Find<Border>("StatusDot");
+            statusText = this.Find<TextBlock>("StatusText");
+            coordsText = this.Find<TextBlock>("CoordsText");
+            zoomText = this.Find<TextBlock>("ZoomText");
 
             entityEditor = new();
             this.Find<Grid>("EditingArea")?.Children.Add(entityEditor);
@@ -43,7 +60,22 @@ namespace SMM2SaveEditor
             if (zoomBorder == null) throw new MissingMemberException("No zoom border found!");
             zoomBorder.KeyDown += (s, e) =>
             {
-                if (e.Key == Avalonia.Input.Key.Space) zoomBorder.UniformToFill();
+                if (e.Key == Avalonia.Input.Key.Space) { zoomBorder.UniformToFill(); UpdateZoomText(); }
+                if (e.Key == Avalonia.Input.Key.R) { zoomBorder.ResetMatrix(); UpdateZoomText(); }
+                if (e.Key == Avalonia.Input.Key.OemPlus) { zoomBorder.ZoomIn(); UpdateZoomText(); }
+                if (e.Key == Avalonia.Input.Key.OemMinus) { zoomBorder.ZoomOut(); UpdateZoomText(); }
+            };
+            zoomBorder.PointerWheelChanged += (s, e) =>
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(UpdateZoomText);
+            };
+            zoomBorder.PointerMoved += (s, e) =>
+            {
+                if (level != null && coordsText != null)
+                {
+                    var pos = e.GetPosition(level);
+                    coordsText.Text = $"X: {(int)pos.X}  Y: {(int)pos.Y}";
+                }
             };
 
             var iconPath = AssetHelper.GetAssetFilePath("Assets/smm2saveeditor.ico");
@@ -60,6 +92,44 @@ namespace SMM2SaveEditor
             AddHandler(DragDrop.DropEvent, OnDrop);
 
             Debug.WriteLine("Launched application!");
+        }
+
+        private void UpdateZoomText()
+        {
+            if (zoomBorder != null && zoomText != null)
+            {
+                int pct = (int)Math.Round(zoomBorder.ZoomX * 100);
+                zoomText.Text = $"Zoom: {pct}%";
+            }
+        }
+
+        private void OnZoomIn(object? sender, RoutedEventArgs e)
+        {
+            zoomBorder?.ZoomIn();
+            UpdateZoomText();
+        }
+
+        private void OnZoomOut(object? sender, RoutedEventArgs e)
+        {
+            zoomBorder?.ZoomOut();
+            UpdateZoomText();
+        }
+
+        private void OnZoomFit(object? sender, RoutedEventArgs e)
+        {
+            zoomBorder?.UniformToFill();
+            UpdateZoomText();
+        }
+
+        private void OnResetZoom(object? sender, RoutedEventArgs e)
+        {
+            zoomBorder?.ResetMatrix();
+            UpdateZoomText();
+        }
+
+        private void OnExitApp(object? sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void InitializeComponent()
@@ -131,6 +201,8 @@ namespace SMM2SaveEditor
             byte[] encrypted = LevelCrypto.EncryptLevel(level.GetBytes());
             File.WriteAllBytes(picked.Path.LocalPath, encrypted);
             currentFilePath = picked.Path.LocalPath;
+            if (statusDot != null && this.TryFindResource("SmmGreenBrush", out var greenBrush)) statusDot.Background = (IBrush)greenBrush!;
+            if (statusText != null) statusText.Text = $"Exported to {Path.GetFileName(picked.Path.LocalPath)}";
             Debug.WriteLine("Completed export. Happy trolling!");
         }
 
@@ -145,6 +217,8 @@ namespace SMM2SaveEditor
 
             byte[] encrypted = LevelCrypto.EncryptLevel(level.GetBytes());
             await File.WriteAllBytesAsync(savePath, encrypted);
+            if (statusDot != null && this.TryFindResource("SmmGreenBrush", out var greenBrush)) statusDot.Background = (IBrush)greenBrush!;
+            if (statusText != null) statusText.Text = $"Saved to {Path.GetFileName(savePath)}";
             Debug.WriteLine($"Saved level to {savePath}");
         }
 
@@ -158,11 +232,21 @@ namespace SMM2SaveEditor
                 byte[] bytes = await File.ReadAllBytesAsync(path);
                 bytes = LevelCrypto.DecryptLevel(bytes);
                 level.LoadFromStream(new KaitaiStream(bytes));
-                Title = $"SMM2SaveEditor - {Path.GetFileName(path)}";
+
+                string displayName = !string.IsNullOrWhiteSpace(level.levelName) ? level.levelName : Path.GetFileName(path);
+                Title = $"SMM2 Course Editor - {displayName}";
+                if (courseHeaderTitle != null) courseHeaderTitle.Text = displayName;
+                if (courseHeaderStyleBadge != null) courseHeaderStyleBadge.IsVisible = true;
+                if (courseHeaderStyleText != null) courseHeaderStyleText.Text = level.gameStyle.ToString();
+                if (statusDot != null && this.TryFindResource("SmmGreenBrush", out var greenBrush)) statusDot.Background = (IBrush)greenBrush!;
+                if (statusText != null) statusText.Text = $"Loaded: {Path.GetFileName(path)} ({(bytes.Length / 1024)} KB)";
+                UpdateZoomText();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                if (statusDot != null && this.TryFindResource("SmmRedBrush", out var redBrush)) statusDot.Background = (IBrush)redBrush!;
+                if (statusText != null) statusText.Text = $"Error: {ex.Message}";
             }
         }
 

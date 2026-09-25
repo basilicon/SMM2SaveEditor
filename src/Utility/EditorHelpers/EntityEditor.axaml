@@ -2,10 +2,53 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="500"
+             mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="600"
              x:Class="SMM2SaveEditor.Utility.EditorHelpers.EntityEditor" 
-			 Background="DarkGray">
-	<ScrollViewer HorizontalScrollBarVisibility="Auto">
-		<StackPanel Name="EditorStack" Orientation="Vertical"/>
-	</ScrollViewer>
+			 Background="#181921">
+	<DockPanel>
+		<!-- Inspector Header -->
+		<Border DockPanel.Dock="Top" Background="#1D1E28" BorderBrush="#2A2D3C" BorderThickness="0,0,0,1" Padding="14,10">
+			<Grid ColumnDefinitions="Auto,*,Auto">
+				<StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+					<Border Width="4" Height="14" Background="{StaticResource SmmYellowBrush}" CornerRadius="2"/>
+					<TextBlock Text="INSPECTOR" FontWeight="Bold" FontSize="11" Foreground="{StaticResource SmmYellowBrush}" LetterSpacing="1"/>
+				</StackPanel>
+
+				<!-- Current Entity Type Pill -->
+				<Border Grid.Column="2" Name="EntityTypeBadgeContainer" Background="#262938" CornerRadius="4" Padding="8,2" VerticalAlignment="Center">
+					<TextBlock Name="EntityTypeBadge" Text="" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+				</Border>
+			</Grid>
+		</Border>
+
+		<!-- Content Area -->
+		<Grid>
+			<!-- Empty State -->
+			<Border Name="EmptyStatePanel" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24" Padding="20">
+				<StackPanel Spacing="12" HorizontalAlignment="Center">
+					<Border Width="56" Height="56" CornerRadius="28" Background="#222432" HorizontalAlignment="Center" BorderBrush="#2E3244" BorderThickness="1">
+						<TextBlock Text="🛠️" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</Border>
+					<TextBlock Text="No Entity Selected" FontWeight="Bold" FontSize="15" Foreground="#E0E4F0" HorizontalAlignment="Center"/>
+					<TextBlock Text="Click any block, track, or entity on the level canvas to inspect and edit its properties." 
+							   TextWrapping="Wrap" FontSize="12" Foreground="#7E8599" TextAlignment="Center" MaxWidth="240" LineHeight="18"/>
+					
+					<Border Background="#1C1E26" BorderBrush="#282B3A" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,12,0,0">
+						<StackPanel Spacing="4">
+							<TextBlock Text="QUICK SHORTCUTS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource SmmYellowBrush}"/>
+							<TextBlock Text="Space  — Fit view to window" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="Scroll  — Zoom in / out" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="Drag    — Pan around canvas" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="R        — Reset zoom matrix" FontSize="11" Foreground="#9AA0B2"/>
+						</StackPanel>
+					</Border>
+				</StackPanel>
+			</Border>
+
+			<!-- Active Entity Options -->
+			<ScrollViewer Name="EditorScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+				<StackPanel Name="EditorStack" Orientation="Vertical" Spacing="4" Margin="6,8"/>
+			</ScrollViewer>
+		</Grid>
+	</DockPanel>
 </UserControl>

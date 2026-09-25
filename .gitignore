@@ -11,3 +11,10 @@ levels
 
 log.txt
 publish/
+
+# Reverse engineering and research artifacts
+decomp/
+dumped_thumbnails/
+test_thumbnails/
+*.bin
+__pycache__/

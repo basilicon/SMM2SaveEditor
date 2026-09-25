@@ -1,14 +1,151 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="SMM2SaveEditor.App"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
 	<Application.Resources>
+		<!-- SMM2 Brand Colors -->
+		<Color x:Key="SmmYellow">#FFCE00</Color>
+		<Color x:Key="SmmYellowHover">#FFE042</Color>
+		<Color x:Key="SmmYellowPressed">#E5A800</Color>
+		<Color x:Key="SmmRed">#FF4757</Color>
+		<Color x:Key="SmmGreen">#2ED573</Color>
+		<Color x:Key="SmmBlue">#2E86DE</Color>
 		
+		<!-- Surfaces & Backgrounds -->
+		<Color x:Key="AppBackground">#131417</Color>
+		<Color x:Key="PanelBackground">#1A1B22</Color>
+		<Color x:Key="CardBackground">#22242E</Color>
+		<Color x:Key="CardBackgroundHover">#2A2D3A</Color>
+		<Color x:Key="InputBackground">#16171D</Color>
+		<Color x:Key="BorderSubtle">#2F3342</Color>
 		
+		<!-- SolidColorBrushes -->
+		<SolidColorBrush x:Key="SmmYellowBrush" Color="{StaticResource SmmYellow}"/>
+		<SolidColorBrush x:Key="SmmYellowHoverBrush" Color="{StaticResource SmmYellowHover}"/>
+		<SolidColorBrush x:Key="SmmYellowPressedBrush" Color="{StaticResource SmmYellowPressed}"/>
+		<SolidColorBrush x:Key="SmmRedBrush" Color="{StaticResource SmmRed}"/>
+		<SolidColorBrush x:Key="SmmGreenBrush" Color="{StaticResource SmmGreen}"/>
+		<SolidColorBrush x:Key="SmmBlueBrush" Color="{StaticResource SmmBlue}"/>
+		
+		<SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackground}"/>
+		<SolidColorBrush x:Key="PanelBackgroundBrush" Color="{StaticResource PanelBackground}"/>
+		<SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackground}"/>
+		<SolidColorBrush x:Key="CardBackgroundHoverBrush" Color="{StaticResource CardBackgroundHover}"/>
+		<SolidColorBrush x:Key="InputBackgroundBrush" Color="{StaticResource InputBackground}"/>
+		<SolidColorBrush x:Key="BorderSubtleBrush" Color="{StaticResource BorderSubtle}"/>
+		<SolidColorBrush x:Key="BorderHoverBrush" Color="{StaticResource SmmYellow}"/>
+		
+		<SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFFFFF"/>
+		<SolidColorBrush x:Key="TextSecondaryBrush" Color="#A0A6B8"/>
+		<SolidColorBrush x:Key="TextMutedBrush" Color="#6C7284"/>
 	</Application.Resources>
 	
     <Application.Styles>
         <FluentTheme />
+		
+		<!-- Global Window Style -->
+		<Style Selector="Window">
+			<Setter Property="Background" Value="{StaticResource AppBackgroundBrush}"/>
+			<Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+			<Setter Property="FontFamily" Value="Segoe UI, Inter, Arial, sans-serif"/>
+		</Style>
+		
+		<!-- SMM2 Accent Button -->
+		<Style Selector="Button.accent">
+			<Setter Property="Background" Value="{StaticResource SmmYellowBrush}"/>
+			<Setter Property="Foreground" Value="#131417"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="14,6"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+		<Style Selector="Button.accent:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="{StaticResource SmmYellowHoverBrush}"/>
+			<Setter Property="Foreground" Value="#0D0E10"/>
+		</Style>
+		<Style Selector="Button.accent:pressed /template/ ContentPresenter">
+			<Setter Property="Background" Value="{StaticResource SmmYellowPressedBrush}"/>
+			<Setter Property="Foreground" Value="#000000"/>
+		</Style>
+
+		<!-- Toolbar Button -->
+		<Style Selector="Button.toolbarBtn">
+			<Setter Property="Background" Value="#22242E"/>
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="10,6"/>
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+		<Style Selector="Button.toolbarBtn:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="#2E313E"/>
+			<Setter Property="BorderBrush" Value="{StaticResource SmmYellowBrush}"/>
+			<Setter Property="Foreground" Value="{StaticResource SmmYellowBrush}"/>
+		</Style>
+		<Style Selector="Button.toolbarBtn:pressed /template/ ContentPresenter">
+			<Setter Property="Background" Value="#1B1C22"/>
+		</Style>
+
+		<!-- Icon-only Toolbar Button -->
+		<Style Selector="Button.iconBtn">
+			<Setter Property="Background" Value="#22242E"/>
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Width" Value="32"/>
+			<Setter Property="Height" Value="30"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Cursor" Value="Hand"/>
+		</Style>
+		<Style Selector="Button.iconBtn:pointerover /template/ ContentPresenter">
+			<Setter Property="Background" Value="#2E313E"/>
+			<Setter Property="BorderBrush" Value="{StaticResource SmmYellowBrush}"/>
+			<Setter Property="Foreground" Value="{StaticResource SmmYellowBrush}"/>
+		</Style>
+
+		<!-- Standard Buttons -->
+		<Style Selector="Button">
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
+		</Style>
+		<Style Selector="Button:pointerover /template/ ContentPresenter">
+			<Setter Property="BorderBrush" Value="{StaticResource SmmYellowBrush}"/>
+		</Style>
+
+		<!-- Inputs: TextBox & NumericUpDown -->
+		<Style Selector="TextBox">
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Background" Value="{StaticResource InputBackgroundBrush}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
+			<Setter Property="SelectionBrush" Value="{StaticResource SmmYellowBrush}"/>
+		</Style>
+		<Style Selector="TextBox:focus /template/ Border">
+			<Setter Property="BorderBrush" Value="{StaticResource SmmYellowBrush}"/>
+		</Style>
+		<Style Selector="NumericUpDown">
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Background" Value="{StaticResource InputBackgroundBrush}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
+		</Style>
+		<Style Selector="ComboBox">
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Background" Value="{StaticResource InputBackgroundBrush}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource BorderSubtleBrush}"/>
+		</Style>
+
+		<!-- Menu Bar Styling -->
+		<Style Selector="Menu">
+			<Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+			<Setter Property="Height" Value="32"/>
+		</Style>
+		<Style Selector="MenuItem">
+			<Setter Property="FontSize" Value="12"/>
+		</Style>
     </Application.Styles>
 </Application>
