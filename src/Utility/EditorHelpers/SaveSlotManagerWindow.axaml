@@ -30,6 +30,8 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Grid.Column="0" Name="StatusMessage" Text="Select a slot to manage." VerticalAlignment="Center" Foreground="#9AA0B2" FontSize="12"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                        <Button Name="UnhideButton" Content="👁️ Unhide in Coursebot" Classes="accent" Click="OnUnhideSlot" ToolTip.Tip="Reactivate this hidden course in save.dat so it appears in SMM2 Coursebot"/>
+                        <Button Name="DiagnoseButton" Content="🔍 Health Diagnostics..." Classes="toolbarBtn" Click="OnOpenDiagnostics" ToolTip.Tip="Inspect SMM2 engine integrity, corruption reasons, and checksums"/>
                         <Button Name="LoadButton" Content="Load into Editor" Classes="accent" Click="OnLoadSlot"/>
                         <Button Name="InjectButton" Content="Inject Current Level" Classes="toolbarBtn" Click="OnInjectLevel"/>
                         <Button Name="ImportButton" Content="Import .bcd into Slot..." Classes="toolbarBtn" Click="OnImportBcd"/>
@@ -74,17 +76,23 @@
                     <DataTemplate x:DataType="util:SlotInfo">
                         <Panel MinHeight="140" Margin="4">
                             <!-- Populated Slot Card -->
-                            <Border IsVisible="{Binding Exists}" CornerRadius="8" Background="#202330" BorderBrush="#2E3346" BorderThickness="1" Padding="10">
+                            <Border IsVisible="{Binding Exists}" CornerRadius="8" Background="#202330" BorderBrush="{Binding HealthBadgeBorder}" BorderThickness="1.5" Padding="10">
                                 <Grid RowDefinitions="Auto,*,Auto">
                                     <!-- Header Row -->
-                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,*,Auto" Margin="0,0,0,8">
+                                    <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,0,0,8">
                                         <!-- In-game slot indicator e.g. 1-1, 1-2 -->
                                         <Border Grid.Column="0" Background="{StaticResource SmmYellowBrush}" CornerRadius="4" Padding="7,2" Margin="0,0,6,0">
                                             <TextBlock Text="{Binding InGameSlot}" FontWeight="Black" FontSize="11" Foreground="#121316"/>
                                         </Border>
                                         <TextBlock Grid.Column="1" Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="11" Foreground="#8A92A6" VerticalAlignment="Center"/>
+
+                                        <!-- Health Badge Pill -->
+                                        <Border Grid.Column="3" Background="{Binding HealthBadgeBackground}" BorderBrush="{Binding HealthBadgeBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1" Margin="0,0,6,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding HealthBadgeText}" FontWeight="Bold" FontSize="10" Foreground="{Binding HealthBadgeForeground}"/>
+                                        </Border>
+
                                         <!-- Game Style Pill -->
-                                        <Border Grid.Column="3" Background="#263152" BorderBrush="#38497A" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
+                                        <Border Grid.Column="4" Background="#263152" BorderBrush="#38497A" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding GameStyle}" FontWeight="Bold" FontSize="10" Foreground="#8BB7FF"/>
                                         </Border>
                                     </Grid>

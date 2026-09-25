@@ -22,6 +22,47 @@ namespace SMM2SaveEditor.Utility
         public DateTime? LastModified { get; set; }
         public bool Exists { get; set; }
         public bool IsCorrupted { get; set; }
+        public bool IsHiddenInCoursebot { get; set; }
+        public bool IsOccupiedInSave { get; set; }
+        public SlotHealthStatus HealthStatus { get; set; } = SlotHealthStatus.Empty;
+
+        public string HealthBadgeText => HealthStatus switch
+        {
+            SlotHealthStatus.Healthy => "🟢 Active",
+            SlotHealthStatus.HiddenInCoursebot => "⚠️ Hidden in Coursebot",
+            SlotHealthStatus.Corrupted => "❌ Corrupted",
+            _ => "⚪ Empty"
+        };
+
+        public string HealthBadgeBackground => HealthStatus switch
+        {
+            SlotHealthStatus.Healthy => "#193B26",
+            SlotHealthStatus.HiddenInCoursebot => "#4A3210",
+            SlotHealthStatus.Corrupted => "#421818",
+            _ => "#242735"
+        };
+
+        public string HealthBadgeForeground => HealthStatus switch
+        {
+            SlotHealthStatus.Healthy => "#2ECC71",
+            SlotHealthStatus.HiddenInCoursebot => "#F39C12",
+            SlotHealthStatus.Corrupted => "#E74C3C",
+            _ => "#6C7284"
+        };
+
+        public string HealthBadgeBorder => HealthStatus switch
+        {
+            SlotHealthStatus.Healthy => "#27AE60",
+            SlotHealthStatus.HiddenInCoursebot => "#E67E22",
+            SlotHealthStatus.Corrupted => "#C0392B",
+            _ => "#32364A"
+        };
+
+        public bool CanUnhide => HealthStatus == SlotHealthStatus.HiddenInCoursebot;
+        public bool CanRepairThumbnail => HealthReport?.CanRepairThumbnail ?? false;
+        public string PrimaryCorruptionReason { get; set; } = "";
+        public CourseHealthReport? HealthReport { get; set; }
+
         public bool HasThumbnail { get; set; }
         public string ThumbnailPath { get; set; } = "";
         public Avalonia.Media.Imaging.Bitmap? ThumbnailBitmap { get; set; }
@@ -130,6 +171,8 @@ namespace SMM2SaveEditor.Utility
                 scanDir = t1 >= t0 ? dir1 : dir0;
             }
 
+            bool[] allStatuses = SaveDataCrypto.GetAllSlotStatuses(scanDir);
+
             for (int i = 0; i < maxSlots; i++)
             {
                 string fileName = $"course_data_{i:D3}.bcd";
@@ -140,6 +183,15 @@ namespace SMM2SaveEditor.Utility
                     SlotIndex = i,
                     FilePath = fullPath
                 };
+
+                // Run reverse-engineered engine integrity diagnostics
+                bool slotOccupied = allStatuses != null && i < allStatuses.Length ? allStatuses[i] : false;
+                var report = CourseDiagnostics.DiagnoseSlot(scanDir, i, slotOccupied);
+                info.HealthReport = report;
+                info.HealthStatus = report.Status;
+                info.IsOccupiedInSave = report.IsOccupiedInSave;
+                info.PrimaryCorruptionReason = report.PrimaryReason;
+                info.IsHiddenInCoursebot = report.Status == SlotHealthStatus.HiddenInCoursebot;
 
                 string thumbFileName = $"course_thumb_{i:D3}.btl";
                 string thumbFullPath = Path.Combine(scanDir, thumbFileName);
@@ -163,9 +215,7 @@ namespace SMM2SaveEditor.Utility
                     }
                 }
 
-                bool isOccupiedInSave = SaveDataCrypto.GetSlotStatus(scanDir, i);
-
-                if (File.Exists(fullPath) && isOccupiedInSave)
+                if (report.Status == SlotHealthStatus.Healthy || report.Status == SlotHealthStatus.HiddenInCoursebot)
                 {
                     info.Exists = true;
                     info.LastModified = File.GetLastWriteTime(fullPath);
@@ -183,14 +233,28 @@ namespace SMM2SaveEditor.Utility
                         info.GameVersion = lvl.gameVersion.ToString();
                         info.OverworldObjects = lvl.overworld.objects.Count;
                         info.SubworldObjects = lvl.subworld.objects.Count;
-                        info.StatusSummary = $"{info.GameStyle} | OW: {info.OverworldObjects} | SW: {info.SubworldObjects}";
+
+                        string prefix = info.IsHiddenInCoursebot ? "[HIDDEN] " : "";
+                        info.StatusSummary = $"{prefix}{info.GameStyle} | OW: {info.OverworldObjects} | SW: {info.SubworldObjects}";
                     }
                     catch (Exception ex)
                     {
                         info.IsCorrupted = true;
+                        info.HealthStatus = SlotHealthStatus.Corrupted;
                         info.Title = "[Corrupted/Unreadable]";
                         info.StatusSummary = $"Decrypt failed: {ex.Message}";
                     }
+                }
+                else if (report.Status == SlotHealthStatus.Corrupted)
+                {
+                    info.Exists = true;
+                    info.IsCorrupted = true;
+                    if (File.Exists(fullPath))
+                    {
+                        info.LastModified = File.GetLastWriteTime(fullPath);
+                    }
+                    info.Title = "[Corrupted Slot]";
+                    info.StatusSummary = report.PrimaryReason;
                 }
                 else
                 {

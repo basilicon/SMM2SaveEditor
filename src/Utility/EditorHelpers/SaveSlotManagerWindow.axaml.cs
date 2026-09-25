@@ -27,7 +27,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             this.mainWindow = mainWindow;
             InitializeComponent();
 
-            SlotsListBox.SelectionChanged += (s, e) => UpdateSelectedThumbStatus();
+            SlotsListBox.SelectionChanged += (s, e) => UpdateSelectionDetails();
 
             string defaultPath = SaveManagerService.DetectSaveDirectory();
             if (!string.IsNullOrEmpty(defaultPath))
@@ -92,10 +92,15 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     SlotsListBox.SelectedIndex = prevSelectedIndex;
                 }
 
-                int occupied = slots.Count(s => s.Exists);
+                int occupied = slots.Count(s => s.Exists && !s.IsHiddenInCoursebot && !s.IsCorrupted);
+                int hidden = slots.Count(s => s.IsHiddenInCoursebot);
+                int corrupted = slots.Count(s => s.IsCorrupted);
                 int withThumbs = slots.Count(s => s.HasThumbnail);
-                StatusMessage.Text = $"Found {occupied} course slot(s), {withThumbs} with thumbnails.";
-                UpdateSelectedThumbStatus();
+
+                string hiddenNotice = hidden > 0 ? $", ⚠️ {hidden} hidden in Coursebot" : "";
+                string corruptedNotice = corrupted > 0 ? $", ❌ {corrupted} corrupted" : "";
+                StatusMessage.Text = $"Found {occupied} active course(s){hiddenNotice}{corruptedNotice}, {withThumbs} with thumbnails.";
+                UpdateSelectionDetails();
             }
             catch (Exception ex)
             {
@@ -108,13 +113,35 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             return SlotsListBox.SelectedItem as SlotInfo;
         }
 
-        private void UpdateSelectedThumbStatus()
+        private void UpdateSelectionDetails()
         {
             var selected = GetSelectedSlot();
             if (selected == null)
             {
                 SelectedThumbStatusText.Text = "Select a slot to modify its thumbnail.";
+                UnhideButton.IsEnabled = false;
+                UnhideButton.IsVisible = false;
                 return;
+            }
+
+            UnhideButton.IsVisible = selected.CanUnhide;
+            UnhideButton.IsEnabled = selected.CanUnhide;
+
+            if (selected.IsHiddenInCoursebot)
+            {
+                StatusMessage.Text = $"⚠️ {selected.DisplayName} is HIDDEN in Coursebot (save.dat status = 0). Click 'Unhide in Coursebot' to restore it!";
+            }
+            else if (selected.IsCorrupted)
+            {
+                StatusMessage.Text = $"❌ {selected.DisplayName} is CORRUPTED: {selected.PrimaryCorruptionReason}";
+            }
+            else if (selected.Exists)
+            {
+                StatusMessage.Text = $"🟢 {selected.DisplayName}: Active & Healthy (visible in Coursebot).";
+            }
+            else
+            {
+                StatusMessage.Text = $"{selected.DisplayName}: Empty slot.";
             }
 
             if (selected.HasThumbnail)
@@ -125,6 +152,48 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 SelectedThumbStatusText.Text = $"{selected.DisplayName} ({selected.InGameSlot}): No thumbnail assigned.";
             }
+        }
+
+        private void OnUnhideSlot(object? sender, RoutedEventArgs e)
+        {
+            var selected = GetSelectedSlot();
+            if (selected == null || !selected.CanUnhide)
+            {
+                StatusMessage.Text = "Please select a hidden course to unhide.";
+                return;
+            }
+
+            string saveDir = SavePathBox.Text?.Trim() ?? "";
+            if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir))
+            {
+                StatusMessage.Text = "Save directory does not exist.";
+                return;
+            }
+
+            bool ok = SaveDataCrypto.SetSlotStatus(saveDir, selected.SlotIndex, occupied: true);
+            if (ok)
+            {
+                StatusMessage.Text = $"Successfully unhidden {selected.DisplayName} in Coursebot! It is now active and visible in-game.";
+                RefreshSlots();
+            }
+            else
+            {
+                StatusMessage.Text = $"Failed to unhide {selected.DisplayName}.";
+            }
+        }
+
+        private async void OnOpenDiagnostics(object? sender, RoutedEventArgs e)
+        {
+            var selected = GetSelectedSlot();
+            if (selected == null)
+            {
+                StatusMessage.Text = "Please select a slot to diagnose.";
+                return;
+            }
+
+            string saveDir = SavePathBox.Text?.Trim() ?? "";
+            var diagWindow = new CourseDiagnosticsWindow(selected, saveDir, RefreshSlots);
+            await diagWindow.ShowDialog(this);
         }
 
         private void OnLoadSlot(object? sender, RoutedEventArgs e)

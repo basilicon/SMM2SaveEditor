@@ -1,0 +1,205 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:util="using:SMM2SaveEditor.Utility"
+             x:Class="SMM2SaveEditor.Utility.EditorHelpers.SaveSlotManagerControl"
+             Background="#131417">
+    <DockPanel>
+        <!-- Top Toolbar: Folder Selection, Sync Status, and Save Actions -->
+        <Border DockPanel.Dock="Top" Background="#1C1E26" BorderBrush="#2A2D3C" BorderThickness="0,0,0,1" Padding="14,10">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Save Folder:" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource SmmYellowBrush}" Margin="0,0,10,0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Name="SavePathBox" Watermark="Path to emulator save folder (e.g. .../0000000000000001)" VerticalAlignment="Center"/>
+                <Button Grid.Row="0" Grid.Column="2" Classes="toolbarBtn" Content="📁 Browse..." Margin="8,0,0,0" Click="OnBrowseFolder"/>
+                <Button Grid.Row="0" Grid.Column="3" Classes="toolbarBtn" Content="🔄 Refresh" Margin="6,0,0,0" Click="OnRefresh"/>
+                <Button Grid.Row="0" Grid.Column="4" Classes="toolbarBtn" Content="💾 Backup Save..." Margin="6,0,0,0" Click="OnBackupSave"/>
+
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                    <TextBlock Grid.Column="0" Name="StatusMessage" Text="Detecting save folder..." Foreground="#8E96AC" FontSize="11" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Name="DetectInfoText" Foreground="#6A7287" FontSize="11" VerticalAlignment="Center"
+                               Text="Double-buffer detection: auto-syncs Switch subfolders '0' and '1' upon saving."/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Main Body: 60-Slot Grid on Left, Slot Inspector on Right -->
+        <Grid ColumnDefinitions="*,5,380">
+            <!-- Left Area: Coursebot 4-Column Grid -->
+            <Border Grid.Column="0" Background="#14151B" Padding="8">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ListBox Name="SlotsListBox" Background="Transparent" DoubleTapped="OnSlotDoubleTapped">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="4"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="util:SlotInfo">
+                                <Panel MinHeight="130" Margin="4">
+                                    <!-- Populated Slot Card -->
+                                    <Border IsVisible="{Binding Exists}" CornerRadius="8" Background="#202330" BorderBrush="{Binding HealthBadgeBorder}" BorderThickness="1.5" Padding="8">
+                                        <Grid RowDefinitions="Auto,*,Auto">
+                                            <!-- Header Row -->
+                                            <Grid Grid.Row="0" ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,0,0,6">
+                                                <Border Grid.Column="0" Background="{StaticResource SmmYellowBrush}" CornerRadius="4" Padding="6,1" Margin="0,0,6,0">
+                                                    <TextBlock Text="{Binding InGameSlot}" FontWeight="Black" FontSize="10" Foreground="#121316"/>
+                                                </Border>
+                                                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="11" Foreground="#8A92A6" VerticalAlignment="Center"/>
+
+                                                <!-- Health Badge Pill -->
+                                                <Border Grid.Column="3" Background="{Binding HealthBadgeBackground}" BorderBrush="{Binding HealthBadgeBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1" Margin="0,0,5,0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding HealthBadgeText}" FontWeight="Bold" FontSize="9" Foreground="{Binding HealthBadgeForeground}"/>
+                                                </Border>
+
+                                                <!-- Game Style Pill -->
+                                                <Border Grid.Column="4" Background="#263152" BorderBrush="#38497A" BorderThickness="1" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding GameStyle}" FontWeight="Bold" FontSize="9" Foreground="#8BB7FF"/>
+                                                </Border>
+                                            </Grid>
+
+                                            <!-- Thumbnail / Title Stage -->
+                                            <Border Grid.Row="1" Background="#161822" BorderBrush="#262A3B" BorderThickness="1" CornerRadius="6" ClipToBounds="True" Margin="0,0,0,6" MinHeight="95">
+                                                <Panel>
+                                                    <Image Source="{Binding ThumbnailBitmap}" 
+                                                           IsVisible="{Binding ThumbnailBitmap, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                           Stretch="UniformToFill" 
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"/>
+                                                    
+                                                    <Border Background="#C0101115" VerticalAlignment="Bottom" Padding="6,4">
+                                                        <StackPanel Spacing="1">
+                                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="11" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding StatusSummary}" FontSize="9" Foreground="#A4ADC2" TextTrimming="CharacterEllipsis"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Panel>
+                                            </Border>
+
+                                            <!-- Footer Row -->
+                                            <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Border IsVisible="{Binding HasThumbnail}" Background="#1C3829" BorderBrush="#2ECC71" BorderThickness="1" CornerRadius="4" Padding="5,1">
+                                                        <TextBlock Text="🖼️ BTL" FontSize="9" FontWeight="SemiBold" Foreground="#2ECC71"/>
+                                                    </Border>
+                                                    <Border IsVisible="{Binding !HasThumbnail}" Background="#242735" CornerRadius="4" Padding="5,1">
+                                                        <TextBlock Text="No Thumb" FontSize="9" Foreground="#6C7284"/>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <TextBlock Grid.Column="2" Text="{Binding LastModified, StringFormat='{}{0:MM-dd HH:mm}'}" FontSize="10" Foreground="#6C7284" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Empty Slot Card -->
+                                    <Border IsVisible="{Binding !Exists}" CornerRadius="8" Background="#181A22" BorderBrush="#262836" BorderThickness="1" Padding="8" Opacity="0.65">
+                                        <Grid RowDefinitions="Auto,*,Auto">
+                                            <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,6">
+                                                <Border Grid.Column="0" Background="#262836" CornerRadius="4" Padding="5,1" Margin="0,0,6,0">
+                                                    <TextBlock Text="{Binding InGameSlot}" FontWeight="Bold" FontSize="10" Foreground="#6C7284"/>
+                                                </Border>
+                                                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" FontSize="10" Foreground="#6C7284" VerticalAlignment="Center"/>
+                                            </Grid>
+
+                                            <Border Grid.Row="1" Background="#13141B" BorderBrush="#212330" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0,0,0,6" MinHeight="95">
+                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
+                                                    <TextBlock Text="+ Empty Slot" FontSize="11" Foreground="#52586B" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Click to inspect" FontSize="9" Foreground="#424756" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <TextBlock Grid.Row="2" Text="Unused" FontSize="9" Foreground="#4A4E5E"/>
+                                        </Grid>
+                                    </Border>
+                                </Panel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Resizer Splitter -->
+            <GridSplitter Grid.Column="1" Background="#21232B" ResizeDirection="Columns" Width="5"/>
+
+            <!-- Right Column: Slot Inspector -->
+            <Border Grid.Column="2" Background="#181921" BorderBrush="#262836" BorderThickness="1,0,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="12" Margin="14">
+                        <!-- Inspector Header -->
+                        <Border Background="#1D1E28" BorderBrush="#2A2D3C" BorderThickness="1" CornerRadius="8" Padding="12,10">
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                <Border Grid.Row="0" Grid.Column="0" Name="InspectorSlotBadge" Background="{StaticResource SmmYellowBrush}" CornerRadius="4" Padding="8,2" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <TextBlock Name="InspectorInGameSlot" Text="1-1" FontWeight="Black" FontSize="12" Foreground="#121316"/>
+                                </Border>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Name="InspectorDisplayName" Text="Slot 000" FontWeight="Bold" FontSize="14" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                <Border Grid.Row="0" Grid.Column="2" Name="InspectorStyleBadge" Background="#263152" BorderBrush="#38497A" BorderThickness="1" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                                    <TextBlock Name="InspectorGameStyle" Text="SMW" FontWeight="Bold" FontSize="10" Foreground="#8BB7FF"/>
+                                </Border>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Name="InspectorCourseTitle" Text="Course Title" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource SmmYellowBrush}" Margin="0,8,0,0" TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Health & Corruption Status Card -->
+                        <Border Name="InspectorHealthCard" Background="#1D202B" BorderBrush="#2A2D3C" BorderThickness="1" CornerRadius="8" Padding="12">
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Column="0" Text="COURSE HEALTH" FontWeight="Black" FontSize="10" Foreground="#8E96AC" LetterSpacing="1" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="2" Name="InspectorHealthPill" Background="#193B26" BorderBrush="#27AE60" BorderThickness="1" CornerRadius="4" Padding="6,2">
+                                        <TextBlock Name="InspectorHealthText" Text="🟢 Active" FontWeight="Bold" FontSize="10" Foreground="#2ECC71"/>
+                                    </Border>
+                                </Grid>
+
+                                <TextBlock Name="InspectorHealthDetail" Text="Course is healthy and visible in Coursebot." FontSize="11" Foreground="#A4ADC2" TextWrapping="Wrap"/>
+
+                                <!-- Unhide / Repair Actions -->
+                                <Button Name="InspectorUnhideBtn" Content="👁️ Unhide in Coursebot" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnUnhideClick"/>
+                                <Button Name="InspectorRepairThumbBtn" Content="🛠️ Repair Thumbnail Signature" Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnRepairThumbClick"/>
+                                <Button Name="InspectorDiagBtn" Content="🔍 View Integrity Diagnostics..." Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnOpenDiagnosticsClick"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Thumbnail Preview & Tools Card -->
+                        <Border Background="#1D202B" BorderBrush="#2A2D3C" BorderThickness="1" CornerRadius="8" Padding="12">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="THUMBNAIL (.BTL)" FontWeight="Black" FontSize="10" Foreground="#8E96AC" LetterSpacing="1"/>
+
+                                <!-- 16:9 Thumbnail Image Preview -->
+                                <Border Background="#121317" BorderBrush="#262A3B" BorderThickness="1" CornerRadius="6" ClipToBounds="True" Height="140">
+                                    <Panel>
+                                        <Image Name="InspectorThumbImage" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock Name="InspectorNoThumbText" Text="No Thumbnail Assigned" FontSize="11" Foreground="#5A6175" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Panel>
+                                </Border>
+
+                                <TextBlock Name="InspectorThumbStatus" Text="No thumbnail" FontSize="10" Foreground="#7A8398"/>
+
+                                <!-- Thumbnail Buttons Grid -->
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="0,4,0,0">
+                                    <Button Grid.Row="0" Grid.Column="0" Content="🎨 Import Image..." Classes="accent" Margin="0,0,3,4" ToolTip.Tip="Import image (PNG, JPG, BMP) &amp; convert to .btl" Click="OnImportImageClick"/>
+                                    <Button Grid.Row="0" Grid.Column="1" Content="🖼️ Export JPEG..." Classes="toolbarBtn" Margin="3,0,0,4" ToolTip.Tip="Export thumbnail as standard JPEG" Click="OnExportImageClick"/>
+                                    <Button Grid.Row="1" Grid.Column="0" Content="📥 Import .btl..." Classes="toolbarBtn" Margin="0,0,3,4" ToolTip.Tip="Import encrypted .btl file" Click="OnImportBtlClick"/>
+                                    <Button Grid.Row="1" Grid.Column="1" Content="📤 Export .btl..." Classes="toolbarBtn" Margin="3,0,0,4" ToolTip.Tip="Export .btl file" Click="OnExportBtlClick"/>
+                                    <Button Grid.Row="2" Grid.Column="0" Content="🔄 Clone Thumb..." Classes="toolbarBtn" Margin="0,0,3,0" ToolTip.Tip="Copy thumbnail from another slot" Click="OnCloneThumbClick"/>
+                                    <Button Grid.Row="2" Grid.Column="1" Content="🗑️ Delete Thumb" Classes="toolbarBtn" Margin="3,0,0,0" ToolTip.Tip="Reset thumbnail to blank container" Click="OnDeleteThumbClick"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Course File & Editor Actions Card -->
+                        <Border Background="#1D202B" BorderBrush="#2A2D3C" BorderThickness="1" CornerRadius="8" Padding="12">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="COURSE ACTIONS" FontWeight="Black" FontSize="10" Foreground="#8E96AC" LetterSpacing="1"/>
+
+                                <Button Name="InspectorOpenEditorBtn" Content="✏️ Open in Level Editor" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnOpenInEditorClick"/>
+                                <Button Content="📥 Import .bcd into this Slot..." Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnImportBcdClick"/>
+                                <Button Name="InspectorExportBcdBtn" Content="📤 Export Slot to .bcd..." Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnExportBcdClick"/>
+                                <Button Content="⚡ Inject Current Editor Level" Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnInjectLevelClick"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>

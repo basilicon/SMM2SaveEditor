@@ -282,5 +282,37 @@ namespace SMM2SaveEditor.Utility
 
             return false;
         }
+
+        /// <summary>
+        /// Reads all 60 Coursebot slot registration statuses from save.dat in a single decryption pass.
+        /// </summary>
+        public static bool[] GetAllSlotStatuses(string saveDir)
+        {
+            bool[] statuses = new bool[MaxCoursebotSlots];
+            var targets = SaveManagerService.GetTargetDirectories(saveDir);
+            foreach (var target in targets)
+            {
+                string saveDatPath = Path.Combine(target, "save.dat");
+                if (!File.Exists(saveDatPath)) continue;
+
+                try
+                {
+                    byte[] raw = File.ReadAllBytes(saveDatPath);
+                    var (_, body) = DecryptSave(raw);
+                    for (int i = 0; i < MaxCoursebotSlots; i++)
+                    {
+                        int slotOffset = CoursebotSlotsOffset + (i * 8);
+                        statuses[i] = body[slotOffset + 1] == 1;
+                    }
+                    return statuses;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[SaveDataCrypto] Error reading slot statuses from {target}: {ex.Message}");
+                }
+            }
+
+            return statuses;
+        }
     }
 }

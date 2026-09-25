@@ -22,11 +22,21 @@ namespace SMM2SaveEditor
         public static MainWindow? Instance { get; private set; }
 
         private Level level;
+        public Level CurrentLevel => level;
+
         private EntityEditor entityEditor;
         private ZoomBorder? zoomBorder;
 
         private IStorageBookmarkFile? storageBookmarkFile;
         private string? currentFilePath;
+
+        private SaveSlotManagerControl? saveSlotManager;
+        private Grid? editingArea;
+        private Button? tabSlotsBtn;
+        private Button? tabEditorBtn;
+        private StackPanel? editorControlsBar;
+        private StackPanel? slotsControlsBar;
+        private Border? zoomBadge;
 
         private TextBlock? courseHeaderTitle;
         private Border? courseHeaderStyleBadge;
@@ -44,6 +54,14 @@ namespace SMM2SaveEditor
 
             level = this.Find<Level>("Level")!;
 
+            saveSlotManager = this.Find<SaveSlotManagerControl>("SaveSlotManager");
+            editingArea = this.Find<Grid>("EditingArea");
+            tabSlotsBtn = this.Find<Button>("TabSlotsBtn");
+            tabEditorBtn = this.Find<Button>("TabEditorBtn");
+            editorControlsBar = this.Find<StackPanel>("EditorControlsBar");
+            slotsControlsBar = this.Find<StackPanel>("SlotsControlsBar");
+            zoomBadge = this.Find<Border>("ZoomBadge");
+
             courseHeaderTitle = this.Find<TextBlock>("CourseHeaderTitle");
             courseHeaderStyleBadge = this.Find<Border>("CourseHeaderStyleBadge");
             courseHeaderStyleText = this.Find<TextBlock>("CourseHeaderStyleText");
@@ -52,8 +70,18 @@ namespace SMM2SaveEditor
             coordsText = this.Find<TextBlock>("CoordsText");
             zoomText = this.Find<TextBlock>("ZoomText");
 
+            if (saveSlotManager != null)
+            {
+                saveSlotManager.RequestOpenLevel += path =>
+                {
+                    LoadFromFile(path);
+                    SwitchToTab(showSlots: false);
+                };
+                saveSlotManager.RequestCurrentLevel += () => level;
+            }
+
             entityEditor = new();
-            this.Find<Grid>("EditingArea")?.Children.Add(entityEditor);
+            editingArea?.Children.Add(entityEditor);
             Grid.SetColumn(entityEditor, 2);
 
             zoomBorder = this.Find<ZoomBorder>("ZoomBorder");
@@ -91,7 +119,66 @@ namespace SMM2SaveEditor
             DragDrop.SetAllowDrop(this, true);
             AddHandler(DragDrop.DropEvent, OnDrop);
 
+            // Default to Coursebot Save Slots View on Launch!
+            SwitchToTab(showSlots: true);
+
             Debug.WriteLine("Launched application!");
+        }
+
+        public void SwitchToTab(bool showSlots)
+        {
+            if (saveSlotManager != null) saveSlotManager.IsVisible = showSlots;
+            if (editingArea != null) editingArea.IsVisible = !showSlots;
+
+            if (tabSlotsBtn != null)
+            {
+                if (showSlots) tabSlotsBtn.Classes.Add("active");
+                else tabSlotsBtn.Classes.Remove("active");
+            }
+
+            if (tabEditorBtn != null)
+            {
+                if (!showSlots) tabEditorBtn.Classes.Add("active");
+                else tabEditorBtn.Classes.Remove("active");
+            }
+
+            if (editorControlsBar != null) editorControlsBar.IsVisible = !showSlots;
+            if (slotsControlsBar != null) slotsControlsBar.IsVisible = showSlots;
+            if (coordsText != null) coordsText.IsVisible = !showSlots;
+            if (zoomBadge != null) zoomBadge.IsVisible = !showSlots;
+
+            if (showSlots)
+            {
+                if (courseHeaderTitle != null) courseHeaderTitle.Text = "Coursebot Save Slots Manager";
+                if (courseHeaderStyleBadge != null) courseHeaderStyleBadge.IsVisible = false;
+                if (statusText != null) statusText.Text = "Coursebot Save Slot Manager active";
+                Title = "SMM2 Course & Save Editor - Coursebot Slots";
+            }
+            else
+            {
+                string displayName = level != null && !string.IsNullOrWhiteSpace(level.levelName)
+                    ? level.levelName 
+                    : (!string.IsNullOrEmpty(currentFilePath) ? Path.GetFileName(currentFilePath) : "Level Editor");
+
+                if (courseHeaderTitle != null) courseHeaderTitle.Text = displayName;
+                if (courseHeaderStyleBadge != null && level != null)
+                {
+                    courseHeaderStyleBadge.IsVisible = true;
+                    if (courseHeaderStyleText != null) courseHeaderStyleText.Text = level.gameStyle.ToString();
+                }
+                Title = $"SMM2 Course Editor - {displayName}";
+                UpdateZoomText();
+            }
+        }
+
+        private void OnSelectSlotsTab(object? sender, RoutedEventArgs e)
+        {
+            SwitchToTab(showSlots: true);
+        }
+
+        private void OnSelectEditorTab(object? sender, RoutedEventArgs e)
+        {
+            SwitchToTab(showSlots: false);
         }
 
         private void UpdateZoomText()
@@ -241,6 +328,7 @@ namespace SMM2SaveEditor
                 if (statusDot != null && this.TryFindResource("SmmGreenBrush", out var greenBrush)) statusDot.Background = (IBrush)greenBrush!;
                 if (statusText != null) statusText.Text = $"Loaded: {Path.GetFileName(path)} ({(bytes.Length / 1024)} KB)";
                 UpdateZoomText();
+                SwitchToTab(showSlots: false);
             }
             catch (Exception ex)
             {
@@ -265,8 +353,7 @@ namespace SMM2SaveEditor
 
         private void OnOpenSaveSlotManager(object sender, RoutedEventArgs e)
         {
-            var window = new SMM2SaveEditor.Utility.EditorHelpers.SaveSlotManagerWindow(this);
-            window.Show(this);
+            SwitchToTab(showSlots: true);
         }
 
         public static void RegisterBcdAssociation()
