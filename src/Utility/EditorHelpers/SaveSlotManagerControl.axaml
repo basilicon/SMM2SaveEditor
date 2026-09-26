@@ -154,6 +154,7 @@
 
                                 <!-- Unhide / Repair Actions -->
                                 <Button Name="InspectorUnhideBtn" Content="👁️ Unhide in Coursebot" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnUnhideClick"/>
+                                <Button Name="InspectorSanitizeFlagsBtn" Content="✨ Sanitize Invalid Object Flags" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnSanitizeFlagsClick"/>
                                 <Button Name="InspectorRepairThumbBtn" Content="🛠️ Repair Thumbnail Signature" Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnRepairThumbClick"/>
                                 <Button Name="InspectorDiagBtn" Content="🔍 View Integrity Diagnostics..." Classes="toolbarBtn" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnOpenDiagnosticsClick"/>
                             </StackPanel>

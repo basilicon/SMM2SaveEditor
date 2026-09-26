@@ -177,6 +177,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             }
 
             InspectorUnhideBtn.IsVisible = selected.CanUnhide;
+            InspectorSanitizeFlagsBtn.IsVisible = selected.CanSanitizeFlags;
             InspectorRepairThumbBtn.IsVisible = selected.CanRepairThumbnail;
 
             if (selected.ThumbnailBitmap != null)
@@ -233,6 +234,26 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             else
             {
                 StatusMessage.Text = $"Failed to unhide {selected.DisplayName}.";
+            }
+        }
+
+        private void OnSanitizeFlagsClick(object? sender, RoutedEventArgs e)
+        {
+            var selected = GetSelectedSlot();
+            if (selected == null || !selected.CanSanitizeFlags) return;
+
+            string saveDir = SavePathBox.Text?.Trim() ?? "";
+            if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir)) return;
+
+            bool ok = CourseDiagnostics.SanitizeCourseFlags(saveDir, selected.SlotIndex);
+            if (ok)
+            {
+                StatusMessage.Text = $"Successfully sanitized object flags for {selected.DisplayName} ({selected.Title})!";
+                RefreshSlots();
+            }
+            else
+            {
+                StatusMessage.Text = $"Failed to sanitize object flags for {selected.DisplayName}.";
             }
         }
 

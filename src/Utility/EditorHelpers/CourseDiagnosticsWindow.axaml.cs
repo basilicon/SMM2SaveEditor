@@ -35,6 +35,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             ChecksList.ItemsSource = report.Checks;
 
             UnhideButton.IsVisible = report.CanUnhide;
+            SanitizeFlagsButton.IsVisible = report.CanSanitizeFlags;
             RepairThumbButton.IsVisible = report.CanRepairThumbnail;
 
             switch (report.Status)
@@ -98,6 +99,19 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 onStateChanged?.Invoke();
                 Close();
+            }
+        }
+
+        private void OnSanitizeFlagsClick(object? sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir)) return;
+
+            bool ok = CourseDiagnostics.SanitizeCourseFlags(saveDir, slot.SlotIndex);
+            if (ok)
+            {
+                onStateChanged?.Invoke();
+                slot.HealthReport = CourseDiagnostics.DiagnoseSlot(saveDir, slot.SlotIndex, slot.IsOccupiedInSave);
+                PopulateDiagnostics();
             }
         }
 

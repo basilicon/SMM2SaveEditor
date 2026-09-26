@@ -60,6 +60,8 @@ namespace SMM2SaveEditor.Utility
 
         public bool CanUnhide => HealthStatus == SlotHealthStatus.HiddenInCoursebot;
         public bool CanRepairThumbnail => HealthReport?.CanRepairThumbnail ?? false;
+        public bool CanSanitizeFlags => HealthReport?.CanSanitizeFlags ?? false;
+        public int FlagViolationCount => HealthReport?.FlagViolationCount ?? 0;
         public string PrimaryCorruptionReason { get; set; } = "";
         public CourseHealthReport? HealthReport { get; set; }
 
@@ -253,8 +255,34 @@ namespace SMM2SaveEditor.Utility
                     {
                         info.LastModified = File.GetLastWriteTime(fullPath);
                     }
-                    info.Title = "[Corrupted Slot]";
-                    info.StatusSummary = report.PrimaryReason;
+
+                    // If it's corrupted due to invalid flags, the course is still decryptable and parseable
+                    if (report.CanSanitizeFlags)
+                    {
+                        try
+                        {
+                            byte[] raw = File.ReadAllBytes(fullPath);
+                            byte[] dec = LevelCrypto.DecryptLevel(raw);
+                            Level lvl = new Level();
+                            lvl.LoadFromStream(new KaitaiStream(dec));
+                            info.Title = string.IsNullOrWhiteSpace(lvl.levelName) ? "(Untitled)" : lvl.levelName;
+                            info.GameStyle = lvl.gameStyle.ToString().ToUpper();
+                            info.GameVersion = lvl.gameVersion.ToString();
+                            info.OverworldObjects = lvl.overworld.objects.Count;
+                            info.SubworldObjects = lvl.subworld.objects.Count;
+                            info.StatusSummary = $"[INVALID FLAGS] {info.GameStyle} | {report.FlagViolationCount} flag error(s)";
+                        }
+                        catch
+                        {
+                            info.Title = "[Corrupted Slot]";
+                            info.StatusSummary = report.PrimaryReason;
+                        }
+                    }
+                    else
+                    {
+                        info.Title = "[Corrupted Slot]";
+                        info.StatusSummary = report.PrimaryReason;
+                    }
                 }
                 else
                 {
