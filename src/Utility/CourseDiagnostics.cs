@@ -233,47 +233,6 @@ namespace SMM2SaveEditor.Utility
                 report.AddCheck("Entity Limits", DiagnosticSeverity.Pass,
                     $"OW: {owObj} obj, {owGround} ground | SW: {swObj} obj, {swGround} ground",
                     "All entity counts within SMM2 engine limits.");
-
-                // Check B.5: Per-Actor Capability Masks & Object Flag Validation
-                var flagErrors = new List<string>();
-                if (lvl.overworld?.objects != null)
-                {
-                    for (int i = 0; i < lvl.overworld.objects.Count; i++)
-                    {
-                        var obj = lvl.overworld.objects[i];
-                        var errs = ActorCapabilities.ValidateObjectFlags(obj.id, obj.flag, obj.cflag, i, "Overworld");
-                        flagErrors.AddRange(errs);
-                    }
-                }
-                if (lvl.subworld?.objects != null)
-                {
-                    for (int i = 0; i < lvl.subworld.objects.Count; i++)
-                    {
-                        var obj = lvl.subworld.objects[i];
-                        var errs = ActorCapabilities.ValidateObjectFlags(obj.id, obj.flag, obj.cflag, i, "Subworld");
-                        flagErrors.AddRange(errs);
-                    }
-                }
-
-                report.FlagViolationCount = flagErrors.Count;
-                if (flagErrors.Count > 0)
-                {
-                    report.Status = SlotHealthStatus.Corrupted;
-                    report.CanSanitizeFlags = true;
-                    if (string.IsNullOrEmpty(report.PrimaryReason))
-                    {
-                        report.PrimaryReason = $"{flagErrors.Count} object(s) have invalid flags violating SMM2 actor capabilities.";
-                    }
-                    report.AddCheck("Actor Capabilities & Flags", DiagnosticSeverity.Error,
-                        $"{flagErrors.Count} illegal flag violation(s)",
-                        string.Join("\n", flagErrors.Take(10)) + (flagErrors.Count > 10 ? $"\n...and {flagErrors.Count - 10} more" : ""));
-                }
-                else
-                {
-                    report.AddCheck("Actor Capabilities & Flags", DiagnosticSeverity.Pass,
-                        "All object flags verified",
-                        "All entities conform to official SMM2 actor capability masks and mutual exclusion rules.");
-                }
             }
             catch (Exception ex)
             {
@@ -469,72 +428,11 @@ namespace SMM2SaveEditor.Utility
 
         /// <summary>
         /// Sanitizes invalid flags on all objects in a course slot, re-encrypts, and saves the file.
+        /// (Deprecated: Flag validation removed to prevent false corruptions on legitimate courses)
         /// </summary>
         public static bool SanitizeCourseFlags(string saveDir, int slotIndex)
         {
-            var targets = SaveManagerService.GetTargetDirectories(saveDir);
-            string fileName = $"course_data_{slotIndex:D3}.bcd";
-            bool anySuccess = false;
-
-            foreach (var dir in targets)
-            {
-                string coursePath = Path.Combine(dir, fileName);
-                if (!File.Exists(coursePath)) continue;
-
-                try
-                {
-                    byte[] rawBcd = File.ReadAllBytes(coursePath);
-                    byte[] decrypted = LevelCrypto.DecryptLevel(rawBcd);
-
-                    Level lvl = new Level();
-                    lvl.LoadFromStream(new KaitaiStream(decrypted));
-
-                    bool changed = false;
-                    if (lvl.overworld?.objects != null)
-                    {
-                        foreach (var obj in lvl.overworld.objects)
-                        {
-                            uint sanitized = ActorCapabilities.SanitizeFlags(obj.id, obj.flag);
-                            if (sanitized != obj.flag)
-                            {
-                                obj.flag = sanitized;
-                                changed = true;
-                            }
-                        }
-                    }
-
-                    if (lvl.subworld?.objects != null)
-                    {
-                        foreach (var obj in lvl.subworld.objects)
-                        {
-                            uint sanitized = ActorCapabilities.SanitizeFlags(obj.id, obj.flag);
-                            if (sanitized != obj.flag)
-                            {
-                                obj.flag = sanitized;
-                                changed = true;
-                            }
-                        }
-                    }
-
-                    if (changed)
-                    {
-                        byte[] newDecrypted = lvl.GetBytes();
-                        byte[] newEncrypted = LevelCrypto.EncryptLevel(newDecrypted);
-                        File.WriteAllBytes(coursePath, newEncrypted);
-                        anySuccess = true;
-                    }
-                    else
-                    {
-                        anySuccess = true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Failed to sanitize flags in {dir}: {ex.Message}");
-                }
-            }
-
-            return anySuccess;
+            return false;
         }
 
         /// <summary>
@@ -646,46 +544,6 @@ namespace SMM2SaveEditor.Utility
                     "All entity counts within SMM2 engine limits.");
             }
 
-            var flagErrors = new List<string>();
-            if (lvl.overworld?.objects != null)
-            {
-                for (int i = 0; i < lvl.overworld.objects.Count; i++)
-                {
-                    var obj = lvl.overworld.objects[i];
-                    var errs = ActorCapabilities.ValidateObjectFlags(obj.id, obj.flag, obj.cflag, i, "Overworld");
-                    flagErrors.AddRange(errs);
-                }
-            }
-            if (lvl.subworld?.objects != null)
-            {
-                for (int i = 0; i < lvl.subworld.objects.Count; i++)
-                {
-                    var obj = lvl.subworld.objects[i];
-                    var errs = ActorCapabilities.ValidateObjectFlags(obj.id, obj.flag, obj.cflag, i, "Subworld");
-                    flagErrors.AddRange(errs);
-                }
-            }
-
-            report.FlagViolationCount = flagErrors.Count;
-            if (flagErrors.Count > 0)
-            {
-                report.Status = SlotHealthStatus.Corrupted;
-                report.CanSanitizeFlags = true;
-                if (string.IsNullOrEmpty(report.PrimaryReason))
-                {
-                    report.PrimaryReason = $"{flagErrors.Count} object(s) have invalid flags violating SMM2 actor capabilities.";
-                }
-                report.AddCheck("Actor Capabilities & Flags", DiagnosticSeverity.Error,
-                    $"{flagErrors.Count} illegal flag violation(s)",
-                    string.Join("\n", flagErrors.Take(10)) + (flagErrors.Count > 10 ? $"\n...and {flagErrors.Count - 10} more" : ""));
-            }
-            else
-            {
-                report.AddCheck("Actor Capabilities & Flags", DiagnosticSeverity.Pass,
-                    "All object flags verified",
-                    "All entities conform to official SMM2 actor capability masks and mutual exclusion rules.");
-            }
-
             if (report.Status != SlotHealthStatus.Corrupted)
             {
                 report.Status = SlotHealthStatus.Healthy;
@@ -697,37 +555,11 @@ namespace SMM2SaveEditor.Utility
 
         /// <summary>
         /// Sanitizes invalid flags on all objects in an in-memory Level instance. Returns count of fixed objects.
+        /// (Deprecated: Flag validation removed to prevent false corruptions on legitimate courses)
         /// </summary>
         public static int SanitizeLevelFlags(Level lvl)
         {
-            int count = 0;
-            if (lvl.overworld?.objects != null)
-            {
-                foreach (var obj in lvl.overworld.objects)
-                {
-                    uint sanitized = ActorCapabilities.SanitizeFlags(obj.id, obj.flag);
-                    if (sanitized != obj.flag)
-                    {
-                        obj.flag = sanitized;
-                        count++;
-                    }
-                }
-            }
-
-            if (lvl.subworld?.objects != null)
-            {
-                foreach (var obj in lvl.subworld.objects)
-                {
-                    uint sanitized = ActorCapabilities.SanitizeFlags(obj.id, obj.flag);
-                    if (sanitized != obj.flag)
-                    {
-                        obj.flag = sanitized;
-                        count++;
-                    }
-                }
-            }
-
-            return count;
+            return 0;
         }
     }
 }
