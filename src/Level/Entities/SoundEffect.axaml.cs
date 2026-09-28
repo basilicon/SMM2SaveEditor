@@ -44,6 +44,20 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
+        public override bool TryMoveBy(int deltaTilesX, int deltaTilesY)
+        {
+            int newX = Math.Clamp(x + deltaTilesX, 0, 240);
+            int newY = Math.Clamp(y + deltaTilesY, 0, 27);
+            if (newX != x || newY != y)
+            {
+                x = (byte)newX;
+                y = (byte)newY;
+                UpdateSprite();
+                return true;
+            }
+            return false;
+        }
+
         public override void UpdateSprite()
         {
             Canvas.SetLeft(this, x * 160);

@@ -294,6 +294,20 @@ namespace SMM2SaveEditor.Entities
             return bb.GetBytes();
         }
 
+        public override bool TryMoveBy(int deltaTilesX, int deltaTilesY)
+        {
+            int newX = Math.Max(80, x + deltaTilesX * 160);
+            int newY = Math.Max(80, y + deltaTilesY * 160);
+            if (newX != x || newY != y)
+            {
+                x = newX;
+                y = newY;
+                UpdateSprite();
+                return true;
+            }
+            return false;
+        }
+
         // TODO: SIMPLIFY IMPLEMENTATION FOR MODDERS
         // sorry modders LUL
         public override void UpdateSprite()

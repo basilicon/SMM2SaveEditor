@@ -22,6 +22,14 @@ namespace SMM2SaveEditor
             ParentEntity?.UpdateSprite();
         }
 
+        public Point? dragStartPos;
+        public bool isDragging;
+
+        public virtual bool TryMoveBy(int deltaTilesX, int deltaTilesY)
+        {
+            return false;
+        }
+
         public void OnClick(object? sender, PointerPressedEventArgs e)
         {
             var point = e.GetCurrentPoint(sender as Visual);
@@ -30,15 +38,82 @@ namespace SMM2SaveEditor
             if (!isLeft && !isRight)
                 return;
 
-            if (EntityEditor.Instance != null)
+            Entity? targetEntity = (sender as Entity) ?? (sender as Visual)?.FindAncestorOfType<Entity>() ?? this;
+            if (targetEntity != null)
             {
-                Entity? targetEntity = (sender as Entity) ?? (sender as Visual)?.FindAncestorOfType<Entity>() ?? this;
-                if (targetEntity != null)
+                e.Handled = true;
+                if (EntityEditor.Instance != null && EntityEditor.Instance.SelectedEntity != targetEntity)
                 {
-                    e.Handled = true;
                     EntityEditor.Instance.OpenOptions(targetEntity);
                 }
+
+                if (isLeft && !(targetEntity is Level) && !(targetEntity is Map))
+                {
+                    var map = targetEntity.FindAncestorOfType<Map>();
+                    var canvas = map?.Find<Canvas>("MapCanvas");
+                    if (canvas != null)
+                    {
+                        targetEntity.isDragging = true;
+                        targetEntity.dragStartPos = e.GetPosition(canvas);
+                        e.Pointer.Capture(targetEntity);
+                    }
+                }
             }
+        }
+
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            base.OnPointerMoved(e);
+            if (isDragging && dragStartPos.HasValue)
+            {
+                var map = this.FindAncestorOfType<Map>();
+                var canvas = map?.Find<Canvas>("MapCanvas");
+                if (canvas != null)
+                {
+                    var currentPos = e.GetPosition(canvas);
+                    double diffX = currentPos.X - dragStartPos.Value.X;
+                    double diffY = dragStartPos.Value.Y - currentPos.Y; // inverted Y
+
+                    int deltaTilesX = (int)(diffX / 160.0);
+                    int deltaTilesY = (int)(diffY / 160.0);
+
+                    if (deltaTilesX != 0 || deltaTilesY != 0)
+                    {
+                        if (TryMoveBy(deltaTilesX, deltaTilesY))
+                        {
+                            dragStartPos = new Point(
+                                dragStartPos.Value.X + deltaTilesX * 160.0,
+                                dragStartPos.Value.Y - deltaTilesY * 160.0);
+
+                            map?.HighlightEntity(this);
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
+        {
+            base.OnPointerReleased(e);
+            if (isDragging)
+            {
+                isDragging = false;
+                dragStartPos = null;
+                e.Pointer.Capture(null);
+
+                // Refresh inspector to reflect final moved coordinates
+                if (EntityEditor.Instance != null && EntityEditor.Instance.SelectedEntity == this)
+                {
+                    EntityEditor.Instance.OpenOptions(this);
+                }
+            }
+        }
+
+        protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
+        {
+            base.OnPointerCaptureLost(e);
+            isDragging = false;
+            dragStartPos = null;
         }
     }
 }

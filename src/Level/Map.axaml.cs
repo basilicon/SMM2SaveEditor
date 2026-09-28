@@ -79,6 +79,7 @@ namespace SMM2SaveEditor
 
             double left = Canvas.GetLeft(entity);
             double top = Canvas.GetTop(entity);
+            double bottom = Canvas.GetBottom(entity);
             double width = entity.Bounds.Width > 0 ? entity.Bounds.Width : entity.Width;
             double height = entity.Bounds.Height > 0 ? entity.Bounds.Height : entity.Height;
 
@@ -86,7 +87,17 @@ namespace SMM2SaveEditor
             if (double.IsNaN(height) || height <= 0) height = 160;
 
             Canvas.SetLeft(selectionAdorner, left);
-            Canvas.SetTop(selectionAdorner, top);
+            if (!double.IsNaN(bottom))
+            {
+                Canvas.SetBottom(selectionAdorner, bottom);
+                Canvas.SetTop(selectionAdorner, double.NaN);
+            }
+            else
+            {
+                Canvas.SetTop(selectionAdorner, top);
+                Canvas.SetBottom(selectionAdorner, double.NaN);
+            }
+
             selectionAdorner.Width = width;
             selectionAdorner.Height = height;
             selectionAdorner.IsVisible = true;
