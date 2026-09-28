@@ -71,7 +71,14 @@ namespace SMM2SaveEditor
 
                 if (EntityEditor.Instance != null)
                 {
-                    EntityEditor.Instance.OpenOptions(targetEntity, overlapping);
+                    if (EntityEditor.Instance.AreOverlappingEntitiesCurrent(overlapping))
+                    {
+                        EntityEditor.Instance.SelectEntity(targetEntity);
+                    }
+                    else
+                    {
+                        EntityEditor.Instance.OpenOptions(targetEntity, overlapping);
+                    }
                 }
 
                 if (isLeft && !(targetEntity is Level) && !(targetEntity is Map))

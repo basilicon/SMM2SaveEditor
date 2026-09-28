@@ -17,11 +17,15 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         public static ObjectEditor? Instance { get; set; }
 
         private Entity? objRef = null;
+        public Entity? TargetEntity => objRef;
+        public event EventHandler? Activated;
+
         private List<string> labels = new(0);
 
         private StackPanel rootStackPanel;
         private Grid grid;
         private Border? gridContainer;
+        private Border? cardBorder;
         private TextBlock editorHeader;
         private ToggleButton expandButton;
         private TextBlock? expandGlyph;
@@ -35,6 +39,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             rootStackPanel = this.Find<StackPanel>("RootStackPanel")!;
             grid = this.Find<Grid>("EditorGrid")!;
             gridContainer = this.Find<Border>("GridContainer");
+            cardBorder = this.Find<Border>("CardBorder");
             editorHeader = this.Find<TextBlock>("EditorHeader")!;
             expandGlyph = this.Find<TextBlock>("ExpandGlyph");
             headerBorder = this.Find<Border>("HeaderBorder");
@@ -42,6 +47,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             expandButton = this.Find<ToggleButton>("ExpandButton")!;
             expandButton.Click += (s, e) =>
             {
+                Activated?.Invoke(this, EventArgs.Empty);
                 if (expandButton.IsChecked == false)
                 {
                     HideEditorGrid();
@@ -56,6 +62,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             {
                 headerBorder.PointerPressed += (s, e) =>
                 {
+                    Activated?.Invoke(this, EventArgs.Empty);
                     if (expandButton.IsChecked == true)
                     {
                         HideEditorGrid();
@@ -66,7 +73,29 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     }
                 };
             }
+
+            if (gridContainer != null)
+            {
+                gridContainer.PointerPressed += (s, e) =>
+                {
+                    Activated?.Invoke(this, EventArgs.Empty);
+                };
+            }
         }
+
+        public void SetActive(bool isActive)
+        {
+            if (cardBorder != null)
+            {
+                cardBorder.BorderBrush = isActive 
+                    ? new SolidColorBrush(Color.Parse("#FFCC00")) 
+                    : new SolidColorBrush(Color.Parse("#2D3142"));
+                cardBorder.BorderThickness = isActive ? new Thickness(1.5) : new Thickness(1);
+            }
+        }
+
+        public void Expand() => ShowEditorGrid();
+        public void Collapse() => HideEditorGrid();
 
         private void ShowEditorGrid()
         {
@@ -148,14 +177,14 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             }
         }
 
-        public void OpenOptions(Entity entity)
+        public void OpenOptions(Entity entity, string? headerText = null)
         {
             grid.Children.RemoveAll(grid.Children);
 
             objRef = entity;
 
             Type entityType = entity.GetType();
-            editorHeader.Text = entityType.Name;
+            editorHeader.Text = !string.IsNullOrEmpty(headerText) ? headerText : entityType.Name;
             IDictionary<string, object> rawOptions = entity.AsDictionary(entityType);
 
             // Filter out non-scalar fields (e.g. lists of entities, arrays, entity sub-trees)

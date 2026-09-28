@@ -89,6 +89,57 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             return entity.GetType().Name;
         }
 
+        public bool AreOverlappingEntitiesCurrent(List<Entity>? overlapping)
+        {
+            if (currentOverlappingList == null || overlapping == null) return false;
+            if (currentOverlappingList.Count != overlapping.Count) return false;
+            for (int i = 0; i < currentOverlappingList.Count; i++)
+            {
+                if (currentOverlappingList[i] != overlapping[i]) return false;
+            }
+            return true;
+        }
+
+        public void SelectEntity(Entity ent)
+        {
+            if (objRef == ent) return;
+
+            if (objRef != null)
+            {
+                objRef.FindAncestorOfType<Map>()?.HighlightEntity(null);
+            }
+
+            objRef = ent;
+            if (entityTypeBadge != null)
+            {
+                entityTypeBadge.Text = ent.GetType().Name;
+            }
+
+            // Update active styling on cards
+            foreach (var child in editorStack.Children)
+            {
+                if (child is ObjectEditor oe)
+                {
+                    oe.SetActive(oe.TargetEntity == ent);
+                }
+            }
+
+            // Sync dropdown selection without reloading
+            if (overlappingDropdown != null && currentOverlappingList != null)
+            {
+                isUpdatingOverlapping = true;
+                if (overlappingDropdown.ItemsSource is List<OverlappingEntityItem> items)
+                {
+                    int index = items.FindIndex(i => i.Entity == ent);
+                    if (index >= 0) overlappingDropdown.SelectedIndex = index;
+                }
+                isUpdatingOverlapping = false;
+            }
+
+            RefreshSelectionHighlight();
+            UpdateVisibility();
+        }
+
         public void OpenOptions(Entity entity, List<Entity>? overlapping = null)
         {
             // Clear any highlight on previous entity
@@ -107,17 +158,31 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 entityTypeBadge.Text = entity.GetType().Name;
             }
 
-            foreach (Type t in entity.GetType().GetInheritanceHierarchy())
-            {
-                ObjectEditor objectEditor = new();
-                editorStack.Children.Add(objectEditor);
-                objectEditor.OpenOptions((Convert.ChangeType(entity, t) as Entity)!);
+            currentOverlappingList = overlapping;
+            var entitiesToDisplay = (overlapping != null && overlapping.Count > 1)
+                ? overlapping
+                : new List<Entity> { entity };
 
-                Debug.WriteLine(t.Name);
+            foreach (var ent in entitiesToDisplay)
+            {
+                foreach (Type t in ent.GetType().GetInheritanceHierarchy())
+                {
+                    ObjectEditor objectEditor = new();
+                    string header = entitiesToDisplay.Count > 1 ? GetEntityDisplayName(ent) : t.Name;
+                    objectEditor.OpenOptions((Convert.ChangeType(ent, t) as Entity)!, header);
+                    objectEditor.SetActive(ent == entity);
+
+                    var currentEnt = ent;
+                    objectEditor.Activated += (s, e) =>
+                    {
+                        SelectEntity(currentEnt);
+                    };
+
+                    editorStack.Children.Add(objectEditor);
+                }
             }
 
             // Update overlapping dropdown
-            currentOverlappingList = overlapping;
             if (overlapping != null && overlapping.Count > 1)
             {
                 isUpdatingOverlapping = true;
@@ -152,7 +217,15 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             if (isUpdatingOverlapping) return;
             if (overlappingDropdown.SelectedItem is OverlappingEntityItem item && item.Entity != objRef)
             {
-                OpenOptions(item.Entity, currentOverlappingList);
+                SelectEntity(item.Entity);
+                foreach (var child in editorStack.Children)
+                {
+                    if (child is ObjectEditor oe && oe.TargetEntity == item.Entity)
+                    {
+                        oe.Expand();
+                        oe.BringIntoView();
+                    }
+                }
             }
         }
 
@@ -196,8 +269,18 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             if (map != null)
             {
                 var target = objRef;
+                var remainingOverlapping = currentOverlappingList != null
+                    ? new List<Entity>(currentOverlappingList)
+                    : null;
+                remainingOverlapping?.Remove(target);
+
                 ClearSelection();
                 map.RemoveEntity(target);
+
+                if (remainingOverlapping != null && remainingOverlapping.Count > 0)
+                {
+                    OpenOptions(remainingOverlapping[0], remainingOverlapping.Count > 1 ? remainingOverlapping : null);
+                }
             }
         }
 

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="300"
              x:Class="SMM2SaveEditor.Utility.EditorHelpers.ObjectEditor">
-	<Border Background="#1E202A" BorderBrush="#2D3142" BorderThickness="1" CornerRadius="8" Margin="0,4" ClipToBounds="True">
+	<Border Name="CardBorder" Background="#1E202A" BorderBrush="#2D3142" BorderThickness="1" CornerRadius="8" Margin="0,4" ClipToBounds="True">
 		<StackPanel Spacing="0" Name="RootStackPanel">
 			<!-- Collapsible Section Header -->
 			<Border Background="#252836" Padding="12,8" BorderBrush="#2D3142" BorderThickness="0,0,0,1" Cursor="Hand" Name="HeaderBorder">
