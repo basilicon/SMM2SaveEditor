@@ -27,6 +27,17 @@
 			</Grid>
 		</Border>
 
+		<!-- Overlapping Entities Bar (visible when multiple entities overlap at selection) -->
+		<Border Name="OverlappingBar" DockPanel.Dock="Top" Background="#14151D" BorderBrush="#2A2D3C" BorderThickness="0,0,0,1" Padding="12,8" IsVisible="False">
+			<Grid ColumnDefinitions="Auto,*">
+				<StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,8,0">
+					<TextBlock Text="📑" FontSize="13" VerticalAlignment="Center"/>
+					<TextBlock Name="OverlappingCountText" Text="Overlapping:" FontSize="11" FontWeight="SemiBold" Foreground="#A0A5B5" VerticalAlignment="Center"/>
+				</StackPanel>
+				<ComboBox Name="OverlappingDropdown" Grid.Column="1" HorizontalAlignment="Stretch" FontSize="11" Height="28" Padding="6,2"/>
+			</Grid>
+		</Border>
+
 		<!-- Content Area -->
 		<Grid>
 			<!-- Empty State -->

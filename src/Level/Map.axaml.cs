@@ -103,6 +103,65 @@ namespace SMM2SaveEditor
             selectionAdorner.IsVisible = true;
         }
 
+        public Rect GetEntityCanvasBounds(Entity ent)
+        {
+            double left = Canvas.GetLeft(ent);
+            double top = Canvas.GetTop(ent);
+            double bottom = Canvas.GetBottom(ent);
+            double width = ent.Bounds.Width > 0 ? ent.Bounds.Width : ent.Width;
+            double height = ent.Bounds.Height > 0 ? ent.Bounds.Height : ent.Height;
+
+            if (double.IsNaN(width) || width <= 0) width = 160;
+            if (double.IsNaN(height) || height <= 0) height = 160;
+
+            if (double.IsNaN(left)) left = ent.Bounds.X;
+            if (double.IsNaN(left)) left = 0;
+
+            if (double.IsNaN(top))
+            {
+                if (!double.IsNaN(bottom))
+                {
+                    double canvasHeight = Height > 0 ? Height : 4320;
+                    top = canvasHeight - bottom - height;
+                }
+                else
+                {
+                    top = ent.Bounds.Y;
+                }
+            }
+            if (double.IsNaN(top)) top = 0;
+
+            return new Rect(left, top, width, height);
+        }
+
+        public List<Entity> GetOverlappingEntities(Point canvasPoint, Entity? priorityTarget = null)
+        {
+            var result = new List<Entity>();
+            if (myCanvas == null) return result;
+
+            foreach (var child in myCanvas.Children)
+            {
+                if (child is Entity ent && ent != this && !(ent is Map) && !(ent is Level))
+                {
+                    Rect calcBounds = GetEntityCanvasBounds(ent);
+                    if (calcBounds.Inflate(8).Contains(canvasPoint) || ent.Bounds.Inflate(8).Contains(canvasPoint))
+                    {
+                        result.Add(ent);
+                    }
+                }
+            }
+
+            if (priorityTarget != null && priorityTarget != this && !(priorityTarget is Map) && !(priorityTarget is Level))
+            {
+                if (!result.Contains(priorityTarget))
+                {
+                    result.Insert(0, priorityTarget);
+                }
+            }
+
+            return result;
+        }
+
         public bool RemoveEntity(Entity entity)
         {
             bool removed = false;

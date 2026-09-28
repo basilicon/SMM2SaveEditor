@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using Avalonia.Media;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace SMM2SaveEditor
 {
@@ -42,15 +43,39 @@ namespace SMM2SaveEditor
             if (targetEntity != null)
             {
                 e.Handled = true;
-                if (EntityEditor.Instance != null && EntityEditor.Instance.SelectedEntity != targetEntity)
+
+                var map = targetEntity.FindAncestorOfType<Map>() ?? (targetEntity as Map);
+                var canvas = map?.Find<Canvas>("MapCanvas");
+                List<Entity>? overlapping = null;
+
+                if (map != null && canvas != null)
                 {
-                    EntityEditor.Instance.OpenOptions(targetEntity);
+                    Point clickPos = e.GetPosition(canvas);
+                    overlapping = map.GetOverlappingEntities(clickPos, targetEntity);
+                }
+
+                if (overlapping != null && overlapping.Count > 1)
+                {
+                    // If an entity was already selected and is in the overlapping list, cycle to the next on repeated click
+                    if (EntityEditor.Instance != null && EntityEditor.Instance.SelectedEntity != null && overlapping.Contains(EntityEditor.Instance.SelectedEntity))
+                    {
+                        int currentIndex = overlapping.IndexOf(EntityEditor.Instance.SelectedEntity);
+                        int nextIndex = (currentIndex + 1) % overlapping.Count;
+                        targetEntity = overlapping[nextIndex];
+                    }
+                    else if (!overlapping.Contains(targetEntity))
+                    {
+                        targetEntity = overlapping[0];
+                    }
+                }
+
+                if (EntityEditor.Instance != null)
+                {
+                    EntityEditor.Instance.OpenOptions(targetEntity, overlapping);
                 }
 
                 if (isLeft && !(targetEntity is Level) && !(targetEntity is Map))
                 {
-                    var map = targetEntity.FindAncestorOfType<Map>();
-                    var canvas = map?.Find<Canvas>("MapCanvas");
                     if (canvas != null)
                     {
                         targetEntity.isDragging = true;
@@ -104,7 +129,15 @@ namespace SMM2SaveEditor
                 // Refresh inspector to reflect final moved coordinates
                 if (EntityEditor.Instance != null && EntityEditor.Instance.SelectedEntity == this)
                 {
-                    EntityEditor.Instance.OpenOptions(this);
+                    var map = this.FindAncestorOfType<Map>();
+                    var canvas = map?.Find<Canvas>("MapCanvas");
+                    List<Entity>? overlapping = null;
+                    if (map != null && canvas != null)
+                    {
+                        Point currentPos = e.GetPosition(canvas);
+                        overlapping = map.GetOverlappingEntities(currentPos, this);
+                    }
+                    EntityEditor.Instance.OpenOptions(this, overlapping);
                 }
             }
         }
