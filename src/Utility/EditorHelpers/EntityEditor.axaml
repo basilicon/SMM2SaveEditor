@@ -14,10 +14,16 @@
 					<TextBlock Text="INSPECTOR" FontWeight="Bold" FontSize="11" Foreground="{StaticResource SmmYellowBrush}" LetterSpacing="1"/>
 				</StackPanel>
 
-				<!-- Current Entity Type Pill -->
-				<Border Grid.Column="2" Name="EntityTypeBadgeContainer" Background="#262938" CornerRadius="4" Padding="8,2" VerticalAlignment="Center">
-					<TextBlock Name="EntityTypeBadge" Text="" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFFF"/>
-				</Border>
+				<!-- Current Entity Type Pill & Delete Action -->
+				<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+					<Border Name="EntityTypeBadgeContainer" Background="#262938" CornerRadius="4" Padding="8,2" VerticalAlignment="Center">
+						<TextBlock Name="EntityTypeBadge" Text="" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+					</Border>
+					<Button Name="DeleteEntityBtn" Classes="toolbarBtn" ToolTip.Tip="Delete Selected Entity (Del)" 
+							Background="#381818" BorderBrush="#552424" Padding="6,2" CornerRadius="4" IsVisible="False" Click="OnDeleteEntityClick">
+						<TextBlock Text="🗑️ Delete" FontSize="11" Foreground="#FF6B6B" FontWeight="SemiBold"/>
+					</Button>
+				</StackPanel>
 			</Grid>
 		</Border>
 
@@ -36,10 +42,11 @@
 					<Border Background="#1C1E26" BorderBrush="#282B3A" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,12,0,0">
 						<StackPanel Spacing="4">
 							<TextBlock Text="QUICK SHORTCUTS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource SmmYellowBrush}"/>
-							<TextBlock Text="Space  — Fit view to window" FontSize="11" Foreground="#9AA0B2"/>
-							<TextBlock Text="Scroll  — Zoom in / out" FontSize="11" Foreground="#9AA0B2"/>
-							<TextBlock Text="Drag    — Pan around canvas" FontSize="11" Foreground="#9AA0B2"/>
-							<TextBlock Text="R        — Reset zoom matrix" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="Left Click — Select entity" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="Delete     — Delete selected entity" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="Space      — Fit view to window" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="Scroll     — Zoom in / out" FontSize="11" Foreground="#9AA0B2"/>
+							<TextBlock Text="R          — Reset zoom matrix" FontSize="11" Foreground="#9AA0B2"/>
 						</StackPanel>
 					</Border>
 				</StackPanel>

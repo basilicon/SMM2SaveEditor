@@ -139,6 +139,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             try
             {
                 objRef.UpdateSprite();
+                EntityEditor.Instance?.RefreshSelectionHighlight();
             }
             catch (Exception ex)
             {

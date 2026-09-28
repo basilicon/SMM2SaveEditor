@@ -25,7 +25,9 @@ namespace SMM2SaveEditor
         public void OnClick(object? sender, PointerPressedEventArgs e)
         {
             var point = e.GetCurrentPoint(sender as Visual);
-            if (!point.Properties.IsRightButtonPressed && point.Properties.PointerUpdateKind != PointerUpdateKind.RightButtonPressed)
+            bool isLeft = point.Properties.IsLeftButtonPressed || point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed;
+            bool isRight = point.Properties.IsRightButtonPressed || point.Properties.PointerUpdateKind == PointerUpdateKind.RightButtonPressed;
+            if (!isLeft && !isRight)
                 return;
 
             if (EntityEditor.Instance != null)

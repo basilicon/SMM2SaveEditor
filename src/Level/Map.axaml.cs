@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using System.Diagnostics;
 using System;
 
@@ -43,12 +44,76 @@ namespace SMM2SaveEditor
         byte[] unknown2 = new byte[3516];
 
         private Canvas? myCanvas;
+        private Border? selectionAdorner;
 
         public Map()
         {
             InitializeComponent();
             myCanvas = this.Find<Canvas>("MapCanvas");
-            myCanvas.PointerPressed += OnClick;
+            if (myCanvas != null)
+            {
+                selectionAdorner = new Border
+                {
+                    BorderBrush = new SolidColorBrush(Color.Parse("#FFCC00")),
+                    BorderThickness = new Thickness(3),
+                    Background = new SolidColorBrush(Color.FromArgb(45, 255, 204, 0)),
+                    CornerRadius = new CornerRadius(3),
+                    IsHitTestVisible = false,
+                    ZIndex = 99999,
+                    IsVisible = false
+                };
+                myCanvas.Children.Add(selectionAdorner);
+                myCanvas.PointerPressed += OnClick;
+            }
+        }
+
+        public void HighlightEntity(Entity? entity)
+        {
+            if (selectionAdorner == null || myCanvas == null) return;
+
+            if (entity == null || entity == this || entity.Parent != myCanvas)
+            {
+                selectionAdorner.IsVisible = false;
+                return;
+            }
+
+            double left = Canvas.GetLeft(entity);
+            double top = Canvas.GetTop(entity);
+            double width = entity.Bounds.Width > 0 ? entity.Bounds.Width : entity.Width;
+            double height = entity.Bounds.Height > 0 ? entity.Bounds.Height : entity.Height;
+
+            if (double.IsNaN(width) || width <= 0) width = 160;
+            if (double.IsNaN(height) || height <= 0) height = 160;
+
+            Canvas.SetLeft(selectionAdorner, left);
+            Canvas.SetTop(selectionAdorner, top);
+            selectionAdorner.Width = width;
+            selectionAdorner.Height = height;
+            selectionAdorner.IsVisible = true;
+        }
+
+        public bool RemoveEntity(Entity entity)
+        {
+            bool removed = false;
+            if (entity is Obj o) removed = objects.Remove(o);
+            else if (entity is Ground g) removed = ground.Remove(g);
+            else if (entity is Track t) removed = tracks.Remove(t);
+            else if (entity is SoundEffect s) removed = sounds.Remove(s);
+            else if (entity is Snake sn) removed = snakes.Remove(sn);
+            else if (entity is ClearPipe cp) removed = clearPipes.Remove(cp);
+            else if (entity is PiranhaCreeper pc) removed = piranhaCreepers.Remove(pc);
+            else if (entity is ExclamationBlock eb) removed = exclamationBlocks.Remove(eb);
+            else if (entity is TrackBlock tb) removed = trackBlocks.Remove(tb);
+            else if (entity is Icicle ic) removed = icicles.Remove(ic);
+
+            if (removed && myCanvas != null)
+            {
+                myCanvas.Children.Remove(entity);
+                HighlightEntity(null);
+                UpdateSprite();
+                return true;
+            }
+            return false;
         }
 
         public override void LoadFromStream(KaitaiStream io)

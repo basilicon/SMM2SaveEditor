@@ -92,7 +92,15 @@ namespace SMM2SaveEditor
                 if (e.Key == Avalonia.Input.Key.R) { zoomBorder.ResetMatrix(); UpdateZoomText(); }
                 if (e.Key == Avalonia.Input.Key.OemPlus) { zoomBorder.ZoomIn(); UpdateZoomText(); }
                 if (e.Key == Avalonia.Input.Key.OemMinus) { zoomBorder.ZoomOut(); UpdateZoomText(); }
+                if (e.Key == Avalonia.Input.Key.Delete) { EntityEditor.Instance?.DeleteSelectedEntity(); }
             };
+            AddHandler(KeyDownEvent, (s, e) =>
+            {
+                if (e.Key == Avalonia.Input.Key.Delete)
+                {
+                    EntityEditor.Instance?.DeleteSelectedEntity();
+                }
+            }, RoutingStrategies.Bubble);
             zoomBorder.PointerWheelChanged += (s, e) =>
             {
                 Avalonia.Threading.Dispatcher.UIThread.Post(UpdateZoomText);
