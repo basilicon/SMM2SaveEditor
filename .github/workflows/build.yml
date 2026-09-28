@@ -31,7 +31,7 @@ jobs:
             archive: SMM2SaveEditor-osx-arm64.tar.gz
           - os: macOS-x64
             rid: osx-x64
-            runs-on: macos-13
+            runs-on: macos-latest
             archive: SMM2SaveEditor-osx-x64.tar.gz
 
     steps:
