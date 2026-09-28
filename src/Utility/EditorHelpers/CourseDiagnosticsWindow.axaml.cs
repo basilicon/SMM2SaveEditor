@@ -12,6 +12,8 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         private readonly SlotInfo slot;
         private readonly string saveDir;
         private readonly Action onStateChanged;
+        private readonly Level? currentLevel;
+        private readonly string? courseFilePath;
 
         public CourseDiagnosticsWindow() : this(new SlotInfo(), "", () => { })
         {
@@ -27,16 +29,42 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             PopulateDiagnostics();
         }
 
+        public CourseDiagnosticsWindow(Level level, string? courseFilePath, Action? onStateChanged = null)
+        {
+            this.currentLevel = level;
+            this.courseFilePath = courseFilePath;
+            this.onStateChanged = onStateChanged ?? (() => { });
+            this.slot = new SlotInfo
+            {
+                Title = !string.IsNullOrWhiteSpace(level.levelName) ? level.levelName : "Active Level",
+                GameStyle = level.gameStyle.ToString()
+            };
+            this.saveDir = "";
+
+            InitializeComponent();
+            PopulateDiagnostics();
+        }
+
         private void PopulateDiagnostics()
         {
-            SlotTitleText.Text = $"{slot.DisplayName} ({slot.InGameSlot}): {slot.Title}";
+            CourseHealthReport report;
+            if (currentLevel != null)
+            {
+                SlotTitleText.Text = $"Level: {slot.Title} ({slot.GameStyle})";
+                report = CourseDiagnostics.DiagnoseLevel(currentLevel, courseFilePath);
+                UnhideButton.IsVisible = false;
+                RepairThumbButton.IsVisible = false;
+            }
+            else
+            {
+                SlotTitleText.Text = $"{slot.DisplayName} ({slot.InGameSlot}): {slot.Title}";
+                report = slot.HealthReport ?? CourseDiagnostics.DiagnoseSlot(saveDir, slot.SlotIndex, slot.IsOccupiedInSave);
+                UnhideButton.IsVisible = report.CanUnhide;
+                RepairThumbButton.IsVisible = report.CanRepairThumbnail;
+            }
 
-            var report = slot.HealthReport ?? CourseDiagnostics.DiagnoseSlot(saveDir, slot.SlotIndex, slot.IsOccupiedInSave);
             ChecksList.ItemsSource = report.Checks;
-
-            UnhideButton.IsVisible = report.CanUnhide;
             SanitizeFlagsButton.IsVisible = report.CanSanitizeFlags;
-            RepairThumbButton.IsVisible = report.CanRepairThumbnail;
 
             switch (report.Status)
             {
@@ -104,6 +132,23 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private void OnSanitizeFlagsClick(object? sender, RoutedEventArgs e)
         {
+            if (currentLevel != null)
+            {
+                int count = CourseDiagnostics.SanitizeLevelFlags(currentLevel);
+                if (!string.IsNullOrEmpty(courseFilePath) && File.Exists(courseFilePath))
+                {
+                    try
+                    {
+                        byte[] encrypted = LevelCrypto.EncryptLevel(currentLevel.GetBytes());
+                        File.WriteAllBytes(courseFilePath, encrypted);
+                    }
+                    catch { }
+                }
+                onStateChanged?.Invoke();
+                PopulateDiagnostics();
+                return;
+            }
+
             if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir)) return;
 
             bool ok = CourseDiagnostics.SanitizeCourseFlags(saveDir, slot.SlotIndex);

@@ -222,6 +222,34 @@ namespace SMM2SaveEditor
             UpdateZoomText();
         }
 
+        private void OnOpenCourseProperties(object? sender, RoutedEventArgs e)
+        {
+            if (level != null)
+            {
+                SwitchToTab(showSlots: false);
+                entityEditor.OpenOptions(level);
+                if (statusText != null) statusText.Text = "Editing Course Properties";
+            }
+        }
+
+        private async void OnRunCourseDiagnostics(object? sender, RoutedEventArgs e)
+        {
+            if (level == null) return;
+
+            var diagWindow = new CourseDiagnosticsWindow(level, currentFilePath, () =>
+            {
+                if (courseHeaderTitle != null && !string.IsNullOrWhiteSpace(level.levelName))
+                {
+                    courseHeaderTitle.Text = level.levelName;
+                }
+                if (courseHeaderStyleText != null)
+                {
+                    courseHeaderStyleText.Text = level.gameStyle.ToString();
+                }
+            });
+            await diagWindow.ShowDialog(this);
+        }
+
         private void OnExitApp(object? sender, RoutedEventArgs e)
         {
             Close();

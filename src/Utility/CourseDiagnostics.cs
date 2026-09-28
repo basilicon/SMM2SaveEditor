@@ -536,5 +536,198 @@ namespace SMM2SaveEditor.Utility
 
             return anySuccess;
         }
+
+        /// <summary>
+        /// Runs engine integrity diagnostics on an in-memory Level instance, and optionally verifies its file on disk.
+        /// </summary>
+        public static CourseHealthReport DiagnoseLevel(Level lvl, string? filePath = null)
+        {
+            var report = new CourseHealthReport();
+
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+            {
+                report.CourseFileExists = true;
+                try
+                {
+                    byte[] rawBcd = File.ReadAllBytes(filePath);
+                    if (rawBcd.Length != 0x5C000)
+                    {
+                        report.AddCheck("Course File Size", DiagnosticSeverity.Error,
+                            $"{rawBcd.Length} bytes (expected 376,832)",
+                            "SMM2 course loader enforces file size <= 376,832 bytes.");
+                    }
+                    else
+                    {
+                        report.AddCheck("Course File Size", DiagnosticSeverity.Pass, "376,832 bytes (0x5C000)", "Matches authentic SMM2 encrypted course container size.");
+                    }
+
+                    try
+                    {
+                        byte[] decrypted = LevelCrypto.DecryptLevel(rawBcd);
+                        report.AddCheck("Course Outer AES-CMAC", DiagnosticSeverity.Pass, "Integrity Verified",
+                            "Outer AES-CMAC signature matches decrypted payload using KeyTables.Course.");
+                        report.AddCheck("Course Header CRC32", DiagnosticSeverity.Pass, "Checksum Matches",
+                            "Header CRC32 at offset 0x08 matches payload checksum.");
+                    }
+                    catch (Exception ex)
+                    {
+                        report.AddCheck("Course Integrity (CMAC/CRC)", DiagnosticSeverity.Error, ex.Message,
+                            "Failed outer AES-CMAC or header CRC32 check on disk.");
+                    }
+
+                    if (rawBcd.Length >= 0x10)
+                    {
+                        string magic = System.Text.Encoding.ASCII.GetString(rawBcd, 0x0C, 4);
+                        if (magic != "SCDL")
+                        {
+                            report.AddCheck("Course Magic Signature", DiagnosticSeverity.Error,
+                                $"Found '{magic}' instead of 'SCDL'",
+                                "SMM2 level headers must begin with 'SCDL' at offset 0x0C.");
+                        }
+                        else
+                        {
+                            report.AddCheck("Course Magic Signature", DiagnosticSeverity.Pass, "'SCDL' Valid", "Standard Super Mario Maker 2 level header signature.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    report.AddCheck("Course File Read", DiagnosticSeverity.Error, "Read error", ex.Message);
+                }
+            }
+
+            // In-Memory Level Validation
+            string style = lvl.gameStyle.ToString().ToUpper();
+            if (!Enum.IsDefined(typeof(GameStyle), lvl.gameStyle))
+            {
+                report.Status = SlotHealthStatus.Corrupted;
+                report.PrimaryReason = $"Unknown GameStyle '{style}'.";
+                report.AddCheck("Game Style", DiagnosticSeverity.Error, $"Invalid style: {style}", "Supported styles are SMB1, SMB3, SMW, NSMBU/NSMBW, SM3DW.");
+            }
+            else
+            {
+                report.AddCheck("Game Style", DiagnosticSeverity.Pass, style, $"Recognized game theme: {style}");
+            }
+
+            if (lvl.startY > 27 || lvl.goalY > 27)
+            {
+                report.Status = SlotHealthStatus.Corrupted;
+                report.PrimaryReason = $"Start/Goal position out of bounds (Start Y: {lvl.startY}, Goal Y: {lvl.goalY}).";
+                report.AddCheck("World Coordinates", DiagnosticSeverity.Error,
+                    $"Start Y: {lvl.startY}, Goal Y: {lvl.goalY} (Max: 27)",
+                    "Player start or goal position exceeds the vertical world limit.");
+            }
+            else
+            {
+                report.AddCheck("World Coordinates", DiagnosticSeverity.Pass,
+                    $"Start Y: {lvl.startY}, Goal Y: {lvl.goalY}", "Within valid vertical world boundary (0-27).");
+            }
+
+            int owObj = lvl.overworld?.objects?.Count ?? 0;
+            int swObj = lvl.subworld?.objects?.Count ?? 0;
+            int owGround = lvl.overworld?.ground?.Count ?? 0;
+            int swGround = lvl.subworld?.ground?.Count ?? 0;
+            int owTracks = lvl.overworld?.tracks?.Count ?? 0;
+            int swTracks = lvl.subworld?.tracks?.Count ?? 0;
+
+            bool entityLimitExceeded = owObj > 2600 || swObj > 2600 || owGround > 4000 || swGround > 4000 || owTracks > 1500 || swTracks > 1500;
+            if (entityLimitExceeded)
+            {
+                report.Status = SlotHealthStatus.Corrupted;
+                report.PrimaryReason = "Course exceeds SMM2 entity pool memory limits.";
+                report.AddCheck("Entity Limits", DiagnosticSeverity.Error,
+                    $"OW: {owObj}/2600 obj, {owGround}/4000 ground | SW: {swObj}/2600 obj, {swGround}/4000 ground",
+                    "Object count exceeds maximum engine buffer size.");
+            }
+            else
+            {
+                report.AddCheck("Entity Limits", DiagnosticSeverity.Pass,
+                    $"OW: {owObj} obj, {owGround} ground | SW: {swObj} obj, {swGround} ground",
+                    "All entity counts within SMM2 engine limits.");
+            }
+
+            var flagErrors = new List<string>();
+            if (lvl.overworld?.objects != null)
+            {
+                for (int i = 0; i < lvl.overworld.objects.Count; i++)
+                {
+                    var obj = lvl.overworld.objects[i];
+                    var errs = ActorCapabilities.ValidateObjectFlags(obj.id, obj.flag, obj.cflag, i, "Overworld");
+                    flagErrors.AddRange(errs);
+                }
+            }
+            if (lvl.subworld?.objects != null)
+            {
+                for (int i = 0; i < lvl.subworld.objects.Count; i++)
+                {
+                    var obj = lvl.subworld.objects[i];
+                    var errs = ActorCapabilities.ValidateObjectFlags(obj.id, obj.flag, obj.cflag, i, "Subworld");
+                    flagErrors.AddRange(errs);
+                }
+            }
+
+            report.FlagViolationCount = flagErrors.Count;
+            if (flagErrors.Count > 0)
+            {
+                report.Status = SlotHealthStatus.Corrupted;
+                report.CanSanitizeFlags = true;
+                if (string.IsNullOrEmpty(report.PrimaryReason))
+                {
+                    report.PrimaryReason = $"{flagErrors.Count} object(s) have invalid flags violating SMM2 actor capabilities.";
+                }
+                report.AddCheck("Actor Capabilities & Flags", DiagnosticSeverity.Error,
+                    $"{flagErrors.Count} illegal flag violation(s)",
+                    string.Join("\n", flagErrors.Take(10)) + (flagErrors.Count > 10 ? $"\n...and {flagErrors.Count - 10} more" : ""));
+            }
+            else
+            {
+                report.AddCheck("Actor Capabilities & Flags", DiagnosticSeverity.Pass,
+                    "All object flags verified",
+                    "All entities conform to official SMM2 actor capability masks and mutual exclusion rules.");
+            }
+
+            if (report.Status != SlotHealthStatus.Corrupted)
+            {
+                report.Status = SlotHealthStatus.Healthy;
+                report.PrimaryReason = "Course data is valid and within engine limits.";
+            }
+
+            return report;
+        }
+
+        /// <summary>
+        /// Sanitizes invalid flags on all objects in an in-memory Level instance. Returns count of fixed objects.
+        /// </summary>
+        public static int SanitizeLevelFlags(Level lvl)
+        {
+            int count = 0;
+            if (lvl.overworld?.objects != null)
+            {
+                foreach (var obj in lvl.overworld.objects)
+                {
+                    uint sanitized = ActorCapabilities.SanitizeFlags(obj.id, obj.flag);
+                    if (sanitized != obj.flag)
+                    {
+                        obj.flag = sanitized;
+                        count++;
+                    }
+                }
+            }
+
+            if (lvl.subworld?.objects != null)
+            {
+                foreach (var obj in lvl.subworld.objects)
+                {
+                    uint sanitized = ActorCapabilities.SanitizeFlags(obj.id, obj.flag);
+                    if (sanitized != obj.flag)
+                    {
+                        obj.flag = sanitized;
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
     }
 }
