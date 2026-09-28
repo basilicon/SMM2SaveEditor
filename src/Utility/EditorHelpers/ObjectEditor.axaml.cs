@@ -8,6 +8,7 @@ using SMM2SaveEditor.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SMM2SaveEditor.Utility.EditorHelpers
 {
@@ -155,7 +156,19 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
             Type entityType = entity.GetType();
             editorHeader.Text = entityType.Name;
-            IDictionary<string, object> options = entity.AsDictionary(entityType);
+            IDictionary<string, object> rawOptions = entity.AsDictionary(entityType);
+
+            // Filter out non-scalar fields (e.g. lists of entities, arrays, entity sub-trees)
+            var options = rawOptions
+                .Where(kvp => IsEditableType(kvp.Value?.GetType()))
+                .ToDictionary(k => k.Key, v => v.Value);
+
+            if (options.Count == 0)
+            {
+                IsVisible = false;
+                return;
+            }
+            IsVisible = true;
 
             grid.ColumnDefinitions = new ColumnDefinitions("*,1.5*");
             grid.RowDefinitions = new RowDefinitions(string.Join(",", System.Linq.Enumerable.Repeat("Auto", options.Count)));
@@ -261,6 +274,16 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                     o = textBox;
                 }
                 else
+                if (type == typeof(bool))
+                {
+                    CheckBox checkBox = new();
+                    checkBox.IsChecked = Convert.ToBoolean(kvp.Value);
+                    checkBox.IsCheckedChanged += (o, e) => {
+                        ApplyOption(kvp.Key, (o as CheckBox)!.IsChecked == true);
+                    };
+                    o = checkBox;
+                }
+                else
                 {
                     TextBox valueBlock = new();
                     valueBlock.Text = kvp.Value.ToString();
@@ -279,6 +302,16 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 counter++;
                 labels.Add(kvp.Key);
             }
+        }
+
+        private static bool IsEditableType(Type? type)
+        {
+            if (type == null) return false;
+            if (type.IsSubclassOf(typeof(Enum))) return true;
+            if (IsIntegerType(type)) return true;
+            if (type == typeof(string)) return true;
+            if (type == typeof(bool)) return true;
+            return false;
         }
 
         private static bool IsIntegerType(Type t)
