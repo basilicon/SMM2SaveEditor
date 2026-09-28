@@ -49,7 +49,8 @@ namespace SMM2SaveEditor.Utility
         public bool ThumbnailFileExists { get; set; }
         public bool CanUnhide { get; set; }
         public bool CanRepairThumbnail { get; set; }
-        public bool CanSanitizeFlags { get; set; }
+        public bool CanRepairCourse { get; set; }
+        public bool CanSanitizeFlags => CanRepairCourse;
         public int FlagViolationCount { get; set; }
         public string PrimaryReason { get; set; } = "";
         public List<DiagnosticItem> Checks { get; set; } = new();
@@ -233,6 +234,39 @@ namespace SMM2SaveEditor.Utility
                 report.AddCheck("Entity Limits", DiagnosticSeverity.Pass,
                     $"OW: {owObj} obj, {owGround} ground | SW: {swObj} obj, {swGround} ground",
                     "All entity counts within SMM2 engine limits.");
+
+                // Check Course Initialization / Management Flags
+                bool isMgmtInitialized = (lvl.unknownManagementFlags & 1) != 0;
+                if (!isMgmtInitialized)
+                {
+                    report.Status = SlotHealthStatus.Corrupted;
+                    report.PrimaryReason = "Course container is uninitialized (missing management flag 0x1 at offset 0x18).";
+                    report.CanRepairCourse = true;
+                    report.AddCheck("Course Initialization Flag", DiagnosticSeverity.Error,
+                        $"0x{lvl.unknownManagementFlags:X8} (Bit 0x1 missing)",
+                        "Offset 0x18 management flags must have bit 0x1 set. When 0, SMM2 treats the course file as an incomplete/uninitialized container and deletes it on boot.");
+                }
+                else
+                {
+                    report.AddCheck("Course Initialization Flag", DiagnosticSeverity.Pass,
+                        $"0x{lvl.unknownManagementFlags:X8} (Initialized)",
+                        "Course management initialization flag bit 0x1 is active.");
+                }
+
+                // Check Course Title
+                if (string.IsNullOrWhiteSpace(lvl.levelName))
+                {
+                    report.CanRepairCourse = true;
+                    report.AddCheck("Course Title", DiagnosticSeverity.Warning,
+                        "Blank / Missing Title",
+                        "Level name is empty. SMM2 Coursebot displays empty text; repair will assign 'Untitled'.");
+                }
+                else
+                {
+                    report.AddCheck("Course Title", DiagnosticSeverity.Pass,
+                        $"\"{lvl.levelName}\"",
+                        "Valid course title.");
+                }
             }
             catch (Exception ex)
             {
@@ -243,6 +277,7 @@ namespace SMM2SaveEditor.Utility
             }
 
             // Check C: Thumbnail Verification
+            bool hasValidThumbImage = false;
             if (report.ThumbnailFileExists)
             {
                 try
@@ -253,6 +288,8 @@ namespace SMM2SaveEditor.Utility
                         report.AddCheck("Thumbnail File Size", DiagnosticSeverity.Warning,
                             $"{rawBtl.Length} bytes (expected {ThumbnailCrypto.BtlFileSize})",
                             "Invalid thumbnail file size. SMM2 may fail to load the thumbnail preview.");
+                        report.CanRepairThumbnail = true;
+                        report.CanRepairCourse = true;
                     }
                     else
                     {
@@ -261,9 +298,10 @@ namespace SMM2SaveEditor.Utility
                         report.AddCheck("Thumbnail Outer CMAC", DiagnosticSeverity.Pass, "Integrity Verified",
                             "Outer AES-CMAC verified using KeyTables.Thumbnail.");
 
-                        // If not a blank container, check inner HMAC-SHA256 signature
-                        if (decThumb.Length > 0 && !(rawBtl[0] == 0 && rawBtl[1] == 0 && rawBtl[2] == 0))
+                        if (decThumb.Length >= 2 && decThumb[0] == 0xFF && decThumb[1] == 0xD8)
                         {
+                            hasValidThumbImage = true;
+
                             // Inner HMAC verification
                             bool hmacOk = VerifyThumbnailInnerHmac(rawBtl);
                             if (hmacOk)
@@ -277,24 +315,18 @@ namespace SMM2SaveEditor.Utility
                                     "Signature MISMATCH (Tampered / Invalid)",
                                     "SMM2 checks this 32-byte HMAC-SHA256 digest at 0x1BFA0. If it fails, SMM2 detects thumbnail tampering and hides or resets the course in Coursebot!");
                                 report.CanRepairThumbnail = true;
+                                report.CanRepairCourse = true;
                             }
 
-                            // Check JPEG header
-                            if (decThumb.Length >= 2 && decThumb[0] == 0xFF && decThumb[1] == 0xD8)
-                            {
-                                report.AddCheck("Thumbnail JPEG Format", DiagnosticSeverity.Pass, "Valid JFIF/JPEG",
-                                    "Starts with standard SOI marker (0xFF 0xD8).");
-                            }
-                            else
-                            {
-                                report.AddCheck("Thumbnail JPEG Format", DiagnosticSeverity.Warning, "Non-standard format",
-                                    "Missing JPEG SOI marker. Preview may fail to render.");
-                            }
+                            report.AddCheck("Thumbnail JPEG Format", DiagnosticSeverity.Pass, "Valid JFIF/JPEG",
+                                $"Starts with standard SOI marker (0xFF 0xD8), payload size: {decThumb.Length} bytes.");
                         }
                         else
                         {
-                            report.AddCheck("Thumbnail Container", DiagnosticSeverity.Info, "Blank / Unset",
-                                "Thumbnail is a valid blank container.");
+                            report.AddCheck("Thumbnail Container", DiagnosticSeverity.Warning, "Empty / No JPEG Image",
+                                "Thumbnail file has no JPEG image data (0 bytes). SMM2 Coursebot requires a valid JPEG thumbnail to render the course.");
+                            report.CanRepairThumbnail = true;
+                            report.CanRepairCourse = true;
                         }
                     }
                 }
@@ -302,25 +334,46 @@ namespace SMM2SaveEditor.Utility
                 {
                     report.AddCheck("Thumbnail Decryption", DiagnosticSeverity.Warning, "Decryption error", ex.Message);
                     report.CanRepairThumbnail = true;
+                    report.CanRepairCourse = true;
                 }
             }
             else
             {
                 report.AddCheck("Thumbnail File", DiagnosticSeverity.Warning, "Missing",
                     $"{thumbFileName} does not exist in save directory. Coursebot displays a placeholder or uninitialized box.");
+                report.CanRepairThumbnail = true;
+                report.CanRepairCourse = true;
+            }
+
+            // If slot is occupied in save.dat but thumbnail has no valid JPEG, SMM2 deletes the course!
+            if (report.IsOccupiedInSave && !hasValidThumbImage)
+            {
+                report.Status = SlotHealthStatus.Corrupted;
+                if (string.IsNullOrEmpty(report.PrimaryReason))
+                {
+                    report.PrimaryReason = "Occupied course is missing a valid JPEG thumbnail (causes SMM2 Coursebot to report corruption and delete the course).";
+                }
+                report.CanRepairThumbnail = true;
+                report.CanRepairCourse = true;
             }
 
             // Final Status Resolution
             if (!report.IsOccupiedInSave)
             {
-                report.Status = SlotHealthStatus.HiddenInCoursebot;
-                report.CanUnhide = true;
-                report.PrimaryReason = "Course data is valid, but hidden in Coursebot because save.dat marks this slot as inactive (status = 0).";
+                if (report.Status != SlotHealthStatus.Corrupted)
+                {
+                    report.Status = SlotHealthStatus.HiddenInCoursebot;
+                    report.CanUnhide = true;
+                    report.PrimaryReason = "Course data is valid, but hidden in Coursebot because save.dat marks this slot as inactive (status = 0).";
+                }
             }
             else
             {
-                report.Status = SlotHealthStatus.Healthy;
-                report.PrimaryReason = "Course and slot registration are fully healthy.";
+                if (report.Status != SlotHealthStatus.Corrupted)
+                {
+                    report.Status = SlotHealthStatus.Healthy;
+                    report.PrimaryReason = "Course and slot registration are fully healthy.";
+                }
             }
 
             return report;
@@ -427,12 +480,140 @@ namespace SMM2SaveEditor.Utility
         }
 
         /// <summary>
-        /// Sanitizes invalid flags on all objects in a course slot, re-encrypts, and saves the file.
-        /// (Deprecated: Flag validation removed to prevent false corruptions on legitimate courses)
+        /// De-corrupts and repairs a course slot:
+        /// 1. Ensures course initialization flag bit 0x1 is active at offset 0x18.
+        /// 2. Sets level name to "Untitled" if empty or blank.
+        /// 3. Ensures a valid JPEG thumbnail exists; generates a randomized noise placeholder with "No Thumbnail Found" if missing or empty.
+        /// 4. Marks the slot as active/occupied in save.dat.
         /// </summary>
-        public static bool SanitizeCourseFlags(string saveDir, int slotIndex)
+        public static bool RepairCourse(string saveDir, int slotIndex)
         {
-            return false;
+            if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir)) return false;
+
+            var targets = SaveManagerService.GetTargetDirectories(saveDir);
+            string courseFile = $"course_data_{slotIndex:D3}.bcd";
+            string thumbFile = $"course_thumb_{slotIndex:D3}.btl";
+
+            bool repairedCourse = false;
+            bool repairedThumb = false;
+
+            // 1. Repair course data across all target directories
+            foreach (var target in targets)
+            {
+                string bcdPath = Path.Combine(target, courseFile);
+                if (File.Exists(bcdPath))
+                {
+                    try
+                    {
+                        byte[] rawBcd = File.ReadAllBytes(bcdPath);
+                        byte[] dec = LevelCrypto.DecryptLevel(rawBcd);
+                        Level lvl = new Level();
+                        lvl.LoadFromStream(new KaitaiStream(dec));
+
+                        bool modified = false;
+
+                        // Ensure initialization flag bit 0x1 is set
+                        if ((lvl.unknownManagementFlags & 1) == 0)
+                        {
+                            lvl.unknownManagementFlags |= 1;
+                            modified = true;
+                        }
+
+                        // Ensure level name is not empty
+                        if (string.IsNullOrWhiteSpace(lvl.levelName))
+                        {
+                            lvl.levelName = "Untitled";
+                            modified = true;
+                        }
+
+                        if (modified)
+                        {
+                            byte[] reEncrypted = LevelCrypto.EncryptLevel(lvl.GetBytes());
+                            File.WriteAllBytes(bcdPath, reEncrypted);
+                            repairedCourse = true;
+                        }
+                        else
+                        {
+                            repairedCourse = true;
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            // 2. Ensure thumbnail is valid; generate random noise thumbnail if missing/empty/corrupted
+            bool hasValidThumbnail = false;
+            foreach (var target in targets)
+            {
+                string thumbPath = Path.Combine(target, thumbFile);
+                if (File.Exists(thumbPath))
+                {
+                    try
+                    {
+                        byte[] rawBtl = File.ReadAllBytes(thumbPath);
+                        if (rawBtl.Length == ThumbnailCrypto.BtlFileSize)
+                        {
+                            byte[] decThumb = ThumbnailCrypto.DecryptThumbnail(rawBtl);
+                            if (decThumb.Length >= 2 && decThumb[0] == 0xFF && decThumb[1] == 0xD8)
+                            {
+                                hasValidThumbnail = true;
+                                if (!VerifyThumbnailInnerHmac(rawBtl))
+                                {
+                                    byte[] fixedBtl = ThumbnailCrypto.EncryptThumbnail(decThumb);
+                                    SaveManagerService.WriteThumbnail(saveDir, slotIndex, fixedBtl);
+                                    repairedThumb = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            if (!hasValidThumbnail)
+            {
+                byte[] noiseBtl = ThumbnailCrypto.GeneratePlaceholderThumbnailBtl();
+                SaveManagerService.WriteThumbnail(saveDir, slotIndex, noiseBtl);
+                repairedThumb = true;
+            }
+
+            // 3. Ensure slot is marked active in save.dat
+            SaveDataCrypto.SetSlotStatus(saveDir, slotIndex, occupied: true);
+
+            return repairedCourse || repairedThumb;
+        }
+
+        /// <summary>
+        /// Backwards-compatible alias for RepairCourse.
+        /// </summary>
+        public static bool SanitizeCourseFlags(string saveDir, int slotIndex) => RepairCourse(saveDir, slotIndex);
+
+        /// <summary>
+        /// Repairs an in-memory Level instance: ensures management flag bit 0x1 is set and assigns "Untitled" if name is blank.
+        /// </summary>
+        public static bool RepairLevel(Level lvl)
+        {
+            bool modified = false;
+            if ((lvl.unknownManagementFlags & 1) == 0)
+            {
+                lvl.unknownManagementFlags |= 1;
+                modified = true;
+            }
+            if (string.IsNullOrWhiteSpace(lvl.levelName))
+            {
+                lvl.levelName = "Untitled";
+                modified = true;
+            }
+            return modified;
+        }
+
+        /// <summary>
+        /// Backwards-compatible alias for RepairLevel.
+        /// </summary>
+        public static int SanitizeLevelFlags(Level lvl)
+        {
+            return RepairLevel(lvl) ? 1 : 0;
         }
 
         /// <summary>
@@ -544,6 +725,39 @@ namespace SMM2SaveEditor.Utility
                     "All entity counts within SMM2 engine limits.");
             }
 
+            // Check Course Initialization / Management Flags
+            bool isMgmtInitialized = (lvl.unknownManagementFlags & 1) != 0;
+            if (!isMgmtInitialized)
+            {
+                report.Status = SlotHealthStatus.Corrupted;
+                report.PrimaryReason = "Course container is uninitialized (missing management flag 0x1 at offset 0x18).";
+                report.CanRepairCourse = true;
+                report.AddCheck("Course Initialization Flag", DiagnosticSeverity.Error,
+                    $"0x{lvl.unknownManagementFlags:X8} (Bit 0x1 missing)",
+                    "Offset 0x18 management flags must have bit 0x1 set. When 0, SMM2 treats the course file as an incomplete/uninitialized container and deletes it on boot.");
+            }
+            else
+            {
+                report.AddCheck("Course Initialization Flag", DiagnosticSeverity.Pass,
+                    $"0x{lvl.unknownManagementFlags:X8} (Initialized)",
+                    "Course management initialization flag bit 0x1 is active.");
+            }
+
+            // Check Course Title
+            if (string.IsNullOrWhiteSpace(lvl.levelName))
+            {
+                report.CanRepairCourse = true;
+                report.AddCheck("Course Title", DiagnosticSeverity.Warning,
+                    "Blank / Missing Title",
+                    "Level name is empty. SMM2 Coursebot displays empty text; repair will assign 'Untitled'.");
+            }
+            else
+            {
+                report.AddCheck("Course Title", DiagnosticSeverity.Pass,
+                    $"\"{lvl.levelName}\"",
+                    "Valid course title.");
+            }
+
             if (report.Status != SlotHealthStatus.Corrupted)
             {
                 report.Status = SlotHealthStatus.Healthy;
@@ -551,15 +765,6 @@ namespace SMM2SaveEditor.Utility
             }
 
             return report;
-        }
-
-        /// <summary>
-        /// Sanitizes invalid flags on all objects in an in-memory Level instance. Returns count of fixed objects.
-        /// (Deprecated: Flag validation removed to prevent false corruptions on legitimate courses)
-        /// </summary>
-        public static int SanitizeLevelFlags(Level lvl)
-        {
-            return 0;
         }
     }
 }

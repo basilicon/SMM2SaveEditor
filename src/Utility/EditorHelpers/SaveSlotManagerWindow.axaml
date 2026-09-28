@@ -31,6 +31,7 @@
                     <TextBlock Grid.Column="0" Name="StatusMessage" Text="Select a slot to manage." VerticalAlignment="Center" Foreground="#9AA0B2" FontSize="12"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                         <Button Name="UnhideButton" Content="👁️ Unhide in Coursebot" Classes="accent" Click="OnUnhideSlot" ToolTip.Tip="Reactivate this hidden course in save.dat so it appears in SMM2 Coursebot"/>
+                        <Button Name="RepairButton" Content="🛠️ De-corrupt Course" Classes="accent" Click="OnRepairSlot" ToolTip.Tip="De-corrupt course: initialize management flags, assign title, generate thumbnail, and restore in save.dat"/>
                         <Button Name="DiagnoseButton" Content="🔍 Health Diagnostics..." Classes="toolbarBtn" Click="OnOpenDiagnostics" ToolTip.Tip="Inspect SMM2 engine integrity, corruption reasons, and checksums"/>
                         <Button Name="LoadButton" Content="Load into Editor" Classes="accent" Click="OnLoadSlot"/>
                         <Button Name="InjectButton" Content="Inject Current Level" Classes="toolbarBtn" Click="OnInjectLevel"/>

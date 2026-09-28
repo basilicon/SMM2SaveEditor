@@ -134,7 +134,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         {
             if (currentLevel != null)
             {
-                int count = CourseDiagnostics.SanitizeLevelFlags(currentLevel);
+                bool ok = CourseDiagnostics.RepairLevel(currentLevel);
                 if (!string.IsNullOrEmpty(courseFilePath) && File.Exists(courseFilePath))
                 {
                     try
@@ -151,11 +151,11 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
             if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir)) return;
 
-            bool ok = CourseDiagnostics.SanitizeCourseFlags(saveDir, slot.SlotIndex);
-            if (ok)
+            bool success = CourseDiagnostics.RepairCourse(saveDir, slot.SlotIndex);
+            if (success)
             {
                 onStateChanged?.Invoke();
-                slot.HealthReport = CourseDiagnostics.DiagnoseSlot(saveDir, slot.SlotIndex, slot.IsOccupiedInSave);
+                slot.HealthReport = CourseDiagnostics.DiagnoseSlot(saveDir, slot.SlotIndex, true);
                 PopulateDiagnostics();
             }
         }
@@ -177,24 +177,32 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 }
             }
 
-            if (btlBytes == null) return;
-
             try
             {
-                byte[] jpegBytes = ThumbnailCrypto.DecryptThumbnail(btlBytes);
                 byte[] repairedBtl;
-                if (jpegBytes != null && jpegBytes.Length > 0)
+                if (btlBytes != null)
                 {
-                    repairedBtl = ThumbnailCrypto.EncryptThumbnail(jpegBytes);
+                    byte[]? jpegBytes = null;
+                    try { jpegBytes = ThumbnailCrypto.DecryptThumbnail(btlBytes); } catch { }
+
+                    if (jpegBytes != null && jpegBytes.Length >= 2 && jpegBytes[0] == 0xFF && jpegBytes[1] == 0xD8)
+                    {
+                        repairedBtl = ThumbnailCrypto.EncryptThumbnail(jpegBytes);
+                    }
+                    else
+                    {
+                        repairedBtl = ThumbnailCrypto.GeneratePlaceholderThumbnailBtl();
+                    }
                 }
                 else
                 {
-                    repairedBtl = ThumbnailCrypto.EncryptThumbnail(Array.Empty<byte>());
+                    repairedBtl = ThumbnailCrypto.GeneratePlaceholderThumbnailBtl();
                 }
 
                 SaveManagerService.WriteThumbnail(saveDir, slot.SlotIndex, repairedBtl);
                 onStateChanged?.Invoke();
-                Close();
+                slot.HealthReport = CourseDiagnostics.DiagnoseSlot(saveDir, slot.SlotIndex, slot.IsOccupiedInSave);
+                PopulateDiagnostics();
             }
             catch (Exception ex)
             {

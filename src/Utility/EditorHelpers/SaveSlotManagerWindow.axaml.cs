@@ -121,11 +121,15 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 SelectedThumbStatusText.Text = "Select a slot to modify its thumbnail.";
                 UnhideButton.IsEnabled = false;
                 UnhideButton.IsVisible = false;
+                RepairButton.IsEnabled = false;
+                RepairButton.IsVisible = false;
                 return;
             }
 
             UnhideButton.IsVisible = selected.CanUnhide;
             UnhideButton.IsEnabled = selected.CanUnhide;
+            RepairButton.IsVisible = selected.CanRepairCourse;
+            RepairButton.IsEnabled = selected.CanRepairCourse;
 
             if (selected.IsHiddenInCoursebot)
             {
@@ -179,6 +183,34 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
             else
             {
                 StatusMessage.Text = $"Failed to unhide {selected.DisplayName}.";
+            }
+        }
+
+        private void OnRepairSlot(object? sender, RoutedEventArgs e)
+        {
+            var selected = GetSelectedSlot();
+            if (selected == null || !selected.CanRepairCourse)
+            {
+                StatusMessage.Text = "Please select a course to repair.";
+                return;
+            }
+
+            string saveDir = SavePathBox.Text?.Trim() ?? "";
+            if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir))
+            {
+                StatusMessage.Text = "Save directory does not exist.";
+                return;
+            }
+
+            bool ok = CourseDiagnostics.RepairCourse(saveDir, selected.SlotIndex);
+            if (ok)
+            {
+                StatusMessage.Text = $"Successfully de-corrupted & repaired {selected.DisplayName} ({selected.Title})!";
+                RefreshSlots();
+            }
+            else
+            {
+                StatusMessage.Text = $"Failed to repair {selected.DisplayName}.";
             }
         }
 

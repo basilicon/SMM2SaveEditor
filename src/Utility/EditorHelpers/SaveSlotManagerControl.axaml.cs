@@ -240,20 +240,20 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         private void OnSanitizeFlagsClick(object? sender, RoutedEventArgs e)
         {
             var selected = GetSelectedSlot();
-            if (selected == null || !selected.CanSanitizeFlags) return;
+            if (selected == null || !selected.CanRepairCourse) return;
 
             string saveDir = SavePathBox.Text?.Trim() ?? "";
             if (string.IsNullOrEmpty(saveDir) || !Directory.Exists(saveDir)) return;
 
-            bool ok = CourseDiagnostics.SanitizeCourseFlags(saveDir, selected.SlotIndex);
+            bool ok = CourseDiagnostics.RepairCourse(saveDir, selected.SlotIndex);
             if (ok)
             {
-                StatusMessage.Text = $"Successfully sanitized object flags for {selected.DisplayName} ({selected.Title})!";
+                StatusMessage.Text = $"Successfully de-corrupted & repaired {selected.DisplayName} ({selected.Title})!";
                 RefreshSlots();
             }
             else
             {
-                StatusMessage.Text = $"Failed to sanitize object flags for {selected.DisplayName}.";
+                StatusMessage.Text = $"Failed to repair {selected.DisplayName}.";
             }
         }
 
@@ -287,17 +287,30 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 if (File.Exists(p)) { btlBytes = File.ReadAllBytes(p); break; }
             }
 
-            if (btlBytes == null) return;
-
             try
             {
-                byte[] jpegBytes = ThumbnailCrypto.DecryptThumbnail(btlBytes);
-                byte[] repairedBtl = jpegBytes != null && jpegBytes.Length > 0
-                    ? ThumbnailCrypto.EncryptThumbnail(jpegBytes)
-                    : ThumbnailCrypto.EncryptThumbnail(Array.Empty<byte>());
+                byte[] repairedBtl;
+                if (btlBytes != null)
+                {
+                    byte[]? jpegBytes = null;
+                    try { jpegBytes = ThumbnailCrypto.DecryptThumbnail(btlBytes); } catch { }
+
+                    if (jpegBytes != null && jpegBytes.Length >= 2 && jpegBytes[0] == 0xFF && jpegBytes[1] == 0xD8)
+                    {
+                        repairedBtl = ThumbnailCrypto.EncryptThumbnail(jpegBytes);
+                    }
+                    else
+                    {
+                        repairedBtl = ThumbnailCrypto.GeneratePlaceholderThumbnailBtl();
+                    }
+                }
+                else
+                {
+                    repairedBtl = ThumbnailCrypto.GeneratePlaceholderThumbnailBtl();
+                }
 
                 SaveManagerService.WriteThumbnail(saveDir, selected.SlotIndex, repairedBtl);
-                StatusMessage.Text = $"Repaired thumbnail signature for {selected.DisplayName}.";
+                StatusMessage.Text = $"Repaired thumbnail for {selected.DisplayName}.";
                 RefreshSlots();
             }
             catch (Exception ex)

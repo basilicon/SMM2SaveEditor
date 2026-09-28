@@ -60,7 +60,8 @@ namespace SMM2SaveEditor.Utility
 
         public bool CanUnhide => HealthStatus == SlotHealthStatus.HiddenInCoursebot;
         public bool CanRepairThumbnail => HealthReport?.CanRepairThumbnail ?? false;
-        public bool CanSanitizeFlags => HealthReport?.CanSanitizeFlags ?? false;
+        public bool CanRepairCourse => HealthReport?.CanRepairCourse ?? false;
+        public bool CanSanitizeFlags => CanRepairCourse;
         public int FlagViolationCount => HealthReport?.FlagViolationCount ?? 0;
         public string PrimaryCorruptionReason { get; set; } = "";
         public CourseHealthReport? HealthReport { get; set; }
@@ -256,8 +257,8 @@ namespace SMM2SaveEditor.Utility
                         info.LastModified = File.GetLastWriteTime(fullPath);
                     }
 
-                    // If it's corrupted due to invalid flags, the course is still decryptable and parseable
-                    if (report.CanSanitizeFlags)
+                    // If it's repairable, the course is decryptable and parseable
+                    if (report.CanRepairCourse)
                     {
                         try
                         {
@@ -270,7 +271,7 @@ namespace SMM2SaveEditor.Utility
                             info.GameVersion = lvl.gameVersion.ToString();
                             info.OverworldObjects = lvl.overworld.objects.Count;
                             info.SubworldObjects = lvl.subworld.objects.Count;
-                            info.StatusSummary = $"[INVALID FLAGS] {info.GameStyle} | {report.FlagViolationCount} flag error(s)";
+                            info.StatusSummary = $"[CORRUPTED] {info.GameStyle} | {report.PrimaryReason}";
                         }
                         catch
                         {

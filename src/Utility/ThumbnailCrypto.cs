@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using SkiaSharp;
 
 namespace SMM2SaveEditor.Utility
 {
@@ -423,6 +424,144 @@ namespace SMM2SaveEditor.Utility
             }
 
             return data.Length;
+        }
+
+        /// <summary>
+        /// Generates a randomized noise background with a centered "No Thumbnail Found" overlay card,
+        /// encoded to compliant 640x360 JPEG format for SMM2.
+        /// </summary>
+        public static byte[] GeneratePlaceholderThumbnailJpeg()
+        {
+            const int targetWidth = 640;
+            const int targetHeight = 360;
+
+            using var bmp = new SKBitmap(targetWidth, targetHeight, SKColorType.Bgra8888, SKAlphaType.Premul);
+            using (var canvas = new SKCanvas(bmp))
+            {
+                var rand = new System.Random();
+
+                // Select a randomized noise color theme for variety across generations
+                int theme = rand.Next(4);
+
+                // Render dynamic randomized pixel static / block noise (4x4 blocks)
+                using var noisePaint = new SKPaint();
+                for (int x = 0; x < targetWidth; x += 4)
+                {
+                    for (int y = 0; y < targetHeight; y += 4)
+                    {
+                        byte r, g, b;
+                        switch (theme)
+                        {
+                            case 0: // Classic TV digital noise
+                                byte v = (byte)rand.Next(25, 120);
+                                r = g = b = v;
+                                break;
+                            case 1: // Cool blue/cyan digital noise
+                                r = (byte)rand.Next(15, 60);
+                                g = (byte)rand.Next(30, 110);
+                                b = (byte)rand.Next(60, 160);
+                                break;
+                            case 2: // Retro arcade neon magenta/purple noise
+                                r = (byte)rand.Next(50, 140);
+                                g = (byte)rand.Next(15, 50);
+                                b = (byte)rand.Next(60, 150);
+                                break;
+                            default: // Warm game/gold digital noise
+                                r = (byte)rand.Next(50, 130);
+                                g = (byte)rand.Next(35, 100);
+                                b = (byte)rand.Next(15, 50);
+                                break;
+                        }
+
+                        // Sprinkle occasional bright pixels for sparkling static effect
+                        if (rand.Next(18) == 0)
+                        {
+                            r = (byte)Math.Min(255, r + rand.Next(60, 130));
+                            g = (byte)Math.Min(255, g + rand.Next(60, 130));
+                            b = (byte)Math.Min(255, b + rand.Next(60, 130));
+                        }
+
+                        noisePaint.Color = new SKColor(r, g, b);
+                        canvas.DrawRect(x, y, 4, 4, noisePaint);
+                    }
+                }
+
+                // Dark vignette / subtle overlay to soften the noise edges
+                using var vignettePaint = new SKPaint
+                {
+                    Color = new SKColor(10, 12, 18, 110)
+                };
+                canvas.DrawRect(0, 0, targetWidth, targetHeight, vignettePaint);
+
+                // Overlay card: rounded box in center
+                float cardLeft = 70;
+                float cardTop = 85;
+                float cardRight = targetWidth - 70;
+                float cardBottom = targetHeight - 85;
+                var cardRect = new SKRoundRect(new SKRect(cardLeft, cardTop, cardRight, cardBottom), 14, 14);
+
+                using var cardBgPaint = new SKPaint
+                {
+                    Color = new SKColor(18, 22, 32, 225),
+                    IsAntialias = true
+                };
+                using var cardBorderPaint = new SKPaint
+                {
+                    Color = new SKColor(254, 209, 0, 220), // SMM2 Yellow accent
+                    Style = SKPaintStyle.Stroke,
+                    StrokeWidth = 3,
+                    IsAntialias = true
+                };
+
+                canvas.DrawRoundRect(cardRect, cardBgPaint);
+                canvas.DrawRoundRect(cardRect, cardBorderPaint);
+
+                // Main Title: "NO THUMBNAIL FOUND"
+                using var titlePaint = new SKPaint
+                {
+                    Color = SKColors.White,
+                    TextSize = 32,
+                    IsAntialias = true,
+                    TextAlign = SKTextAlign.Center,
+                    Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold) ?? SKTypeface.Default
+                };
+                canvas.DrawText("NO THUMBNAIL FOUND", targetWidth / 2f, 155, titlePaint);
+
+                // Subtitle: "Super Mario Maker 2 Course Placeholder"
+                using var subtitlePaint = new SKPaint
+                {
+                    Color = new SKColor(180, 195, 215),
+                    TextSize = 17,
+                    IsAntialias = true,
+                    TextAlign = SKTextAlign.Center,
+                    Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal) ?? SKTypeface.Default
+                };
+                canvas.DrawText("Super Mario Maker 2 Course Placeholder", targetWidth / 2f, 195, subtitlePaint);
+
+                // Status Tag / Badge: "[ Auto-Generated Placeholder ]"
+                using var tagPaint = new SKPaint
+                {
+                    Color = new SKColor(254, 209, 0, 200),
+                    TextSize = 13,
+                    IsAntialias = true,
+                    TextAlign = SKTextAlign.Center,
+                    Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold) ?? SKTypeface.Default
+                };
+                canvas.DrawText("[ Auto-Generated Placeholder ]", targetWidth / 2f, 228, tagPaint);
+            }
+
+            using var image = SKImage.FromBitmap(bmp);
+            using var data = image.Encode(SKEncodedImageFormat.Jpeg, 80);
+            return data.ToArray();
+        }
+
+        /// <summary>
+        /// Generates a randomized placeholder thumbnail and returns an authentic encrypted .btl container.
+        /// </summary>
+        public static byte[] GeneratePlaceholderThumbnailBtl()
+        {
+            byte[] jpeg = GeneratePlaceholderThumbnailJpeg();
+            return EncryptThumbnail(jpeg);
         }
     }
 }
