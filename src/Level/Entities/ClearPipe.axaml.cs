@@ -9,8 +9,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class ClearPipe : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public byte index;
         public byte numNodes;
         public ushort unknown;

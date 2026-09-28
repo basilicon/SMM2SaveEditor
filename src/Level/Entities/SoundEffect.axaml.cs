@@ -9,8 +9,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class SoundEffect : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public SoundEffectId id;
         public byte x;
         public byte y;

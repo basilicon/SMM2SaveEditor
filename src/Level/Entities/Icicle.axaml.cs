@@ -9,8 +9,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class Icicle : Entity
     {
-        public event EventHandler? PostSpriteUpdate;
-
         private static readonly Dictionary<string, Bitmap> bitmaps = new();
         private Image img;
 

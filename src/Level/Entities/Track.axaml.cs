@@ -12,8 +12,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class Track : Entity
     {
-        public event EventHandler? PostSpriteUpdate;
-
         private static readonly Dictionary<string, Bitmap> bitmaps = new();
         private Image img;
         private Canvas capCanvas;

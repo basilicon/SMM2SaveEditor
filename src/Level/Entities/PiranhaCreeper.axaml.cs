@@ -9,8 +9,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class PiranhaCreeper : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public byte unknown1;
         public byte index;
         public byte unknown2;

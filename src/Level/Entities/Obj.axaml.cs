@@ -13,8 +13,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class Obj : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public int x = 0;
         public int y = 0;
         public short unknown1 = 0;

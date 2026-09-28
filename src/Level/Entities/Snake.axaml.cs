@@ -9,8 +9,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class Snake : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public byte index;
         public ushort unknown1;
         public List<SnakeNode> nodes = new(120);

@@ -8,8 +8,6 @@ namespace SMM2SaveEditor.Entities.Nodes
 {
     public partial class TrackBlockNode : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public byte unknown1;
         public byte direction;
         public ushort unknown2;

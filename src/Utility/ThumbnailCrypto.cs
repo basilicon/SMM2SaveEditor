@@ -2,8 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace SMM2SaveEditor.Utility
 {
@@ -353,57 +351,19 @@ namespace SMM2SaveEditor.Utility
                 canvas.DrawBitmap(originalBitmap, destRect, paint);
             }
 
-            using var gdiBitmap = new Bitmap(targetWidth, targetHeight, PixelFormat.Format32bppArgb);
-            var bmpData = gdiBitmap.LockBits(
-                new Rectangle(0, 0, targetWidth, targetHeight),
-                ImageLockMode.WriteOnly,
-                PixelFormat.Format32bppArgb);
-
-            try
+            using var image = SkiaSharp.SKImage.FromBitmap(resized);
+            int quality = 80;
+            while (quality >= 30)
             {
-                IntPtr srcPixels = resized.GetPixels();
-                int byteCount = targetWidth * targetHeight * 4;
-                unsafe
-                {
-                    Buffer.MemoryCopy((void*)srcPixels, (void*)bmpData.Scan0, byteCount, byteCount);
-                }
-            }
-            finally
-            {
-                gdiBitmap.UnlockBits(bmpData);
-            }
-
-            ImageCodecInfo? jpegCodec = null;
-            foreach (var codec in ImageCodecInfo.GetImageEncoders())
-            {
-                if (codec.FormatID == ImageFormat.Jpeg.Guid)
-                {
-                    jpegCodec = codec;
-                    break;
-                }
-            }
-
-            if (jpegCodec == null)
-            {
-                throw new InvalidOperationException("JPEG encoder not found in System.Drawing.");
-            }
-
-            long quality = 80L;
-            while (quality >= 30L)
-            {
-                using var encoderParams = new EncoderParameters(1);
-                encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-
-                using var ms = new MemoryStream();
-                gdiBitmap.Save(ms, jpegCodec, encoderParams);
-                byte[] encoded = ms.ToArray();
+                using var data = image.Encode(SkiaSharp.SKEncodedImageFormat.Jpeg, quality);
+                byte[] encoded = data.ToArray();
 
                 if (encoded.Length <= 0x1BF9C)
                 {
                     return encoded;
                 }
 
-                quality -= 10L;
+                quality -= 10;
             }
 
             throw new InvalidOperationException("Could not compress thumbnail to fit within 114,588 bytes.");

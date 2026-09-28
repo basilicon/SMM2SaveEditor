@@ -7,8 +7,6 @@ namespace SMM2SaveEditor.Entities.Nodes
 {
     public partial class ExclamationBlockNode : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         byte unknown1;
         byte direction;
         ushort unknown2;

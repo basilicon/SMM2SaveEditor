@@ -8,8 +8,6 @@ namespace SMM2SaveEditor.Entities
 {
     public partial class Ground : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         public byte x;
         public byte y;
         public byte id;

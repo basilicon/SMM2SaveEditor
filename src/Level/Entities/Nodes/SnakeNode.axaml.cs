@@ -8,8 +8,6 @@ namespace SMM2SaveEditor.Entities.Nodes
 {
     public partial class SnakeNode : Entity
     {
-        public event EventHandler PostSpriteUpdate;
-
         ushort index;
         ushort direction;
         uint unknown1;
