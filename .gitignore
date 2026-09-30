@@ -17,4 +17,6 @@ decomp/
 dumped_thumbnails/
 test_thumbnails/
 *.bin
-__pycache__/
+__pycache__/
+
+tools/

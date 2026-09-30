@@ -276,12 +276,12 @@ namespace SMM2SaveEditor.Utility
 
     public enum TrackSocket : byte
     {
-        East = 0,
-        West = 1,
+        West = 0,
+        East = 1,
         North = 2,
         South = 3,
-        SouthEast = 4,
-        NorthWest = 5,
+        NorthWest = 4,
+        SouthEast = 5,
         SouthWest = 6,
         NorthEast = 7
     }

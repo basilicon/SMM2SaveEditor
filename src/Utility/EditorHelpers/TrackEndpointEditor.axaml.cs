@@ -10,6 +10,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
         private ComboBox socketDropdown;
         private CheckBox cappedCheckBox;
+        private CheckBox cutCheckBox;
         private TextBox hexTextBox;
 
         public ushort Value { get; private set; }
@@ -21,6 +22,7 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
 
             socketDropdown = this.FindControl<ComboBox>("SocketDropdown")!;
             cappedCheckBox = this.FindControl<CheckBox>("CappedCheckBox")!;
+            cutCheckBox = this.FindControl<CheckBox>("CutCheckBox")!;
             hexTextBox = this.FindControl<TextBox>("HexTextBox")!;
 
             socketDropdown.ItemsSource = Enum.GetValues(typeof(TrackSocket));
@@ -50,6 +52,20 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
                 UpdateInternal((ushort)((hi << 8) | lo));
             };
 
+            cutCheckBox.IsCheckedChanged += (sender, e) =>
+            {
+                if (isUpdating) return;
+                if (cutCheckBox.IsChecked == true)
+                {
+                    UpdateInternal(0x0104);
+                }
+                else
+                {
+                    byte socketNum = socketDropdown.SelectedItem is TrackSocket sock ? (byte)sock : (byte)0;
+                    UpdateInternal((ushort)(0x0080 | socketNum));
+                }
+            };
+
             hexTextBox.TextChanged += (s, e) =>
             {
                 if (isUpdating) return;
@@ -70,41 +86,55 @@ namespace SMM2SaveEditor.Utility.EditorHelpers
         public void SetValue(ushort value, TrackType trackType = TrackType.horizontal, int endpointIndex = 1)
         {
             int typeId = (int)trackType;
-            int defaultPort = 0;
+            TrackSocket defaultPort = TrackSocket.East;
             if (typeId >= 0 && typeId < Entities.Track.TrackPorts.Length)
             {
                 var ports = Entities.Track.TrackPorts[typeId];
                 defaultPort = endpointIndex == 1 ? ports.port1 : ports.port2;
             }
 
-            byte lo = (byte)(value & 0xFF);
-            int rawSocket = lo & 0x0F;
-            int displayPort = Entities.Track.ResolvePort(typeId, endpointIndex, rawSocket, defaultPort);
+            TrackSocket displaySocket = Entities.Track.ResolveEndpointSocket(value, defaultPort);
 
-            UpdateInternal(value, displayPort, refreshHex: true);
+            UpdateInternal(value, displaySocket, refreshHex: true);
         }
 
-        private void UpdateInternal(ushort newValue, int? displayPort = null, bool refreshHex = true)
+        private void UpdateInternal(ushort newValue, TrackSocket? displaySocket = null, bool refreshHex = true)
         {
             Value = newValue;
             isUpdating = true;
 
             try
             {
-                byte lo = (byte)(newValue & 0xFF);
-                int socketNum = displayPort ?? (lo & 0x0F);
-                bool isCapped = (lo & 0xF0) == 0x70;
+                bool isCut = newValue == 0x0104;
+                cutCheckBox.IsChecked = isCut;
+                socketDropdown.IsEnabled = !isCut;
+                cappedCheckBox.IsEnabled = !isCut;
 
-                if (socketNum >= 0 && socketNum <= 7)
+                byte lo = (byte)(newValue & 0xFF);
+                bool isCapped = !isCut && ((lo & 0xF0) == 0x70 || (newValue >= 0x0070 && newValue <= 0x0077));
+
+                if (isCut)
                 {
-                    socketDropdown.SelectedItem = (TrackSocket)socketNum;
+                    socketDropdown.SelectedIndex = -1;
+                    cappedCheckBox.IsChecked = false;
                 }
                 else
                 {
-                    socketDropdown.SelectedIndex = -1;
-                }
+                    if (displaySocket != null)
+                    {
+                        socketDropdown.SelectedItem = displaySocket.Value;
+                    }
+                    else if ((lo & 0x0F) <= 7)
+                    {
+                        socketDropdown.SelectedItem = (TrackSocket)(lo & 0x0F);
+                    }
+                    else
+                    {
+                        socketDropdown.SelectedIndex = -1;
+                    }
 
-                cappedCheckBox.IsChecked = isCapped;
+                    cappedCheckBox.IsChecked = isCapped;
+                }
 
                 if (refreshHex)
                 {

@@ -34,6 +34,7 @@
 			<MenuItem Header="Tools">
 				<MenuItem Header="Course Properties..." InputGesture="F4" Click="OnOpenCourseProperties"/>
 				<MenuItem Header="Run Course Diagnostics..." InputGesture="F5" Click="OnRunCourseDiagnostics"/>
+				<MenuItem Header="Scripting &amp; Automation Console..." InputGesture="F6" Click="OnOpenScriptConsole"/>
 			</MenuItem>
 		</Menu>
 
@@ -107,6 +108,12 @@
 							<StackPanel Orientation="Horizontal" Spacing="4">
 								<TextBlock Text="🩺" FontSize="11" VerticalAlignment="Center"/>
 								<TextBlock Text="Diagnostics" FontSize="12" VerticalAlignment="Center"/>
+							</StackPanel>
+						</Button>
+						<Button Classes="toolbarBtn" Click="OnOpenScriptConsole" ToolTip.Tip="Interactive C# Scripting &amp; Automation Console (F6)">
+							<StackPanel Orientation="Horizontal" Spacing="4">
+								<TextBlock Text="⚡" FontSize="11" VerticalAlignment="Center"/>
+								<TextBlock Text="Scripting" FontSize="12" VerticalAlignment="Center"/>
 							</StackPanel>
 						</Button>
 						<Rectangle Width="1" Height="20" Fill="#2E3242" Margin="4,0"/>

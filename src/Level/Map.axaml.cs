@@ -186,6 +186,38 @@ namespace SMM2SaveEditor
             return false;
         }
 
+        public void RebuildCanvas()
+        {
+            if (myCanvas == null) return;
+            myCanvas.Children.Clear();
+            if (selectionAdorner != null)
+            {
+                myCanvas.Children.Add(selectionAdorner);
+            }
+
+            void AddRange<T>(List<T> items) where T : Control
+            {
+                foreach (var item in items)
+                {
+                    if (item is Entity ent) ent.UpdateSprite();
+                    myCanvas.Children.Add(item);
+                }
+            }
+
+            AddRange(ground);
+            AddRange(tracks);
+            AddRange(trackBlocks);
+            AddRange(clearPipes);
+            AddRange(snakes);
+            AddRange(piranhaCreepers);
+            AddRange(exclamationBlocks);
+            AddRange(objects);
+            AddRange(sounds);
+            AddRange(icicles);
+
+            UpdateSprite();
+        }
+
         public override void LoadFromStream(KaitaiStream io)
         {
             theme = (Theme)io.ReadU1();

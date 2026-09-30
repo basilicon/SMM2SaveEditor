@@ -1,0 +1,93 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="SMM2SaveEditor.Utility.EditorHelpers.ScriptConsoleWindow"
+        Title="Live C# Scripting &amp; Automation Console"
+        Width="920" Height="680"
+        MinWidth="700" MinHeight="500"
+        Background="#121316"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="14">
+        <!-- Top Header & Preset Toolbar -->
+        <Border DockPanel.Dock="Top" Background="#1A1C24" BorderBrush="#2A2D3C" BorderThickness="1" CornerRadius="8" Padding="14,10" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="⚡" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="Live C# Course Automation &amp; Scripting" FontWeight="Bold" FontSize="15" Foreground="#FFFFFF"/>
+                        <Border Background="{StaticResource SmmYellowBrush}" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                            <TextBlock Text="Roslyn .NET 8" FontWeight="Black" FontSize="9" Foreground="#121316"/>
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Text="Direct in-memory access to level.overworld and level.subworld entities." FontSize="11" Foreground="#9BA3B8"/>
+                </StackPanel>
+
+                <!-- Preset Template Selector -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="Recipe:" FontSize="12" Foreground="#D0D5E2" VerticalAlignment="Center"/>
+                    <ComboBox Name="PresetDropdown" Width="260" SelectedIndex="0">
+                        <ComboBoxItem Content="Binary Search: Remove Second Half"/>
+                        <ComboBoxItem Content="Binary Search: Remove First Half"/>
+                        <ComboBoxItem Content="List All Track Details"/>
+                        <ComboBoxItem Content="Apply 7 Rules (Clean Cut Tracks)"/>
+                        <ComboBoxItem Content="Batch Add Ground Walkway"/>
+                        <ComboBoxItem Content="Custom Script Template"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Bottom Action & Status Bar -->
+        <Border DockPanel.Dock="Bottom" Background="#1A1C24" BorderBrush="#2A2D3C" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,10,0,0">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                    <Button Name="RunButton" Classes="accent" Click="OnRunScriptClick">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="▶" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="Execute Script (F5)" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="ClearLogButton" Classes="toolbarBtn" Content="🧹 Clear Log" Click="OnClearLogClick"/>
+                </StackPanel>
+
+                <TextBlock Name="StatusText" Grid.Column="1" Text="Ready" Foreground="#9BA3B8" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                <Button Grid.Column="2" Content="Close" Classes="toolbarBtn" Click="OnCloseClick"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Splitter: Code Editor (Top) vs Output Console (Bottom) -->
+        <Grid RowDefinitions="*,5,180">
+            <!-- Code Editor Panel -->
+            <Border Grid.Row="0" Background="#161822" BorderBrush="#282C3D" BorderThickness="1" CornerRadius="8" Padding="6">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#1C1E2B" Padding="8,4" CornerRadius="4" Margin="0,0,0,4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="C# SCRIPT EDITOR" FontWeight="Bold" FontSize="11" Foreground="{StaticResource SmmYellowBrush}"/>
+                            <TextBlock Grid.Column="1" Text="Globals: level, overworld, subworld, print(msg), refresh()" FontSize="10" Foreground="#8A92A6"/>
+                        </Grid>
+                    </Border>
+                    <TextBox Name="CodeEditor" FontFamily="Cascadia Code, Consolas, Courier New, monospace" FontSize="12"
+                             AcceptsReturn="True" AcceptsTab="True" TextWrapping="NoWrap"
+                             Background="#12131B" Foreground="#E2E8F0" BorderThickness="0"/>
+                </DockPanel>
+            </Border>
+
+            <GridSplitter Grid.Row="1" Background="#242738" ResizeDirection="Rows"/>
+
+            <!-- Output Log Console -->
+            <Border Grid.Row="2" Background="#0E1017" BorderBrush="#282C3D" BorderThickness="1" CornerRadius="8" Padding="6">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#181A24" Padding="8,4" CornerRadius="4" Margin="0,0,0,4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="EXECUTION OUTPUT &amp; LOGS" FontWeight="Bold" FontSize="11" Foreground="#9BA3B8"/>
+                            <TextBlock Name="ExecutionTimeText" Grid.Column="1" Text="" FontSize="10" Foreground="#9BA3B8"/>
+                        </Grid>
+                    </Border>
+                    <TextBox Name="OutputConsole" FontFamily="Cascadia Code, Consolas, Courier New, monospace" FontSize="11"
+                             IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                             Background="#0A0B10" Foreground="#6EE7B7" BorderThickness="0"/>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

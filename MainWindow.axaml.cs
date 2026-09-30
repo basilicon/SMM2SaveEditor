@@ -250,6 +250,18 @@ namespace SMM2SaveEditor
             await diagWindow.ShowDialog(this);
         }
 
+        private void OnOpenScriptConsole(object? sender, RoutedEventArgs e)
+        {
+            if (level == null) return;
+            SwitchToTab(showSlots: false);
+            var consoleWin = new ScriptConsoleWindow(level, () =>
+            {
+                level.overworld?.RebuildCanvas();
+                level.subworld?.RebuildCanvas();
+            });
+            consoleWin.Show(this);
+        }
+
         private void OnExitApp(object? sender, RoutedEventArgs e)
         {
             Close();
