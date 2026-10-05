@@ -27,7 +27,7 @@ namespace SMM2SaveEditor
         private EntityEditor entityEditor;
         private ZoomBorder? zoomBorder;
 
-        private IStorageBookmarkFile? storageBookmarkFile;
+        private IStorageFile? storageBookmarkFile;
         private string? currentFilePath;
 
         private SaveSlotManagerControl? saveSlotManager;
@@ -298,16 +298,20 @@ namespace SMM2SaveEditor
                 AllowMultiple = false,
                 FileTypeFilter = new[]
                 {
-                    new FilePickerFileType("")
+                    new FilePickerFileType("Mario Maker 2 Course (.bcd)")
                     {
                         Patterns = new[] { "*.bcd" }
+                    },
+                    new FilePickerFileType("All Files (*.*)")
+                    {
+                        Patterns = new[] { "*.*" }
                     }
                 }
             });
 
             if (picked.Count == 0) return;
 
-            storageBookmarkFile = (IStorageBookmarkFile)picked[0];
+            storageBookmarkFile = picked[0];
             LoadFromFile(storageBookmarkFile.Path.LocalPath);
         }
 
@@ -320,12 +324,17 @@ namespace SMM2SaveEditor
             IStorageFile? picked = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
             {
                 Title = "Export Level",
-                DefaultExtension = defaultName,
+                DefaultExtension = "bcd",
+                SuggestedFileName = defaultName,
                 FileTypeChoices = new[]
                 {
-                    new FilePickerFileType("") 
+                    new FilePickerFileType("Mario Maker 2 Course (.bcd)") 
                     {
                         Patterns = new[] { "*.bcd" }
+                    },
+                    new FilePickerFileType("All Files (*.*)")
+                    {
+                        Patterns = new[] { "*.*" }
                     }
                 },
                 ShowOverwritePrompt = true
