@@ -12,19 +12,19 @@
 		<!-- Menu Bar -->
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
-				<MenuItem Header="Open Level (.bcd)..." InputGesture="Ctrl+O" Click="OnOpenLevel"/>
-				<MenuItem Header="Save Level" InputGesture="Ctrl+S" Click="OnSaveLevel"/>
-				<MenuItem Header="Export Level..." InputGesture="Ctrl+Shift+S" Click="OnExportLevel"/>
+				<MenuItem Header="Open Level (.bcd)..." HotKey="Ctrl+O" InputGesture="Ctrl+O" Click="OnOpenLevel"/>
+				<MenuItem Header="Save Level" HotKey="Ctrl+S" InputGesture="Ctrl+S" Click="OnSaveLevel"/>
+				<MenuItem Header="Export Level..." HotKey="Ctrl+Shift+S" InputGesture="Ctrl+Shift+S" Click="OnExportLevel"/>
 				<Separator/>
-				<MenuItem Header="Coursebot Save Slots" InputGesture="F3" Click="OnOpenSaveSlotManager"/>
+				<MenuItem Header="Coursebot Save Slots" HotKey="F3" InputGesture="F3" Click="OnOpenSaveSlotManager"/>
 				<Separator/>
 				<MenuItem Header="Register .bcd File Association in Windows" Click="OnRegisterAssociation"/>
 				<Separator/>
 				<MenuItem Header="Exit" Click="OnExitApp"/>
 			</MenuItem>
 			<MenuItem Header="View">
-				<MenuItem Header="Coursebot Save Slots" InputGesture="F1" Click="OnSelectSlotsTab"/>
-				<MenuItem Header="Level Editor Canvas" InputGesture="F2" Click="OnSelectEditorTab"/>
+				<MenuItem Header="Coursebot Save Slots" HotKey="F1" InputGesture="F1" Click="OnSelectSlotsTab"/>
+				<MenuItem Header="Level Editor Canvas" HotKey="F2" InputGesture="F2" Click="OnSelectEditorTab"/>
 				<Separator/>
 				<MenuItem Header="Zoom In" InputGesture="+" Click="OnZoomIn"/>
 				<MenuItem Header="Zoom Out" InputGesture="-" Click="OnZoomOut"/>
@@ -32,9 +32,9 @@
 				<MenuItem Header="Fit to Window" InputGesture="Space" Click="OnZoomFit"/>
 			</MenuItem>
 			<MenuItem Header="Tools">
-				<MenuItem Header="Course Properties..." InputGesture="F4" Click="OnOpenCourseProperties"/>
-				<MenuItem Header="Run Course Diagnostics..." InputGesture="F5" Click="OnRunCourseDiagnostics"/>
-				<MenuItem Header="Scripting &amp; Automation Console..." InputGesture="F6" Click="OnOpenScriptConsole"/>
+				<MenuItem Header="Course Properties..." HotKey="F4" InputGesture="F4" Click="OnOpenCourseProperties"/>
+				<MenuItem Header="Run Course Diagnostics..." HotKey="F5" InputGesture="F5" Click="OnRunCourseDiagnostics"/>
+				<MenuItem Header="Scripting &amp; Automation Console..." HotKey="F6" InputGesture="F6" Click="OnOpenScriptConsole"/>
 			</MenuItem>
 		</Menu>
 
